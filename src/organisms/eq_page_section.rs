@@ -9,9 +9,11 @@ pub fn EqPageSection(
     /// Optional id for anchor links, e.g. "services"
     id: Option<&'static str>,
     /// Optional title shown above the section content
-    title: Option<&'static str>,
+    #[props(into)]
+    title: Option<String>,
     /// Optional description/subtitle
-    description: Option<&'static str>,
+    #[props(into)]
+    description: Option<String>,
     /// Optional section content
     #[props(default)]
     children: Element,
