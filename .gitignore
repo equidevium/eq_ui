@@ -1,0 +1,91 @@
+# =========================
+# Rust / Cargo
+# =========================
+
+/target/
+**/*.rs.bk
+
+# Library crate → ignore lockfile
+Cargo.lock
+
+# =========================
+# WASM / Dioxus outputs
+# =========================
+
+dist/
+build/
+pkg/
+public/build/
+.dioxus/
+
+# wasm-bindgen / trunk temp
+wasm-pack.log
+wasm-bindgen*
+
+# =========================
+# Dev servers / hot reload
+# =========================
+
+.devserver/
+.cache/
+.tmp/
+
+# =========================
+# JetBrains (RustRover)
+# =========================
+
+.idea/
+*.iml
+out/
+
+# =========================
+# VS Code
+# =========================
+
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# =========================
+# OS noise
+# =========================
+
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =========================
+# Logs / temp
+# =========================
+
+*.log
+*.tmp
+*.swp
+*.swo
+
+# =========================
+# Coverage / profiling
+# =========================
+
+coverage/
+*.profraw
+*.profdata
+*.lcov
+
+# =========================
+# Env / secrets
+# =========================
+
+.env
+.env.*
+!.env.example
+
+# =========================
+# Database / local runtime
+# =========================
+
+*.db
+*.sqlite
+*.sqlite3
