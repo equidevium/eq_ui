@@ -2,7 +2,7 @@ use dioxus::prelude::*;
 use eq_ui::atoms::*;
 use eq_ui::molecules::*;
 use eq_ui::organisms::*;
-use eq_ui::{UI_TAILWIND_CSS, UI_INDEX_CSS, UI_COLORS_CSS, UI_BUTTONS_CSS};
+use eq_ui::{UI_BUTTONS_CSS, UI_COLORS_CSS, UI_INDEX_CSS, UI_TAILWIND_CSS};
 
 fn main() {
     dioxus::launch(App);
@@ -33,9 +33,7 @@ fn App() -> Element {
 fn PageHeader() -> Element {
     rsx! {
         header { class: "space-y-2 pb-8 border-b border-[var(--color-card-border)]",
-            h1 { class: "text-3xl font-bold text-[var(--color-label-primary)]",
-                "eq_ui showcase"
-            }
+            h1 { class: "text-3xl font-bold text-[var(--color-label-primary)]", "eq_ui showcase" }
             p { class: "text-[var(--color-label-secondary)]",
                 "Visual gallery of every component with prop variations."
             }
@@ -61,9 +59,7 @@ fn Section(title: &'static str, children: Element) -> Element {
 fn ComponentBlock(name: &'static str, children: Element) -> Element {
     rsx! {
         div { class: "space-y-3",
-            h3 { class: "text-lg font-medium text-[var(--color-label-bold)]",
-                "{name}"
-            }
+            h3 { class: "text-lg font-medium text-[var(--color-label-bold)]", "{name}" }
             div { class: "rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card)]/30 p-6 space-y-4",
                 {children}
             }
@@ -164,6 +160,58 @@ fn ShowcaseAtoms() -> Element {
                 }
             }
 
+            ComponentBlock { name: "EqImage",
+                div { class: "space-y-6",
+                    div { class: "space-y-2",
+                        span { class: "text-sm text-[var(--color-label-secondary)]",
+                            "Small — default ratio, cover"
+                        }
+                        EqImage {
+                            src: "https://picsum.photos/seed/eq-sm/400/300",
+                            alt: "Small placeholder",
+                            size: AtomImageSize::Sm,
+                        }
+                    }
+                    div { class: "space-y-2",
+                        span { class: "text-sm text-[var(--color-label-secondary)]",
+                            "Medium — 16:9, rounded"
+                        }
+                        EqImage {
+                            src: "https://picsum.photos/seed/eq-md/800/450",
+                            alt: "Medium 16:9 placeholder",
+                            size: AtomImageSize::Md,
+                            aspect_ratio: AspectRatio::Ratio16_9,
+                            rounded: true,
+                        }
+                    }
+                    div { class: "space-y-2",
+                        span { class: "text-sm text-[var(--color-label-secondary)]",
+                            "Large — square, contain"
+                        }
+                        EqImage {
+                            src: "https://picsum.photos/seed/eq-lg/600/600",
+                            alt: "Large square placeholder",
+                            size: AtomImageSize::Lg,
+                            aspect_ratio: AspectRatio::Square,
+                            object_fit: ObjectFit::Contain,
+                            rounded: true,
+                        }
+                    }
+                    div { class: "space-y-2",
+                        span { class: "text-sm text-[var(--color-label-secondary)]",
+                            "Full width — 4:3, cover"
+                        }
+                        EqImage {
+                            src: "https://picsum.photos/seed/eq-full/1200/900",
+                            alt: "Full width placeholder",
+                            size: AtomImageSize::Full,
+                            aspect_ratio: AspectRatio::Ratio4_3,
+                            object_fit: ObjectFit::Cover,
+                        }
+                    }
+                }
+            }
+
             ComponentBlock { name: "EqIcon",
                 div { class: "flex items-center gap-6",
                     div { class: "flex items-center gap-2",
@@ -177,7 +225,9 @@ fn ShowcaseAtoms() -> Element {
                                 path { d: "M12 4.5v15m7.5-7.5h-15" }
                             }
                         }
-                        span { class: "text-sm text-[var(--color-label-secondary)]", "Sm" }
+                        span { class: "text-sm text-[var(--color-label-secondary)]",
+                            "Sm"
+                        }
                     }
                     div { class: "flex items-center gap-2",
                         EqIcon { size: IconSize::Md,
@@ -190,7 +240,9 @@ fn ShowcaseAtoms() -> Element {
                                 path { d: "M12 4.5v15m7.5-7.5h-15" }
                             }
                         }
-                        span { class: "text-sm text-[var(--color-label-secondary)]", "Md (default)" }
+                        span { class: "text-sm text-[var(--color-label-secondary)]",
+                            "Md (default)"
+                        }
                     }
                     div { class: "flex items-center gap-2",
                         EqIcon { size: IconSize::Lg,
@@ -203,7 +255,9 @@ fn ShowcaseAtoms() -> Element {
                                 path { d: "M12 4.5v15m7.5-7.5h-15" }
                             }
                         }
-                        span { class: "text-sm text-[var(--color-label-secondary)]", "Lg" }
+                        span { class: "text-sm text-[var(--color-label-secondary)]",
+                            "Lg"
+                        }
                     }
                     div { class: "flex items-center gap-2",
                         EqIcon { size: IconSize::Lg, muted: true,
@@ -216,7 +270,9 @@ fn ShowcaseAtoms() -> Element {
                                 path { d: "M12 4.5v15m7.5-7.5h-15" }
                             }
                         }
-                        span { class: "text-sm text-[var(--color-label-secondary)]", "Lg muted" }
+                        span { class: "text-sm text-[var(--color-label-secondary)]",
+                            "Lg muted"
+                        }
                     }
                 }
             }
@@ -230,6 +286,33 @@ fn ShowcaseAtoms() -> Element {
 fn ShowcaseMolecules() -> Element {
     rsx! {
         Section { title: "Molecules",
+
+            ComponentBlock { name: "EqImageCard — Caption Below",
+                EqImageCard {
+                    src: "https://picsum.photos/seed/eq-card1/800/500",
+                    alt: "Mountain landscape",
+                    mode: CaptionMode::Below,
+                    size: AtomImageSize::Lg,
+                    aspect_ratio: AspectRatio::Ratio16_9,
+                    rounded: true,
+                    title: "Alpine Meadow",
+                    description: "A serene landscape captured during the golden hour.",
+                    attribution: "Photo by Jane Doe",
+                }
+            }
+
+            ComponentBlock { name: "EqImageCard — Overlay",
+                EqImageCard {
+                    src: "https://picsum.photos/seed/eq-card2/800/500",
+                    alt: "Ocean waves",
+                    mode: CaptionMode::Overlay,
+                    size: AtomImageSize::Lg,
+                    aspect_ratio: AspectRatio::Ratio16_9,
+                    rounded: true,
+                    title: "Ocean Power",
+                    description: "The raw energy of nature captured in motion.",
+                }
+            }
 
             ComponentBlock { name: "EqCard",
                 div { class: "grid grid-cols-1 md:grid-cols-2 gap-4",
@@ -259,10 +342,28 @@ fn ShowcaseOrganisms() -> Element {
                     div { class: "rounded-lg overflow-hidden border border-[var(--color-card-border)]",
                         EqHeader {
                             nav: rsx! {
-                                li { a { href: "#", class: "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] transition", "Home" } }
-                                li { a { href: "#", class: "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] transition", "About" } }
-                                li { a { href: "#", class: "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] transition", "Contact" } }
-                            }
+                                li {
+                                    a {
+                                        href: "#",
+                                        class: "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] transition",
+                                        "Home"
+                                    }
+                                }
+                                li {
+                                    a {
+                                        href: "#",
+                                        class: "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] transition",
+                                        "About"
+                                    }
+                                }
+                                li {
+                                    a {
+                                        href: "#",
+                                        class: "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] transition",
+                                        "Contact"
+                                    }
+                                }
+                            },
                         }
                     }
                     p { class: "text-sm text-[var(--color-label-secondary)]",

@@ -13,8 +13,12 @@ pub mod eq_input_styles;
 mod eq_icon;
 mod eq_icon_styles;
 
+mod eq_image;
+mod eq_image_styles;
+
 pub use eq_text::{EqText, TextVariant};
 pub use eq_label::EqLabel;
 pub use eq_link::EqLink;
 pub use eq_input::{EqInput, InputKind};
 pub use eq_icon::{EqIcon, IconSize};
+pub use eq_image::{EqImage, AtomImageSize, AspectRatio, ObjectFit};
