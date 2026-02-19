@@ -1,0 +1,16 @@
+#navbar {
+  display: flex;
+  flex-direction: row;
+}
+
+#navbar a {
+  color: var(--color-label-primary);
+  margin-right: 20px;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+#navbar a:hover {
+  cursor: pointer;
+  color: var(--color-label-bold);
+}

@@ -1,0 +1,12 @@
+[package]
+name = "eq_ui"
+version = "0.1.0"
+edition = "2021"
+description = "Portable Dioxus UI component library — atoms, molecules, organisms + theme"
+
+[dependencies]
+dioxus = "0.7.3"
+
+[[example]]
+name = "showcase"
+path = "examples/showcase.rs"

@@ -1,0 +1,3 @@
+[application]
+name = "eq_ui"
+default_platform = "web"

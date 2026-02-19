@@ -1,0 +1,19 @@
+@import "colors.css";
+@import "buttons.css";
+
+html, body {
+    min-height: 100%;
+}
+
+html {
+    background: var(--gradient-background);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+body {
+    background: transparent;
+    color: var(--color-label-primary);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+}

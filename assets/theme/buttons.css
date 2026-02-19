@@ -1,0 +1,17 @@
+@layer components {
+    .btn {
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .btn-primary {
+        background: var(--color-secondary-dark);
+        border: 2px solid var(--color-secondary-dark);
+        border-radius: 8px;
+        color: var(--color-label-primary);
+    }
+
+    .btn-primary:hover {
+        background-color: var(--color-hover-button);
+    }
+}

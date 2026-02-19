@@ -1,0 +1,36 @@
+:root {
+
+
+    --color-primary-dark: #330f20;
+    --color-secondary-dark: #945f79;
+    --color-tertiary-dark: #5c1a39;
+    --color-hover-button: #672D4C;
+    --color-card: #56203E;
+    --color-card-border: #764259;
+    --color-card-shadow: #7F5066;
+    --color-label-primary: #ffffff;
+    --color-label-secondary: #cbb3c3;
+    --color-label-bold: #e6a6c0;
+    --color-gradient-default-start: #cbb3c3;
+    --color-gradient-default-mid: #c97da7;
+    --color-gradient-default-end: #f6c0d8;
+
+    --gradient-primary-tricolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-start) 0%,
+            var(--color-gradient-default-mid) 50%,
+            var(--color-gradient-default-end) 100%
+    );
+
+    --gradient-background: linear-gradient(
+            90deg,
+            var(--color-primary-dark) 0%,
+            var(--color-tertiary-dark) 100%
+    );
+
+    --gradient-primary-duocolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-end) 0%,
+            var(--color-gradient-default-start) 100%
+    );
+}
