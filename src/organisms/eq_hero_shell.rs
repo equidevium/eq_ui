@@ -4,8 +4,10 @@ use crate::theme::CONTAINER_LAYOUT;
 
 #[component]
 pub fn EqHeroShell(
-    title: &'static str,
-    subtitle: Option<&'static str>,
+    #[props(into)]
+    title: String,
+    #[props(into)]
+    subtitle: Option<String>,
     actions: Option<Element>,
 ) -> Element {
     rsx! {
