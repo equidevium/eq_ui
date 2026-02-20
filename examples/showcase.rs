@@ -16,9 +16,22 @@ fn App() -> Element {
         document::Link { rel: "stylesheet", href: UI_COLORS_CSS }
         document::Link { rel: "stylesheet", href: UI_BUTTONS_CSS }
 
-        div { class: "min-h-screen bg-[var(--color-primary-dark)] text-[var(--color-label-primary)]",
-            div { class: "mx-auto max-w-5xl px-4 py-8 space-y-16",
-                PageHeader {}
+        EqAppShell {
+            header: rsx! {
+                EqHeader {
+                    site_title: "eq_ui showcase (most of the samples to be produced for the docs site later on :P )",
+
+                    nav: rsx! {
+                        li { a { href: "#atoms", class: "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] transition", "Atoms" } }
+                        li { a { href: "#molecules", class: "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] transition", "Molecules" } }
+                        li { a { href: "#organisms", class: "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] transition", "Organisms" } }
+                    },
+                }
+            },
+            footer: rsx! { EqFooter {} },
+
+            // children go inside CONTAINER_LAYOUT automatically
+            div { class: "space-y-16",
                 ShowcaseAtoms {}
                 ShowcaseMolecules {}
                 ShowcaseOrganisms {}
@@ -27,26 +40,13 @@ fn App() -> Element {
     }
 }
 
-// ── Page header ─────────────────────────────────────────────────────
-
-#[component]
-fn PageHeader() -> Element {
-    rsx! {
-        header { class: "space-y-2 pb-8 border-b border-[var(--color-card-border)]",
-            h1 { class: "text-3xl font-bold text-[var(--color-label-primary)]", "eq_ui showcase" }
-            p { class: "text-[var(--color-label-secondary)]",
-                "Visual gallery of every component with prop variations."
-            }
-        }
-    }
-}
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
 #[component]
-fn Section(title: &'static str, children: Element) -> Element {
+fn Section(title: &'static str, id: Option<&'static str>, children: Element) -> Element {
     rsx! {
-        section { class: "space-y-6",
+        section { id: id.unwrap_or_default(), class: "space-y-6 scroll-mt-20",
             h2 { class: "text-2xl font-semibold text-[var(--color-label-primary)] border-b border-[var(--color-card-border)] pb-2",
                 "{title}"
             }
@@ -76,7 +76,7 @@ fn ShowcaseAtoms() -> Element {
     let mut demo_textarea = use_signal(|| String::new());
 
     rsx! {
-        Section { title: "Atoms",
+        Section { title: "Atoms", id: "atoms",
 
             ComponentBlock { name: "EqText",
                 EqText { variant: TextVariant::H1, "Heading 1" }
@@ -285,7 +285,7 @@ fn ShowcaseAtoms() -> Element {
 #[component]
 fn ShowcaseMolecules() -> Element {
     rsx! {
-        Section { title: "Molecules",
+        Section { title: "Molecules", id: "molecules",
 
             ComponentBlock { name: "EqImageCard — Caption Below",
                 EqImageCard {
@@ -314,6 +314,51 @@ fn ShowcaseMolecules() -> Element {
                 }
             }
 
+            ComponentBlock { name: "EqCarousel",
+                div { class: "max-w-lg",
+                    EqCarousel {
+                        slides: vec![
+                            rsx! {
+                                EqImageCard {
+                                    src: "https://picsum.photos/seed/carousel1/800/450",
+                                    alt: "Slide one",
+                                    mode: CaptionMode::Overlay,
+                                    size: AtomImageSize::Full,
+                                    aspect_ratio: AspectRatio::Ratio16_9,
+                                    rounded: true,
+                                    title: "First Slide",
+                                    description: "A beautiful mountain landscape.",
+                                }
+                            },
+                            rsx! {
+                                EqImageCard {
+                                    src: "https://picsum.photos/seed/carousel2/800/450",
+                                    alt: "Slide two",
+                                    mode: CaptionMode::Overlay,
+                                    size: AtomImageSize::Full,
+                                    aspect_ratio: AspectRatio::Ratio16_9,
+                                    rounded: true,
+                                    title: "Second Slide",
+                                    description: "Waves crashing on the shore.",
+                                }
+                            },
+                            rsx! {
+                                EqImageCard {
+                                    src: "https://picsum.photos/seed/carousel3/800/450",
+                                    alt: "Slide three",
+                                    mode: CaptionMode::Overlay,
+                                    size: AtomImageSize::Full,
+                                    aspect_ratio: AspectRatio::Ratio16_9,
+                                    rounded: true,
+                                    title: "Third Slide",
+                                    description: "A dense forest at dawn.",
+                                }
+                            },
+                        ],
+                    }
+                }
+            }
+
             ComponentBlock { name: "EqCard",
                 div { class: "grid grid-cols-1 md:grid-cols-2 gap-4",
                     EqCard {
@@ -335,7 +380,7 @@ fn ShowcaseMolecules() -> Element {
 #[component]
 fn ShowcaseOrganisms() -> Element {
     rsx! {
-        Section { title: "Organisms",
+        Section { title: "Organisms", id: "organisms",
 
             ComponentBlock { name: "EqHeader",
                 div { class: "space-y-4",

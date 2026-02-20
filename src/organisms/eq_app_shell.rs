@@ -12,9 +12,7 @@ pub fn EqAppShell(
 ) -> Element {
     rsx! {
         div { id: "app", class: APP,
-            div { class: CONTAINER_LAYOUT,
-                {header}
-            }
+            {header}
 
             main { class: "{MAIN_CONTENT} {MAIN_INNER}",
                 div { class: CONTAINER_LAYOUT,
