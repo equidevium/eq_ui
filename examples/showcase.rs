@@ -441,6 +441,42 @@ fn ShowcaseOrganisms() -> Element {
                 }
             }
 
+            ComponentBlock { name: "EqHeroShell with background image and custom colors",
+                EqHeroShell {
+                    title: "Hero Shell Title",
+                    subtitle: "A tagline or subtitle goes here.",
+                    title_color: "#ff6b6b",
+                    subtitle_color: "#ffd93d",
+                    background: rsx! {
+                        EqImage {
+                            src: "https://picsum.photos/seed/eq-full/1200/900",
+                            alt: "Full width placeholder",
+                            size: AtomImageSize::Full,
+                            aspect_ratio: AspectRatio::Ratio4_3,
+                            object_fit: ObjectFit::Cover,
+                        }
+                    }
+                }
+            }
+
+            ComponentBlock { name: "EqHeroShell with background image and custom colors from CSS variables from a different theme",
+                EqHeroShell {
+                    title: "Hero Shell Title",
+                    subtitle: "A tagline or subtitle goes here.",
+                    title_color: "#ff6b6b",
+                    subtitle_color: "var(--color-label-bold)",
+                    background: rsx! {
+                        EqImage {
+                            src: "https://picsum.photos/seed/eq-full/1200/900",
+                            alt: "Full width placeholder",
+                            size: AtomImageSize::Full,
+                            aspect_ratio: AspectRatio::Ratio4_3,
+                            object_fit: ObjectFit::Cover,
+                        }
+                    }
+                }
+            }
+
             ComponentBlock { name: "EqPageSection",
                 div { class: "space-y-4",
                     EqPageSection {
