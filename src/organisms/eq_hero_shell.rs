@@ -9,10 +9,17 @@ pub fn EqHeroShell(
     #[props(into)]
     subtitle: Option<String>,
     actions: Option<Element>,
+    background: Option<Element>,
 ) -> Element {
     rsx! {
-        section { class: HERO_SHELL,
-            div { class: CONTAINER_LAYOUT,
+        section { class: "{HERO_SHELL} {HERO_SHELL_RELATIVE}",
+            if let Some(bg) = background {
+                div { class: HERO_BG,
+                    {bg}
+                }
+                div { class: HERO_OVERLAY }
+            }
+            div { class: "{CONTAINER_LAYOUT} {HERO_CONTENT}",
                 h1 { class: HERO_TITLE, "{title}" }
 
                 if let Some(subtitle) = subtitle {

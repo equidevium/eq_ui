@@ -1,3 +1,4 @@
+use dioxus::html::a::backdrop_filter;
 use dioxus::prelude::*;
 use eq_ui::atoms::*;
 use eq_ui::molecules::*;
@@ -421,6 +422,22 @@ fn ShowcaseOrganisms() -> Element {
                 EqHeroShell {
                     title: "Hero Shell Title",
                     subtitle: "A tagline or subtitle goes here.",
+                }
+            }
+
+            ComponentBlock { name: "EqHeroShell with background image",
+                EqHeroShell {
+                    title: "Hero Shell Title",
+                    subtitle: "A tagline or subtitle goes here.",
+                    background: rsx! {
+                        EqImage {
+                            src: "https://picsum.photos/seed/eq-full/1200/900",
+                            alt: "Full width placeholder",
+                            size: AtomImageSize::Full,
+                            aspect_ratio: AspectRatio::Ratio4_3,
+                            object_fit: ObjectFit::Cover,
+                        }
+                    }
                 }
             }
 

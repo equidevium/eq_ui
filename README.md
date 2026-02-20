@@ -178,6 +178,12 @@ The crate includes a built-in showcase you can use to browse all components visu
 
 ```bash
 dx serve --example showcase --platform web
+
+# Or with cargo directly:
+~/.cargo/bin/dx serve --example showcase --platform web
+
+# Or if you are already testing the website and you want it on a different port (just pick one):
+~/.cargo/bin/dx serve --example showcase --package web --addr 127.0.0.1 --port 3030
 ```
 
 This opens a page showing every atom, molecule, and organism with live examples.
