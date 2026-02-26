@@ -1,0 +1,83 @@
+:root {
+
+    /* ============================================
+       THEME: Dometrain
+       Inspired by Dometrain's UI — deep purple-navy
+       base, vibrant purple/orange accents, dev education vibe
+       ============================================ */
+
+    /* --- Core darks --- */
+    --color-primary-dark: #13112a;
+    --color-secondary-dark: #6e6b99;
+    --color-tertiary-dark: #1e1b3d;
+    --color-hover-button: #2d2952;
+    --color-card: #1a1838;
+    --color-card-border: #2e2b55;
+    --color-card-shadow: #3a3768;
+    --color-background: #000000;
+
+    /* --- Labels / text --- */
+    --color-label-primary: #f0eeff;
+    --color-label-secondary: #a8a4cc;
+    --color-label-bold: #c084fc;
+    --color-label-muted: #6e6b99;
+    --color-label-disabled: #3a3860;
+
+    /* --- Gradients --- */
+    --color-gradient-default-start: #7c3aed;
+    --color-gradient-default-mid: #c084fc;
+    --color-gradient-default-end: #f97316;
+
+    --gradient-primary-tricolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-start) 0%,
+            var(--color-gradient-default-mid) 50%,
+            var(--color-gradient-default-end) 100%
+    );
+
+    --gradient-background: linear-gradient(
+            90deg,
+            var(--color-primary-dark) 0%,
+            var(--color-tertiary-dark) 100%
+    );
+
+    --gradient-primary-duocolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-end) 0%,
+            var(--color-gradient-default-start) 100%
+    );
+
+    /* --- Accent & interaction --- */
+    --color-accent-primary: #7c3aed;
+    --color-accent-secondary: #f97316;
+    --color-accent-muted: #5a28b0;
+
+    /* --- State / feedback --- */
+    --color-success: #4ade80;
+    --color-warning: #f97316;
+    --color-error: #ef4444;
+    --color-info: #818cf8;
+
+    /* --- Borders & dividers --- */
+    --color-border-default: #252248;
+    --color-border-subtle: #1a1835;
+    --color-border-active: #7c3aed;
+
+    /* --- Input / form elements --- */
+    --color-input-bg: #110f28;
+    --color-input-border: #252248;
+    --color-input-focus: #7c3aed;
+    --color-input-placeholder: #585488;
+
+    /* --- Overlay & surface --- */
+    --color-surface-elevated: #1e1b3d;
+    --color-surface-overlay: rgba(0, 0, 0, 0.7);
+    --color-surface-tooltip: #252248;
+
+    /* --- Code / terminal feel --- */
+    --color-code-bg: #0e0c22;
+    --color-code-text: #f0eeff;
+    --color-code-comment: #6e6b99;
+    --color-code-keyword: #c084fc;
+    --color-code-string: #4ade80;
+}

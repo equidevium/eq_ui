@@ -1,0 +1,83 @@
+:root {
+
+    /* ============================================
+       THEME: Monokai
+       Inspired by the Monokai color scheme —
+       vivid syntax colors on dark charcoal
+       ============================================ */
+
+    /* --- Core darks --- */
+    --color-primary-dark: #1e1f1c;
+    --color-secondary-dark: #75715e;
+    --color-tertiary-dark: #3e3d32;
+    --color-hover-button: #4e4d42;
+    --color-card: #272822;
+    --color-card-border: #49483e;
+    --color-card-shadow: #575648;
+    --color-background: #000000;
+
+    /* --- Labels / text --- */
+    --color-label-primary: #f8f8f2;
+    --color-label-secondary: #a6a69a;
+    --color-label-bold: #f92672;
+    --color-label-muted: #75715e;
+    --color-label-disabled: #49483e;
+
+    /* --- Gradients --- */
+    --color-gradient-default-start: #f92672;
+    --color-gradient-default-mid: #ae81ff;
+    --color-gradient-default-end: #66d9ef;
+
+    --gradient-primary-tricolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-start) 0%,
+            var(--color-gradient-default-mid) 50%,
+            var(--color-gradient-default-end) 100%
+    );
+
+    --gradient-background: linear-gradient(
+            90deg,
+            var(--color-primary-dark) 0%,
+            var(--color-tertiary-dark) 100%
+    );
+
+    --gradient-primary-duocolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-end) 0%,
+            var(--color-gradient-default-start) 100%
+    );
+
+    /* --- Accent & interaction --- */
+    --color-accent-primary: #f92672;
+    --color-accent-secondary: #a6e22e;
+    --color-accent-muted: #7aa31a;
+
+    /* --- State / feedback --- */
+    --color-success: #a6e22e;
+    --color-warning: #e6db74;
+    --color-error: #f92672;
+    --color-info: #66d9ef;
+
+    /* --- Borders & dividers --- */
+    --color-border-default: #3e3d32;
+    --color-border-subtle: #272822;
+    --color-border-active: #f92672;
+
+    /* --- Input / form elements --- */
+    --color-input-bg: #1e1f1c;
+    --color-input-border: #3e3d32;
+    --color-input-focus: #f92672;
+    --color-input-placeholder: #62614e;
+
+    /* --- Overlay & surface --- */
+    --color-surface-elevated: #333328;
+    --color-surface-overlay: rgba(0, 0, 0, 0.7);
+    --color-surface-tooltip: #3e3d32;
+
+    /* --- Code / terminal feel --- */
+    --color-code-bg: #272822;
+    --color-code-text: #f8f8f2;
+    --color-code-comment: #75715e;
+    --color-code-keyword: #f92672;
+    --color-code-string: #e6db74;
+}

@@ -1,0 +1,83 @@
+:root {
+
+    /* ============================================
+       THEME: Gruvbox
+       Inspired by the Gruvbox color scheme —
+       warm, retro, earthy tones
+       ============================================ */
+
+    /* --- Core darks --- */
+    --color-primary-dark: #1d2021;
+    --color-secondary-dark: #7c6f64;
+    --color-tertiary-dark: #3c3836;
+    --color-hover-button: #504945;
+    --color-card: #282828;
+    --color-card-border: #504945;
+    --color-card-shadow: #5a524c;
+    --color-background: #000000;
+
+    /* --- Labels / text --- */
+    --color-label-primary: #ebdbb2;
+    --color-label-secondary: #a89984;
+    --color-label-bold: #fabd2f;
+    --color-label-muted: #7c6f64;
+    --color-label-disabled: #504945;
+
+    /* --- Gradients --- */
+    --color-gradient-default-start: #d79921;
+    --color-gradient-default-mid: #fabd2f;
+    --color-gradient-default-end: #fe8019;
+
+    --gradient-primary-tricolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-start) 0%,
+            var(--color-gradient-default-mid) 50%,
+            var(--color-gradient-default-end) 100%
+    );
+
+    --gradient-background: linear-gradient(
+            90deg,
+            var(--color-primary-dark) 0%,
+            var(--color-tertiary-dark) 100%
+    );
+
+    --gradient-primary-duocolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-end) 0%,
+            var(--color-gradient-default-start) 100%
+    );
+
+    /* --- Accent & interaction --- */
+    --color-accent-primary: #fabd2f;
+    --color-accent-secondary: #b8bb26;
+    --color-accent-muted: #98971a;
+
+    /* --- State / feedback --- */
+    --color-success: #b8bb26;
+    --color-warning: #fabd2f;
+    --color-error: #fb4934;
+    --color-info: #83a598;
+
+    /* --- Borders & dividers --- */
+    --color-border-default: #3c3836;
+    --color-border-subtle: #282828;
+    --color-border-active: #fabd2f;
+
+    /* --- Input / form elements --- */
+    --color-input-bg: #1d2021;
+    --color-input-border: #3c3836;
+    --color-input-focus: #fabd2f;
+    --color-input-placeholder: #665c54;
+
+    /* --- Overlay & surface --- */
+    --color-surface-elevated: #32302f;
+    --color-surface-overlay: rgba(0, 0, 0, 0.7);
+    --color-surface-tooltip: #3c3836;
+
+    /* --- Code / terminal feel --- */
+    --color-code-bg: #1d2021;
+    --color-code-text: #ebdbb2;
+    --color-code-comment: #7c6f64;
+    --color-code-keyword: #fb4934;
+    --color-code-string: #b8bb26;
+}

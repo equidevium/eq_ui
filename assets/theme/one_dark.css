@@ -1,0 +1,83 @@
+:root {
+
+    /* ============================================
+       THEME: One Dark
+       Atom editor's iconic theme — balanced, readable
+       Based on the One Dark Pro spec
+       ============================================ */
+
+    /* --- Core darks --- */
+    --color-primary-dark: #21252b;
+    --color-secondary-dark: #5c6370;
+    --color-tertiary-dark: #2c313a;
+    --color-hover-button: #3a3f4b;
+    --color-card: #282c34;
+    --color-card-border: #3e4451;
+    --color-card-shadow: #484e5c;
+    --color-background: #000000;
+
+    /* --- Labels / text --- */
+    --color-label-primary: #abb2bf;
+    --color-label-secondary: #848b98;
+    --color-label-bold: #61afef;
+    --color-label-muted: #5c6370;
+    --color-label-disabled: #3e4451;
+
+    /* --- Gradients --- */
+    --color-gradient-default-start: #61afef;
+    --color-gradient-default-mid: #c678dd;
+    --color-gradient-default-end: #56b6c2;
+
+    --gradient-primary-tricolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-start) 0%,
+            var(--color-gradient-default-mid) 50%,
+            var(--color-gradient-default-end) 100%
+    );
+
+    --gradient-background: linear-gradient(
+            90deg,
+            var(--color-primary-dark) 0%,
+            var(--color-tertiary-dark) 100%
+    );
+
+    --gradient-primary-duocolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-end) 0%,
+            var(--color-gradient-default-start) 100%
+    );
+
+    /* --- Accent & interaction --- */
+    --color-accent-primary: #61afef;
+    --color-accent-secondary: #c678dd;
+    --color-accent-muted: #4a88c0;
+
+    /* --- State / feedback --- */
+    --color-success: #98c379;
+    --color-warning: #e5c07b;
+    --color-error: #e06c75;
+    --color-info: #56b6c2;
+
+    /* --- Borders & dividers --- */
+    --color-border-default: #3e4451;
+    --color-border-subtle: #2c313a;
+    --color-border-active: #61afef;
+
+    /* --- Input / form elements --- */
+    --color-input-bg: #21252b;
+    --color-input-border: #3e4451;
+    --color-input-focus: #61afef;
+    --color-input-placeholder: #5c6370;
+
+    /* --- Overlay & surface --- */
+    --color-surface-elevated: #2c313a;
+    --color-surface-overlay: rgba(0, 0, 0, 0.7);
+    --color-surface-tooltip: #3e4451;
+
+    /* --- Code / terminal feel --- */
+    --color-code-bg: #282c34;
+    --color-code-text: #abb2bf;
+    --color-code-comment: #5c6370;
+    --color-code-keyword: #c678dd;
+    --color-code-string: #98c379;
+}

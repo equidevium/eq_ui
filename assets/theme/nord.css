@@ -1,0 +1,83 @@
+:root {
+
+    /* ============================================
+       THEME: Nord
+       Arctic, cool frost palette — calm and clean
+       Based on nordtheme.com spec
+       ============================================ */
+
+    /* --- Core darks (Polar Night) --- */
+    --color-primary-dark: #2e3440;
+    --color-secondary-dark: #616e88;
+    --color-tertiary-dark: #3b4252;
+    --color-hover-button: #434c5e;
+    --color-card: #3b4252;
+    --color-card-border: #4c566a;
+    --color-card-shadow: #555e70;
+    --color-background: #000000;
+
+    /* --- Labels / text (Snow Storm) --- */
+    --color-label-primary: #eceff4;
+    --color-label-secondary: #d8dee9;
+    --color-label-bold: #88c0d0;
+    --color-label-muted: #616e88;
+    --color-label-disabled: #4c566a;
+
+    /* --- Gradients (Frost) --- */
+    --color-gradient-default-start: #8fbcbb;
+    --color-gradient-default-mid: #88c0d0;
+    --color-gradient-default-end: #81a1c1;
+
+    --gradient-primary-tricolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-start) 0%,
+            var(--color-gradient-default-mid) 50%,
+            var(--color-gradient-default-end) 100%
+    );
+
+    --gradient-background: linear-gradient(
+            90deg,
+            var(--color-primary-dark) 0%,
+            var(--color-tertiary-dark) 100%
+    );
+
+    --gradient-primary-duocolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-end) 0%,
+            var(--color-gradient-default-start) 100%
+    );
+
+    /* --- Accent & interaction (Frost) --- */
+    --color-accent-primary: #88c0d0;
+    --color-accent-secondary: #81a1c1;
+    --color-accent-muted: #5e81ac;
+
+    /* --- State / feedback (Aurora) --- */
+    --color-success: #a3be8c;
+    --color-warning: #ebcb8b;
+    --color-error: #bf616a;
+    --color-info: #5e81ac;
+
+    /* --- Borders & dividers --- */
+    --color-border-default: #4c566a;
+    --color-border-subtle: #3b4252;
+    --color-border-active: #88c0d0;
+
+    /* --- Input / form elements --- */
+    --color-input-bg: #2e3440;
+    --color-input-border: #4c566a;
+    --color-input-focus: #88c0d0;
+    --color-input-placeholder: #616e88;
+
+    /* --- Overlay & surface --- */
+    --color-surface-elevated: #434c5e;
+    --color-surface-overlay: rgba(0, 0, 0, 0.7);
+    --color-surface-tooltip: #4c566a;
+
+    /* --- Code / terminal feel --- */
+    --color-code-bg: #2e3440;
+    --color-code-text: #eceff4;
+    --color-code-comment: #616e88;
+    --color-code-keyword: #81a1c1;
+    --color-code-string: #a3be8c;
+}

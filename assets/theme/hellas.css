@@ -1,0 +1,83 @@
+:root {
+
+    /* ============================================
+       THEME: Hellas
+       Ancient Greece — deep blues, marble whites,
+       gold/bronze accents, Olympian feel
+       ============================================ */
+
+    /* --- Core darks --- */
+    --color-primary-dark: #0a0e1f;
+    --color-secondary-dark: #5c6a94;
+    --color-tertiary-dark: #1a2548;
+    --color-hover-button: #2a3a68;
+    --color-card: #141e40;
+    --color-card-border: #3a4a78;
+    --color-card-shadow: #4a5a88;
+    --color-background: #000000;
+
+    /* --- Labels / text --- */
+    --color-label-primary: #f0ece4;
+    --color-label-secondary: #b0a890;
+    --color-label-bold: #d4a843;
+    --color-label-muted: #6a6858;
+    --color-label-disabled: #3a3d48;
+
+    /* --- Gradients --- */
+    --color-gradient-default-start: #d4a843;
+    --color-gradient-default-mid: #1a3a8a;
+    --color-gradient-default-end: #f0ece4;
+
+    --gradient-primary-tricolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-start) 0%,
+            var(--color-gradient-default-mid) 50%,
+            var(--color-gradient-default-end) 100%
+    );
+
+    --gradient-background: linear-gradient(
+            90deg,
+            var(--color-primary-dark) 0%,
+            var(--color-tertiary-dark) 100%
+    );
+
+    --gradient-primary-duocolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-end) 0%,
+            var(--color-gradient-default-start) 100%
+    );
+
+    /* --- Accent & interaction --- */
+    --color-accent-primary: #d4a843;
+    --color-accent-secondary: #2a5ccc;
+    --color-accent-muted: #8a7430;
+
+    /* --- State / feedback --- */
+    --color-success: #6bffa6;
+    --color-warning: #d4a843;
+    --color-error: #cc3a3a;
+    --color-info: #4a8adc;
+
+    /* --- Borders & dividers --- */
+    --color-border-default: #1e2a4a;
+    --color-border-subtle: #121a35;
+    --color-border-active: #d4a843;
+
+    /* --- Input / form elements --- */
+    --color-input-bg: #0e1428;
+    --color-input-border: #1e2a4a;
+    --color-input-focus: #d4a843;
+    --color-input-placeholder: #55607a;
+
+    /* --- Overlay & surface --- */
+    --color-surface-elevated: #1a2445;
+    --color-surface-overlay: rgba(0, 0, 0, 0.7);
+    --color-surface-tooltip: #1e2a4a;
+
+    /* --- Code / terminal feel --- */
+    --color-code-bg: #0a0e1a;
+    --color-code-text: #f0ece4;
+    --color-code-comment: #5c6a94;
+    --color-code-keyword: #d4a843;
+    --color-code-string: #4a8adc;
+}

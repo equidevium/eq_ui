@@ -1,21 +1,107 @@
-use dioxus::html::a::backdrop_filter;
 use dioxus::prelude::*;
 use eq_ui::atoms::*;
 use eq_ui::molecules::*;
 use eq_ui::organisms::*;
-use eq_ui::{UI_BUTTONS_CSS, UI_COLORS_CSS, UI_INDEX_CSS, UI_TAILWIND_CSS};
+use eq_ui::{UI_BUTTONS_CSS, UI_INDEX_CSS, UI_TAILWIND_CSS};
+use eq_ui::eq_theme::EqTheme;
 
 fn main() {
     dioxus::launch(App);
 }
 
 #[component]
+fn ThemeSwitcher() -> Element {
+    let mut theme = EqTheme::use_theme();
+
+    rsx! {
+        select {
+            class: "rounded-md bg-[var(--color-card)] text-[var(--color-label-primary)] border border-[var(--color-card-border)] px-2 py-1 text-sm",
+            value: format!("{:?}", *theme.read()),
+            onchange: move |evt: Event<FormData>| {
+                let new_theme = match evt.value().as_str() {
+                    "Unghosty"      => EqTheme::Unghosty,
+                    "Burgundy"      => EqTheme::Burgundy,
+                    "Gold"          => EqTheme::Gold,
+                    "PurplePink"    => EqTheme::PurplePink,
+                    "Monochrome"    => EqTheme::Monochrome,
+                    "Watermelon"    => EqTheme::Watermelon,
+                    "Sunset"        => EqTheme::Sunset,
+                    "Ocean"         => EqTheme::Ocean,
+                    "Spacetime"     => EqTheme::Spacetime,
+                    "Gruvbox"       => EqTheme::Gruvbox,
+                    "Monokai"       => EqTheme::Monokai,
+                    "Hellas"        => EqTheme::Hellas,
+                    "Egypt"         => EqTheme::Egypt,
+                    "Dometrain"     => EqTheme::Dometrain,
+                    "Catppuccin"    => EqTheme::Catppuccin,
+                    "Dracula"       => EqTheme::Dracula,
+                    "Nord"          => EqTheme::Nord,
+                    "OneDark"       => EqTheme::OneDark,
+                    "RosePine"      => EqTheme::RosePine,
+                    "SolarizedDark" => EqTheme::SolarizedDark,
+                    "TokyoNight"    => EqTheme::TokyoNight,
+                    _             => EqTheme::Unghosty,
+                };
+                theme.set(new_theme);
+            },
+
+            for (name, _variant) in EqTheme::build_in_variants() {
+                option { value: "{name}", "{name}" }
+            }
+        }
+    }
+}
+
+#[component]
+pub fn EqThemeRenderer() -> Element {
+    let theme = EqTheme::use_theme();
+
+    let (key, css) = match &*theme.read() {
+        EqTheme::Custom(css) => ("custom".to_string(), css.clone()),
+        other => {
+            let name = format!("{:?}", other);
+            let content = other.css_content().unwrap_or("").to_string();
+            (name, content)
+        }
+    };
+
+    rsx! {
+        style { key: "{key}", dangerous_inner_html: "{css}" }
+    }
+}
+
+// Read CSS from wherever — file, string, user input, etc. TODO:: this still does not work yet.
+// Inside a component's event handler or effect:
+// EqTheme::set_custom_theme(r#"
+//     :root {
+//         --color-primary-dark: #1a0a0a;
+//         --color-accent-primary: #ff6600;
+//     }
+// "#.to_string());
+
+// Set a built-in theme directly
+// EqTheme::set_theme(EqTheme::Ocean);
+
+// Or in a component on mount:
+// #[component]
+// fn MyPage() -> Element {
+//     use_effect(|| {
+//         EqTheme::set_theme(EqTheme::Burgundy);
+//     });
+//     rsx! { /* ... */ }
+// }
+
+#[component]
 fn App() -> Element {
+
+    let _theme = EqTheme::use_theme_provider();
+
     rsx! {
         document::Link { rel: "stylesheet", href: UI_TAILWIND_CSS }
         document::Link { rel: "stylesheet", href: UI_INDEX_CSS }
-        document::Link { rel: "stylesheet", href: UI_COLORS_CSS }
         document::Link { rel: "stylesheet", href: UI_BUTTONS_CSS }
+
+        EqThemeRenderer {}
 
         EqAppShell {
             header: rsx! {
@@ -26,6 +112,7 @@ fn App() -> Element {
                         li { a { href: "#atoms", class: "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] transition", "Atoms" } }
                         li { a { href: "#molecules", class: "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] transition", "Molecules" } }
                         li { a { href: "#organisms", class: "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] transition", "Organisms" } }
+                        li { ThemeSwitcher {} }
                     },
                 }
             },

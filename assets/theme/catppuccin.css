@@ -1,0 +1,83 @@
+:root {
+
+    /* ============================================
+       THEME: Catppuccin (Mocha variant)
+       Soft pastels on dark — soothing and trendy
+       Based on catppuccin.com spec
+       ============================================ */
+
+    /* --- Core darks (Base/Mantle/Crust) --- */
+    --color-primary-dark: #1e1e2e;
+    --color-secondary-dark: #7f849c;
+    --color-tertiary-dark: #313244;
+    --color-hover-button: #45475a;
+    --color-card: #1e1e2e;
+    --color-card-border: #45475a;
+    --color-card-shadow: #4e5068;
+    --color-background: #000000;
+
+    /* --- Labels / text --- */
+    --color-label-primary: #cdd6f4;
+    --color-label-secondary: #a6adc8;
+    --color-label-bold: #cba6f7;
+    --color-label-muted: #7f849c;
+    --color-label-disabled: #585b70;
+
+    /* --- Gradients --- */
+    --color-gradient-default-start: #cba6f7;
+    --color-gradient-default-mid: #f5c2e7;
+    --color-gradient-default-end: #89b4fa;
+
+    --gradient-primary-tricolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-start) 0%,
+            var(--color-gradient-default-mid) 50%,
+            var(--color-gradient-default-end) 100%
+    );
+
+    --gradient-background: linear-gradient(
+            90deg,
+            var(--color-primary-dark) 0%,
+            var(--color-tertiary-dark) 100%
+    );
+
+    --gradient-primary-duocolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-end) 0%,
+            var(--color-gradient-default-start) 100%
+    );
+
+    /* --- Accent & interaction --- */
+    --color-accent-primary: #cba6f7;
+    --color-accent-secondary: #f5c2e7;
+    --color-accent-muted: #9878c4;
+
+    /* --- State / feedback --- */
+    --color-success: #a6e3a1;
+    --color-warning: #f9e2af;
+    --color-error: #f38ba8;
+    --color-info: #89b4fa;
+
+    /* --- Borders & dividers --- */
+    --color-border-default: #45475a;
+    --color-border-subtle: #313244;
+    --color-border-active: #cba6f7;
+
+    /* --- Input / form elements --- */
+    --color-input-bg: #181825;
+    --color-input-border: #45475a;
+    --color-input-focus: #cba6f7;
+    --color-input-placeholder: #6c7086;
+
+    /* --- Overlay & surface --- */
+    --color-surface-elevated: #313244;
+    --color-surface-overlay: rgba(0, 0, 0, 0.7);
+    --color-surface-tooltip: #45475a;
+
+    /* --- Code / terminal feel --- */
+    --color-code-bg: #1e1e2e;
+    --color-code-text: #cdd6f4;
+    --color-code-comment: #7f849c;
+    --color-code-keyword: #cba6f7;
+    --color-code-string: #a6e3a1;
+}

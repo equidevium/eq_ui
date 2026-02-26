@@ -1,0 +1,83 @@
+:root {
+
+    /* ============================================
+       THEME: Spacetime
+       Inspired by SpacetimeDB — dark navy base,
+       bright green + purple accents
+       ============================================ */
+
+    /* --- Core darks --- */
+    --color-primary-dark: #0c0e1a;
+    --color-secondary-dark: #5a5f8a;
+    --color-tertiary-dark: #1a1e38;
+    --color-hover-button: #2a2f55;
+    --color-card: #141830;
+    --color-card-border: #2e3458;
+    --color-card-shadow: #3a4068;
+    --color-background: #000000;
+
+    /* --- Labels / text --- */
+    --color-label-primary: #ffffff;
+    --color-label-secondary: #a0a8c8;
+    --color-label-bold: #00e587;
+    --color-label-muted: #6a7094;
+    --color-label-disabled: #3a3f5c;
+
+    /* --- Gradients --- */
+    --color-gradient-default-start: #00e587;
+    --color-gradient-default-mid: #7b5cff;
+    --color-gradient-default-end: #a78bfa;
+
+    --gradient-primary-tricolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-start) 0%,
+            var(--color-gradient-default-mid) 50%,
+            var(--color-gradient-default-end) 100%
+    );
+
+    --gradient-background: linear-gradient(
+            90deg,
+            var(--color-primary-dark) 0%,
+            var(--color-tertiary-dark) 100%
+    );
+
+    --gradient-primary-duocolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-end) 0%,
+            var(--color-gradient-default-start) 100%
+    );
+
+    /* --- Accent & interaction --- */
+    --color-accent-primary: #00e587;
+    --color-accent-secondary: #7b5cff;
+    --color-accent-muted: #4a3aaa;
+
+    /* --- State / feedback --- */
+    --color-success: #00e587;
+    --color-warning: #ffd644;
+    --color-error: #ff4d5e;
+    --color-info: #7b5cff;
+
+    /* --- Borders & dividers --- */
+    --color-border-default: #1e2340;
+    --color-border-subtle: #14182e;
+    --color-border-active: #00e587;
+
+    /* --- Input / form elements --- */
+    --color-input-bg: #0e1220;
+    --color-input-border: #1e2340;
+    --color-input-focus: #00e587;
+    --color-input-placeholder: #505880;
+
+    /* --- Overlay & surface --- */
+    --color-surface-elevated: #181d38;
+    --color-surface-overlay: rgba(0, 0, 0, 0.7);
+    --color-surface-tooltip: #1e2340;
+
+    /* --- Code / terminal feel --- */
+    --color-code-bg: #0a0d18;
+    --color-code-text: #00e587;
+    --color-code-comment: #5a5f8a;
+    --color-code-keyword: #7b5cff;
+    --color-code-string: #a78bfa;
+}

@@ -1,0 +1,83 @@
+:root {
+
+    /* ============================================
+       THEME: Solarized Dark
+       Ethan Schoonover's classic — precision colors
+       based on ethanschoonover.com/solarized
+       ============================================ */
+
+    /* --- Core darks --- */
+    --color-primary-dark: #002b36;
+    --color-secondary-dark: #586e75;
+    --color-tertiary-dark: #073642;
+    --color-hover-button: #0a4a58;
+    --color-card: #073642;
+    --color-card-border: #2a5c68;
+    --color-card-shadow: #3a6c78;
+    --color-background: #000000;
+
+    /* --- Labels / text --- */
+    --color-label-primary: #fdf6e3;
+    --color-label-secondary: #93a1a1;
+    --color-label-bold: #b58900;
+    --color-label-muted: #657b83;
+    --color-label-disabled: #586e75;
+
+    /* --- Gradients --- */
+    --color-gradient-default-start: #b58900;
+    --color-gradient-default-mid: #cb4b16;
+    --color-gradient-default-end: #d33682;
+
+    --gradient-primary-tricolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-start) 0%,
+            var(--color-gradient-default-mid) 50%,
+            var(--color-gradient-default-end) 100%
+    );
+
+    --gradient-background: linear-gradient(
+            90deg,
+            var(--color-primary-dark) 0%,
+            var(--color-tertiary-dark) 100%
+    );
+
+    --gradient-primary-duocolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-end) 0%,
+            var(--color-gradient-default-start) 100%
+    );
+
+    /* --- Accent & interaction --- */
+    --color-accent-primary: #b58900;
+    --color-accent-secondary: #268bd2;
+    --color-accent-muted: #2aa198;
+
+    /* --- State / feedback --- */
+    --color-success: #859900;
+    --color-warning: #b58900;
+    --color-error: #dc322f;
+    --color-info: #268bd2;
+
+    /* --- Borders & dividers --- */
+    --color-border-default: #0a4a58;
+    --color-border-subtle: #073642;
+    --color-border-active: #b58900;
+
+    /* --- Input / form elements --- */
+    --color-input-bg: #002b36;
+    --color-input-border: #0a4a58;
+    --color-input-focus: #b58900;
+    --color-input-placeholder: #586e75;
+
+    /* --- Overlay & surface --- */
+    --color-surface-elevated: #073642;
+    --color-surface-overlay: rgba(0, 0, 0, 0.7);
+    --color-surface-tooltip: #0a4a58;
+
+    /* --- Code / terminal feel --- */
+    --color-code-bg: #002b36;
+    --color-code-text: #839496;
+    --color-code-comment: #586e75;
+    --color-code-keyword: #268bd2;
+    --color-code-string: #2aa198;
+}

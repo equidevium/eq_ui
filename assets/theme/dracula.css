@@ -1,0 +1,83 @@
+:root {
+
+    /* ============================================
+       THEME: Dracula
+       The classic — purple/pink/green/cyan on dark
+       Based on draculatheme.com spec
+       ============================================ */
+
+    /* --- Core darks --- */
+    --color-primary-dark: #21222c;
+    --color-secondary-dark: #6272a4;
+    --color-tertiary-dark: #343746;
+    --color-hover-button: #44475a;
+    --color-card: #282a36;
+    --color-card-border: #44475a;
+    --color-card-shadow: #4e5170;
+    --color-background: #000000;
+
+    /* --- Labels / text --- */
+    --color-label-primary: #f8f8f2;
+    --color-label-secondary: #bfc3d4;
+    --color-label-bold: #bd93f9;
+    --color-label-muted: #6272a4;
+    --color-label-disabled: #44475a;
+
+    /* --- Gradients --- */
+    --color-gradient-default-start: #bd93f9;
+    --color-gradient-default-mid: #ff79c6;
+    --color-gradient-default-end: #8be9fd;
+
+    --gradient-primary-tricolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-start) 0%,
+            var(--color-gradient-default-mid) 50%,
+            var(--color-gradient-default-end) 100%
+    );
+
+    --gradient-background: linear-gradient(
+            90deg,
+            var(--color-primary-dark) 0%,
+            var(--color-tertiary-dark) 100%
+    );
+
+    --gradient-primary-duocolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-end) 0%,
+            var(--color-gradient-default-start) 100%
+    );
+
+    /* --- Accent & interaction --- */
+    --color-accent-primary: #bd93f9;
+    --color-accent-secondary: #ff79c6;
+    --color-accent-muted: #8a6dbf;
+
+    /* --- State / feedback --- */
+    --color-success: #50fa7b;
+    --color-warning: #f1fa8c;
+    --color-error: #ff5555;
+    --color-info: #8be9fd;
+
+    /* --- Borders & dividers --- */
+    --color-border-default: #44475a;
+    --color-border-subtle: #2e3040;
+    --color-border-active: #bd93f9;
+
+    /* --- Input / form elements --- */
+    --color-input-bg: #21222c;
+    --color-input-border: #44475a;
+    --color-input-focus: #bd93f9;
+    --color-input-placeholder: #6272a4;
+
+    /* --- Overlay & surface --- */
+    --color-surface-elevated: #343746;
+    --color-surface-overlay: rgba(0, 0, 0, 0.7);
+    --color-surface-tooltip: #44475a;
+
+    /* --- Code / terminal feel --- */
+    --color-code-bg: #282a36;
+    --color-code-text: #f8f8f2;
+    --color-code-comment: #6272a4;
+    --color-code-keyword: #ff79c6;
+    --color-code-string: #f1fa8c;
+}
