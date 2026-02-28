@@ -22,3 +22,8 @@ pub use eq_link::EqLink;
 pub use eq_input::{EqInput, InputKind};
 pub use eq_icon::{EqIcon, IconSize};
 pub use eq_image::{EqImage, AtomImageSize, AspectRatio, ObjectFit};
+
+mod eq_scrollable_space;
+mod eq_scrollable_space_styles;
+
+pub use eq_scrollable_space::EqScrollableSpace;
