@@ -313,7 +313,7 @@ The crate includes an interactive component playground for browsing and testing 
 dx serve --example playground --platform web
 
 #in the rare case that deno interferes with dx command
-~/.cargo/bin/dx serve --example playground --platform web
+~/.cargo/bin/dx serve --example playground --platform web --port 3030
 ```
 
 This opens a two-panel environment with a collapsible component tree on the left and an isolated preview panel on the right. Switch between all 21 built-in themes from the header dropdown.
