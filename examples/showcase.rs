@@ -459,6 +459,64 @@ fn ShowcaseMolecules() -> Element {
                     }
                 }
             }
+
+            ComponentBlock { name: "EqTree + EqScrollableSpace",
+                TreeDemo {}
+            }
+        }
+    }
+}
+
+#[component]
+fn TreeDemo() -> Element {
+    let mut selected = use_signal(|| Option::<String>::None);
+
+    let tree = vec![
+        TreeNode::new_with_children("atoms", "Atoms", vec![
+            TreeNode::new("eq-text", "EqText"),
+            TreeNode::new("eq-label", "EqLabel"),
+            TreeNode::new("eq-link", "EqLink"),
+            TreeNode::new("eq-input", "EqInput"),
+            TreeNode::new("eq-icon", "EqIcon"),
+            TreeNode::new("eq-image", "EqImage"),
+            TreeNode::new("eq-scrollable-space", "EqScrollableSpace"),
+        ]),
+        TreeNode::new_with_children("molecules", "Molecules", vec![
+            TreeNode::new("eq-card", "EqCard"),
+            TreeNode::new("eq-image-card", "EqImageCard"),
+            TreeNode::new("eq-carousel", "EqCarousel"),
+            TreeNode::new("eq-tree", "EqTree"),
+        ]),
+        TreeNode::new_with_children("organisms", "Organisms", vec![
+            TreeNode::new("eq-header", "EqHeader"),
+            TreeNode::new("eq-footer", "EqFooter"),
+            TreeNode::new("eq-hero-shell", "EqHeroShell"),
+            TreeNode::new("eq-page-section", "EqPageSection"),
+            TreeNode::new("eq-app-shell", "EqAppShell"),
+        ]),
+    ];
+
+    rsx! {
+        div { class: "flex gap-6",
+            // Left: tree inside a scrollable space with fixed height
+            div { class: "w-64 h-72 flex flex-col border border-[var(--color-card-border)] rounded-lg p-3",
+                EqScrollableSpace {
+                    EqTree {
+                        nodes: tree,
+                        selected: selected(),
+                        on_select: move |id: String| selected.set(Some(id)),
+                    }
+                }
+            }
+
+            // Right: show selected node
+            div { class: "flex-1 flex items-center justify-center rounded-lg border border-[var(--color-card-border)] p-6 min-h-[18rem]",
+                if let Some(id) = selected() {
+                    EqText { variant: TextVariant::H3, "Selected: {id}" }
+                } else {
+                    EqText { variant: TextVariant::Muted, "Click a leaf node in the tree" }
+                }
+            }
         }
     }
 }

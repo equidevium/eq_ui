@@ -14,7 +14,7 @@ The crate is organized into three layers, each building on the one below:
 
 **Organisms** — page-level structures. A sticky header with backdrop blur, footer with link groups, hero section with optional background images and overlay, page sections, the full app shell, and a navbar.
 
-**Theming** — 14 built-in color themes plus custom CSS support. Switch themes at runtime with a single function call or let users pick from a dropdown.
+**Theming** — 21 built-in color themes plus custom CSS support. Switch themes at runtime with a single function call or let users pick from a dropdown.
 
 There's also a **theme** module — with shared Tailwind utility constants for spacing, borders, surfaces, shadows, buttons, and more. Components pull from the theme internally, but you can use the constants directly in your own layouts too.
 
@@ -203,9 +203,9 @@ EqHeader {
 
 ## Theming
 
-eq_ui ships with 14 built-in themes and supports custom CSS themes at runtime.
+eq_ui ships with 21 built-in themes and supports custom CSS themes at runtime.
 
-**Built-in themes:** Unghosty (default), Burgundy, Gold, PurplePink, Monochrome, Watermelon, Sunset, Ocean, Spacetime, Gruvbox, Monokai, Hellas, Egypt, Dometrain.
+**Built-in themes:** Unghosty (default), Burgundy, Gold, PurplePink, Monochrome, Watermelon, Sunset, Ocean, Spacetime, Gruvbox, Monokai, Hellas, Egypt, Dometrain, Catppuccin, Dracula, Nord, OneDark, RosePine, SolarizedDark, TokyoNight.
 
 ### Setting up theming
 
@@ -288,7 +288,7 @@ src/
     eq_navbar.rs      - horizontal nav bar
     *_styles.rs       - co-located style constants for each organism
 assets/
-  theme/              - base CSS + 14 theme color files
+  theme/              - base CSS + 21 theme color files
   styling/            - component-specific CSS (navbar)
   tailwind.css        - Tailwind entry point with @source directives
 ```

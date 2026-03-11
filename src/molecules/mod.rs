@@ -10,3 +10,8 @@ mod eq_carousel_styles;
 pub use eq_card::{EqCard, EqCardBody, EqCardFooter, EqCardHeader};
 pub use eq_image_card::{EqImageCard, CaptionMode};
 pub use eq_carousel::EqCarousel;
+
+mod eq_tree;
+mod eq_tree_styles;
+
+pub use eq_tree::{EqTree, TreeNode};

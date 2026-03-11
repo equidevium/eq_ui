@@ -32,7 +32,7 @@
 - `EqTheme` — Theme enum with 14 built-in themes + custom CSS support
 - `EqThemeRenderer` — Runtime theme switcher using `document::Style`
 - Theme context via `use_theme_provider()` / `use_theme()` / `set_theme()`
-- Built-in themes: Unghosty, Burgundy, Gold, PurplePink, Monochrome, Watermelon, Sunset, Ocean, Spacetime, Gruvbox, Monokai, Hellas, Egypt, Dometrain
+- Built-in themes (21): Unghosty, Burgundy, Gold, PurplePink, Monochrome, Watermelon, Sunset, Ocean, Spacetime, Gruvbox, Monokai, Hellas, Egypt, Dometrain, Catppuccin, Dracula, Nord, OneDark, RosePine, SolarizedDark, TokyoNight
 
 ### Infrastructure
 - Co-located `_styles.rs` pattern for all components
@@ -107,9 +107,10 @@ These are the items currently being worked on or immediately planned.
 - [ ] **EqHeroShell overlay customizability** - Make the overlay opacity/color configurable instead of hardcoded `bg-black/50`. Can use `class_override` on the overlay div or a dedicated `overlay_class` prop.
 - [ ] **Custom theme loading** - Finalize `set_custom_theme()` for loading user-provided CSS strings at runtime.
 
-### Documentation
+### Documentation & Tooling
 - [ ] **Integration guide** - Step-by-step instructions for adding eq_ui to a consuming project (git dependency, Tailwind `@source`, theme setup, `EqThemeRenderer` wiring).
 - [ ] **Showcase improvements** - Add theming section to showcase. Document all component prop variations.
+- [ ] **EqPlayground** - Storybook alternative for eq_ui. Two-panel layout: collapsible component tree on the left (grouped by Atoms/Molecules/Organisms), preview area on the right with interactive prop controls and variant gallery. Theme switcher in the header. Built as a separate binary crate to evaluate hot reload behavior. Dogfoods eq_ui components for its own UI. See Rule 15 in RULES.md for full layout spec.
 
 ---
 
@@ -163,7 +164,7 @@ Longer-term ideas and aspirations.
 - [ ] **Documentation site** - Dedicated docs site built with eq_ui itself (dogfooding).
 - [ ] **Starter templates** - Project templates for web, desktop, and fullstack Dioxus apps using eq_ui.
 - [ ] **Community themes** - Allow third-party theme contributions with a standard format.
-- [ ] **Component playground** - Interactive editor where users can tweak props and see live previews.
+- [ ] **EqPlayground public version** - Host EqPlayground as a public site where users can explore components, tweak props, and preview themes without cloning the repo.
 
 ---
 
