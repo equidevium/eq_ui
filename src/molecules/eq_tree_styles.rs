@@ -23,5 +23,8 @@ pub const LEAF_SPACER: &str = "w-4 shrink-0";
 /// Node label text.
 pub const LABEL: &str = "truncate text-[var(--color-label)]";
 
+/// Child count shown next to branch labels, e.g. "(8)".
+pub const COUNT: &str = "ml-1 text-[var(--color-label-secondary)] opacity-60";
+
 /// Children container with left indentation.
 pub const CHILDREN: &str = "ml-3";

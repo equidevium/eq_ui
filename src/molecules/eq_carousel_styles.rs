@@ -1,14 +1,41 @@
 //! Style constants for EqCarousel.
 
 /// Outer carousel wrapper
-pub const CAROUSEL: &str = "relative w-full";
+pub const CAROUSEL: &str = "relative w-full overflow-hidden";
 
-/// Container for the current slide
-pub const SLIDE_CONTAINER: &str = "w-full";
+/// The horizontal strip that holds all slides side-by-side.
+/// `translateX` is set dynamically via inline style.
+pub const SLIDE_STRIP: &str =
+    "flex transition-transform duration-500 ease-in-out";
+
+/// A single slide within the strip — full width of the carousel.
+pub const SLIDE: &str = "w-full shrink-0";
+
+// ── Peek mode ────────────────────────────────────────────────────
+
+/// Peek carousel wrapper — shows edges of neighbouring slides.
+pub const CAROUSEL_PEEK: &str = "relative w-full overflow-hidden";
+
+/// Peek strip — like SLIDE_STRIP but slides are narrower (80%).
+pub const SLIDE_STRIP_PEEK: &str =
+    "flex transition-transform duration-500 ease-in-out";
+
+/// Each slide in peek mode is 80% width so neighbours are visible.
+pub const SLIDE_PEEK: &str = "shrink-0";
+
+/// Left fade mask overlay for previous slide peek.
+pub const PEEK_FADE_LEFT: &str =
+    "absolute inset-y-0 left-0 z-10 pointer-events-none";
+
+/// Right fade mask overlay for next slide peek.
+pub const PEEK_FADE_RIGHT: &str =
+    "absolute inset-y-0 right-0 z-10 pointer-events-none";
+
+// ── Arrow buttons ────────────────────────────────────────────────
 
 /// Shared arrow button base
 pub const ARROW_BASE: &str =
-    "absolute top-1/2 -translate-y-1/2 z-10 \
+    "absolute top-1/2 -translate-y-1/2 z-20 \
      flex items-center justify-center \
      size-10 rounded-full \
      bg-black/30 text-white \
@@ -23,6 +50,8 @@ pub const ARROW_RIGHT: &str = "right-2";
 
 /// Arrow icon sizing
 pub const ARROW_ICON: &str = "size-5";
+
+// ── Dot indicators ───────────────────────────────────────────────
 
 /// Dot indicator container
 pub const DOTS: &str = "flex justify-center items-center gap-2 mt-4";

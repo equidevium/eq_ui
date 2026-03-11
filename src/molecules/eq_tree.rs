@@ -224,6 +224,9 @@ pub fn EqTree(
     /// The currently selected node id (gets highlight style).
     #[props(into, default)]
     selected: Option<String>,
+    /// When `true`, branch nodes show their direct child count, e.g. "Atoms (8)".
+    #[props(default)]
+    show_count: bool,
 ) -> Element {
     rsx! {
         div { class: s::TREE,
@@ -233,6 +236,7 @@ pub fn EqTree(
                     node: node,
                     on_select: on_select,
                     selected: selected.clone(),
+                    show_count: show_count,
                 }
             }
         }
@@ -248,6 +252,7 @@ fn TreeBranch(
     node: TreeNode,
     on_select: EventHandler<String>,
     selected: Option<String>,
+    show_count: bool,
 ) -> Element {
     let is_leaf = node.is_leaf();
     let is_selected = selected.as_deref() == Some(node.id.as_str());
@@ -257,6 +262,7 @@ fn TreeBranch(
 
     let node_id = node.id.clone();
     let label = node.label.clone();
+    let child_count = node.children.len();
 
     let chevron_rotate = if expanded() { s::CHEVRON_EXPANDED } else { "" };
 
@@ -290,6 +296,11 @@ fn TreeBranch(
 
                 // Label
                 span { class: s::LABEL, "{label}" }
+
+                // Direct child count for branches
+                if show_count && !is_leaf {
+                    span { class: s::COUNT, "({child_count})" }
+                }
             }
 
             // Children (shown when expanded)
@@ -301,6 +312,7 @@ fn TreeBranch(
                             node: child,
                             on_select: on_select,
                             selected: selected.clone(),
+                            show_count: show_count,
                         }
                     }
                 }
