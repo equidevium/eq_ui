@@ -27,3 +27,8 @@ mod eq_scrollable_space;
 mod eq_scrollable_space_styles;
 
 pub use eq_scrollable_space::EqScrollableSpace;
+
+mod eq_divider;
+mod eq_divider_styles;
+
+pub use eq_divider::{EqDivider, DividerVariant, DividerWeight, DividerSpacing};
