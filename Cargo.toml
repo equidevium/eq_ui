@@ -8,5 +8,5 @@ description = "Portable Dioxus UI component library - atoms, molecules, organism
 dioxus = "0.7.3"
 
 [[example]]
-name = "showcase"
-path = "examples/showcase.rs"
+name = "playground"
+path = "examples/playground.rs"

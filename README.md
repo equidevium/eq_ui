@@ -305,15 +305,18 @@ Components that benefit from per-instance customization accept optional override
 
 Just one: `dioxus = "0.7.3"`. That's it. No other crates needed.
 
-## Running the showcase
+## Running the Playground
 
-The crate includes a built-in showcase you can use to browse all components visually:
+The crate includes an interactive component playground for browsing and testing all components:
 
 ```bash
-dx serve --example showcase --platform web
+dx serve --example playground --platform web
+
+#in the rare case that deno interferes with dx command
+~/.cargo/bin/dx serve --example playground --platform web
 ```
 
-This opens a page showing every atom, molecule, and organism with live examples and a theme switcher.
+This opens a two-panel environment with a collapsible component tree on the left and an isolated preview panel on the right. Switch between all 21 built-in themes from the header dropdown.
 
 ## Roadmap
 
