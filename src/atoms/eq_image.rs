@@ -1,4 +1,5 @@
 use super::eq_image_styles as s;
+use crate::theme::merge_classes;
 use dioxus::prelude::*;
 
 /// Image size preset.
@@ -53,6 +54,9 @@ pub fn EqImage(
     /// Apply rounded corners.
     #[props(default = false)]
     rounded: bool,
+    /// Optional class override — extend or replace default wrapper styles.
+    #[props(into, default)]
+    class: String,
 ) -> Element {
     let size_class = match size {
         AtomImageSize::Sm => s::SM,
@@ -73,8 +77,11 @@ pub fn EqImage(
     };
     let rounded_class = if rounded { s::ROUNDED } else { "" };
 
+    let wrapper_base = format!("{} {} {} {}", s::WRAPPER, size_class, ratio_class, rounded_class);
+    let wrapper_cls = merge_classes(&wrapper_base, &class);
+
     rsx! {
-        div { class: "{s::WRAPPER} {size_class} {ratio_class} {rounded_class}",
+        div { class: "{wrapper_cls}",
             img {
                 class: "{s::IMAGE_ELEMENT} {fit_class} {rounded_class}",
                 src: "{src}",

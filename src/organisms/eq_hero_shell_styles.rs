@@ -17,8 +17,7 @@ pub const HERO_SHELL_RELATIVE: &str =
 pub const HERO_BG: &str =
     "absolute inset-0 w-full h-full";
 
-//TODO: we will need to review more customizability on this part.
 pub const HERO_OVERLAY: &str =
-    "absolute inset-0 bg-black/50";  // darkens image so text is readable
+    "absolute inset-0 bg-black/50";
 pub const HERO_CONTENT: &str =
     "relative z-10";

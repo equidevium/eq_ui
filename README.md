@@ -16,7 +16,7 @@ The crate is organized into three layers, each building on the one below:
 
 **Theming** — 21 built-in color themes plus custom CSS support. Switch themes at runtime with a single function call or let users pick from a dropdown.
 
-There's also a **theme** module — with shared Tailwind utility constants for spacing, borders, surfaces, shadows, buttons, and more. Components pull from the theme internally, but you can use the constants directly in your own layouts too.
+The **theme** module provides shared Tailwind utility constants for spacing, borders, surfaces, shadows, buttons, and more. Components pull from the theme internally, but the constants are also available for use in your own layouts.
 
 ## Quick start
 
@@ -184,7 +184,7 @@ EqHeroShell {
 EqPageSection {
     id: "features",
     title: "Features",
-    description: "Here's what we've got.",
+    description: "Everything you need to build fast.",
     // children go in the body
 }
 ```

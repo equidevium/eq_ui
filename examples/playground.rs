@@ -1,9 +1,9 @@
 use dioxus::prelude::*;
 use eq_ui::atoms::*;
-use eq_ui::eq_theme::EqTheme;
 use eq_ui::molecules::*;
 use eq_ui::organisms::*;
 use eq_ui::{UI_BUTTONS_CSS, UI_INDEX_CSS, UI_TAILWIND_CSS};
+use eq_ui::eq_theme::EqTheme;
 
 fn main() {
     dioxus::launch(App);
@@ -21,33 +21,33 @@ fn ThemeSwitcher() -> Element {
             value: format!("{:?}", *theme.read()),
             onchange: move |evt: Event<FormData>| {
                 let new_theme = match evt.value().as_str() {
-                    "Unghosty" => EqTheme::Unghosty,
-                    "Burgundy" => EqTheme::Burgundy,
-                    "Gold" => EqTheme::Gold,
-                    "PurplePink" => EqTheme::PurplePink,
-                    "Monochrome" => EqTheme::Monochrome,
-                    "Watermelon" => EqTheme::Watermelon,
-                    "Sunset" => EqTheme::Sunset,
-                    "Ocean" => EqTheme::Ocean,
-                    "Spacetime" => EqTheme::Spacetime,
-                    "Gruvbox" => EqTheme::Gruvbox,
-                    "Monokai" => EqTheme::Monokai,
-                    "Hellas" => EqTheme::Hellas,
-                    "Egypt" => EqTheme::Egypt,
-                    "Dometrain" => EqTheme::Dometrain,
-                    "Catppuccin" => EqTheme::Catppuccin,
-                    "Dracula" => EqTheme::Dracula,
-                    "Nord" => EqTheme::Nord,
-                    "OneDark" => EqTheme::OneDark,
-                    "RosePine" => EqTheme::RosePine,
+                    "Unghosty"      => EqTheme::Unghosty,
+                    "Burgundy"      => EqTheme::Burgundy,
+                    "Gold"          => EqTheme::Gold,
+                    "PurplePink"    => EqTheme::PurplePink,
+                    "Monochrome"    => EqTheme::Monochrome,
+                    "Watermelon"    => EqTheme::Watermelon,
+                    "Sunset"        => EqTheme::Sunset,
+                    "Ocean"         => EqTheme::Ocean,
+                    "Spacetime"     => EqTheme::Spacetime,
+                    "Gruvbox"       => EqTheme::Gruvbox,
+                    "Monokai"       => EqTheme::Monokai,
+                    "Hellas"        => EqTheme::Hellas,
+                    "Egypt"         => EqTheme::Egypt,
+                    "Dometrain"     => EqTheme::Dometrain,
+                    "Catppuccin"    => EqTheme::Catppuccin,
+                    "Dracula"       => EqTheme::Dracula,
+                    "Nord"          => EqTheme::Nord,
+                    "OneDark"       => EqTheme::OneDark,
+                    "RosePine"      => EqTheme::RosePine,
                     "SolarizedDark" => EqTheme::SolarizedDark,
-                    "TokyoNight" => EqTheme::TokyoNight,
-                    _ => EqTheme::Unghosty,
+                    "TokyoNight"    => EqTheme::TokyoNight,
+                    _             => EqTheme::Unghosty,
                 };
                 theme.set(new_theme);
             },
 
-            for (name , _variant) in EqTheme::build_in_variants() {
+            for (name, _variant) in EqTheme::build_in_variants() {
                 option { value: "{name}", "{name}" }
             }
         }
@@ -76,41 +76,30 @@ pub fn EqThemeRenderer() -> Element {
 
 fn build_component_tree() -> Vec<TreeNode> {
     vec![
-        TreeNode::new_with_children(
-            "atoms",
-            "Atoms",
-            vec![
-                TreeNode::new("text", "EqText"),
-                TreeNode::new("label", "EqLabel"),
-                TreeNode::new("link", "EqLink"),
-                TreeNode::new("input", "EqInput"),
-                TreeNode::new("image", "EqImage"),
-                TreeNode::new("icon", "EqIcon"),
-                TreeNode::new("scrollable-space", "EqScrollableSpace"),
-                TreeNode::new("divider", "EqDivider"),
-            ],
-        ),
-        TreeNode::new_with_children(
-            "molecules",
-            "Molecules",
-            vec![
-                TreeNode::new("image-card", "EqImageCard"),
-                TreeNode::new("carousel", "EqCarousel"),
-                TreeNode::new("card", "EqCard"),
-                TreeNode::new("tree", "EqTree"),
-            ],
-        ),
-        TreeNode::new_with_children(
-            "organisms",
-            "Organisms",
-            vec![
-                TreeNode::new("header", "EqHeader"),
-                TreeNode::new("hero-shell", "EqHeroShell"),
-                TreeNode::new("page-section", "EqPageSection"),
-                TreeNode::new("footer", "EqFooter"),
-                TreeNode::new("app-shell", "EqAppShell"),
-            ],
-        ),
+        TreeNode::new_with_children("atoms", "Atoms", vec![
+            TreeNode::new("text", "EqText"),
+            TreeNode::new("label", "EqLabel"),
+            TreeNode::new("link", "EqLink"),
+            TreeNode::new("input", "EqInput"),
+            TreeNode::new("image", "EqImage"),
+            TreeNode::new("icon", "EqIcon"),
+            TreeNode::new("scrollable-space", "EqScrollableSpace"),
+            TreeNode::new("divider", "EqDivider"),
+        ]),
+        TreeNode::new_with_children("molecules", "Molecules", vec![
+            TreeNode::new("image-card", "EqImageCard"),
+            TreeNode::new("carousel", "EqCarousel"),
+            TreeNode::new("card", "EqCard"),
+            TreeNode::new("tree", "EqTree"),
+            TreeNode::new("accordion", "EqAccordion"),
+        ]),
+        TreeNode::new_with_children("organisms", "Organisms", vec![
+            TreeNode::new("header", "EqHeader"),
+            TreeNode::new("hero-shell", "EqHeroShell"),
+            TreeNode::new("page-section", "EqPageSection"),
+            TreeNode::new("footer", "EqFooter"),
+            TreeNode::new("app-shell", "EqAppShell"),
+        ]),
     ]
 }
 
@@ -137,9 +126,7 @@ fn App() -> Element {
                     },
                 }
             },
-            footer: rsx! {
-                EqFooter {}
-            },
+            footer: rsx! { EqFooter {} },
 
             // Two-panel layout
             div { class: "flex min-h-[calc(100vh-8rem)]",
@@ -170,66 +157,28 @@ fn App() -> Element {
 fn PreviewPanel(selected: Option<String>) -> Element {
     match selected.as_deref() {
         // Atoms
-        Some("text") => rsx! {
-            DemoEqText {}
-            // Atoms
-        },
-        Some("label") => rsx! {
-            DemoEqLabel {}
-        },
-        Some("link") => rsx! {
-            DemoEqLink {}
-        },
-        Some("input") => rsx! {
-            DemoEqInput {}
-        },
-        Some("image") => rsx! {
-            DemoEqImage {}
-        },
-        Some("icon") => rsx! {
-            DemoEqIcon {}
-        },
-        Some("scrollable-space") => rsx! {
-            DemoEqScrollableSpace {}
-        },
-        Some("divider") => rsx! {
-            DemoEqDivider {}
-        },
+        Some("text")             => rsx! { DemoEqText {} },
+        Some("label")            => rsx! { DemoEqLabel {} },
+        Some("link")             => rsx! { DemoEqLink {} },
+        Some("input")            => rsx! { DemoEqInput {} },
+        Some("image")            => rsx! { DemoEqImage {} },
+        Some("icon")             => rsx! { DemoEqIcon {} },
+        Some("scrollable-space") => rsx! { DemoEqScrollableSpace {} },
+        Some("divider")          => rsx! { DemoEqDivider {} },
 
         // Molecules
-        Some("image-card") => rsx! {
-            DemoEqImageCard {}
-
-            // Molecules
-        },
-        Some("carousel") => rsx! {
-            DemoEqCarousel {}
-        },
-        Some("card") => rsx! {
-            DemoEqCard {}
-        },
-        Some("tree") => rsx! {
-            DemoEqTree {}
-        },
+        Some("image-card") => rsx! { DemoEqImageCard {} },
+        Some("carousel")   => rsx! { DemoEqCarousel {} },
+        Some("card")        => rsx! { DemoEqCard {} },
+        Some("tree")        => rsx! { DemoEqTree {} },
+        Some("accordion")   => rsx! { DemoEqAccordion {} },
 
         // Organisms
-        Some("header") => rsx! {
-            DemoEqHeader {}
-
-            // Organisms
-        },
-        Some("hero-shell") => rsx! {
-            DemoEqHeroShell {}
-        },
-        Some("page-section") => rsx! {
-            DemoEqPageSection {}
-        },
-        Some("footer") => rsx! {
-            DemoEqFooter {}
-        },
-        Some("app-shell") => rsx! {
-            DemoEqAppShell {}
-        },
+        Some("header")       => rsx! { DemoEqHeader {} },
+        Some("hero-shell")   => rsx! { DemoEqHeroShell {} },
+        Some("page-section") => rsx! { DemoEqPageSection {} },
+        Some("footer")       => rsx! { DemoEqFooter {} },
+        Some("app-shell")    => rsx! { DemoEqAppShell {} },
 
         _ => rsx! {
             div { class: "flex flex-col items-center justify-center h-full min-h-[60vh] gap-4 text-[var(--color-label-secondary)]",
@@ -248,7 +197,7 @@ fn PreviewPanel(selected: Option<String>) -> Element {
     }
 }
 
-// ── Shared demo wrapper ─────────────────────────────────────────────
+// ── Shared helpers ──────────────────────────────────────────────────
 
 #[component]
 fn DemoSection(title: &'static str, children: Element) -> Element {
@@ -262,301 +211,548 @@ fn DemoSection(title: &'static str, children: Element) -> Element {
     }
 }
 
+/// Renders a themed code block with monospace font and subtle background.
+/// Uses `dangerous_inner_html` to avoid rsx! format-string parsing of braces.
+#[component]
+fn CodeBlock(code: String) -> Element {
+    let escaped = code
+        .replace('&', "&amp;")
+        .replace('<', "&lt;")
+        .replace('>', "&gt;");
+    rsx! {
+        div { class: "mt-6 space-y-2",
+            EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Example Usage" }
+            pre {
+                class: "rounded-lg bg-[var(--color-card)] border border-[var(--color-card-border)] p-4 overflow-x-auto text-xs leading-relaxed font-mono text-[var(--color-label)]",
+                code { dangerous_inner_html: "{escaped}" }
+            }
+        }
+    }
+}
+
+/// Shows which CSS constants a component uses and from which file.
+/// Uses `dangerous_inner_html` to avoid rsx! format-string parsing of braces.
+#[component]
+fn StyleInfo(file: &'static str, styles: String) -> Element {
+    let escaped = styles
+        .replace('&', "&amp;")
+        .replace('<', "&lt;")
+        .replace('>', "&gt;");
+    rsx! {
+        details { class: "mt-4 rounded-lg border border-[var(--color-card-border)] overflow-hidden",
+            summary { class: "px-4 py-2 cursor-pointer text-xs font-semibold uppercase tracking-wider text-[var(--color-label-secondary)] bg-[var(--color-card)]/40 hover:bg-[var(--color-card)]/60 transition select-none",
+                "Default Styles — {file}"
+            }
+            pre {
+                class: "p-4 overflow-x-auto text-xs leading-relaxed font-mono text-[var(--color-label)] bg-[var(--color-card)]/20",
+                code { dangerous_inner_html: "{escaped}" }
+            }
+        }
+    }
+}
+
+// Shared style constants for playground prop controls.
+const PROP_ROW: &str = "flex items-center gap-3";
+const PROP_LABEL: &str = "text-xs font-medium text-[var(--color-label-secondary)] w-20 shrink-0";
+const PROP_CONTROL: &str = "rounded-md bg-[var(--color-card)] text-[var(--color-label-primary)] border border-[var(--color-card-border)] px-2 py-1 text-xs";
+
+/// Styled select dropdown for prop controls.
+#[component]
+fn PropSelect(
+    label: &'static str,
+    value: String,
+    options: Vec<&'static str>,
+    onchange: EventHandler<String>,
+) -> Element {
+    rsx! {
+        div { class: PROP_ROW,
+            span { class: PROP_LABEL, "{label}" }
+            select {
+                class: PROP_CONTROL,
+                value: "{value}",
+                onchange: move |evt: Event<FormData>| onchange.call(evt.value()),
+                for opt in options {
+                    option { value: "{opt}", "{opt}" }
+                }
+            }
+        }
+    }
+}
+
+/// Styled text input for prop controls.
+#[component]
+fn PropInput(
+    label: &'static str,
+    value: String,
+    placeholder: &'static str,
+    onchange: EventHandler<String>,
+) -> Element {
+    rsx! {
+        div { class: PROP_ROW,
+            span { class: PROP_LABEL, "{label}" }
+            input {
+                class: "flex-1 {PROP_CONTROL}",
+                r#type: "text",
+                value: "{value}",
+                placeholder: "{placeholder}",
+                oninput: move |evt: FormEvent| onchange.call(evt.value()),
+            }
+        }
+    }
+}
+
+/// Styled boolean toggle for prop controls.
+#[component]
+fn PropToggle(
+    label: &'static str,
+    value: bool,
+    onchange: EventHandler<bool>,
+) -> Element {
+    rsx! {
+        div { class: PROP_ROW,
+            span { class: PROP_LABEL, "{label}" }
+            select {
+                class: PROP_CONTROL,
+                value: if value { "true" } else { "false" },
+                onchange: move |evt: Event<FormData>| onchange.call(evt.value() == "true"),
+                option { value: "false", "false" }
+                option { value: "true", "true" }
+            }
+        }
+    }
+}
+
 // ── Atom demos ──────────────────────────────────────────────────────
 
 #[component]
 fn DemoEqText() -> Element {
+    let mut variant_str = use_signal(|| "Body".to_string());
+    let mut content = use_signal(|| "The quick brown fox jumps over the lazy dog.".to_string());
+
+    let variant = match variant_str().as_str() {
+        "H1"       => TextVariant::H1,
+        "H2"       => TextVariant::H2,
+        "H3"       => TextVariant::H3,
+        "Muted"    => TextVariant::Muted,
+        "Caption"  => TextVariant::Caption,
+        "Emphasis" => TextVariant::Emphasis,
+        "Mono"     => TextVariant::Mono,
+        _          => TextVariant::Body,
+    };
+
+    let styles = "H1:       \"text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-label-primary)]\"\nH2:       \"text-2xl font-semibold tracking-tight text-[var(--color-label-primary)]\"\nH3:       \"text-lg font-semibold text-[var(--color-label-primary)]\"\nBODY:     \"text-base leading-relaxed text-[var(--color-label-primary)]\"\nMUTED:    \"text-base leading-relaxed text-[var(--color-label-secondary)]\"\nCAPTION:  \"text-sm text-[var(--color-label-secondary)]\"\nEMPHASIS: \"text-[var(--color-label-bold)]\"\nMONO:     \"font-mono text-sm text-[var(--color-label-secondary)]\"".to_string();
+
+    let code = r#"EqText { variant: TextVariant::H1, "Heading 1" }
+
+EqText { variant: TextVariant::Body,
+    "Body text — the default variant."
+}
+
+EqText { variant: TextVariant::Muted,
+    "Muted — secondary colour."
+}"#.to_string();
+
     rsx! {
         DemoSection { title: "EqText",
-            EqText { variant: TextVariant::H1, "Heading 1" }
-            EqText { variant: TextVariant::H2, "Heading 2" }
-            EqText { variant: TextVariant::H3, "Heading 3" }
-            EqText { variant: TextVariant::Body,
-                "Body text — the default variant. Renders a <p> element."
+            // Interactive controls
+            div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-3",
+                span { class: "text-xs font-semibold uppercase tracking-wider text-[var(--color-label-secondary)]",
+                    "Props"
+                }
+                PropSelect {
+                    label: "variant",
+                    value: variant_str(),
+                    options: vec!["Body", "H1", "H2", "H3", "Muted", "Caption", "Emphasis", "Mono"],
+                    onchange: move |v: String| variant_str.set(v),
+                }
+                PropInput {
+                    label: "content",
+                    value: content(),
+                    placeholder: "Enter text content…",
+                    onchange: move |v: String| content.set(v),
+                }
             }
-            EqText { variant: TextVariant::Muted,
-                "Muted text — secondary colour for less important content."
+
+            // Live preview
+            div { class: "rounded-lg border border-dashed border-[var(--color-card-border)] p-6",
+                EqText { variant: variant, "{content}" }
             }
-            EqText { variant: TextVariant::Caption, "Caption text" }
-            EqText { variant: TextVariant::Emphasis, "Emphasis text" }
-            EqText { variant: TextVariant::Mono, "Mono text — code snippets" }
+
+            // All variants gallery
+            div { class: "space-y-3",
+                EqText { variant: TextVariant::Emphasis, "All variants" }
+                EqText { variant: TextVariant::H1, "Heading 1" }
+                EqText { variant: TextVariant::H2, "Heading 2" }
+                EqText { variant: TextVariant::H3, "Heading 3" }
+                EqText { variant: TextVariant::Body, "Body text — the default variant." }
+                EqText { variant: TextVariant::Muted, "Muted text — secondary colour." }
+                EqText { variant: TextVariant::Caption, "Caption text" }
+                EqText { variant: TextVariant::Emphasis, "Emphasis text" }
+                EqText { variant: TextVariant::Mono, "Mono text — code snippets" }
+            }
+
+            StyleInfo { file: "eq_text_styles.rs", styles: styles }
+            CodeBlock { code: code }
         }
     }
 }
 
 #[component]
 fn DemoEqLabel() -> Element {
+    let mut for_id_str = use_signal(|| "username".to_string());
+    let mut content = use_signal(|| "Username".to_string());
+
+    let for_id: &'static str = match for_id_str().as_str() {
+        "email"    => "email",
+        "password" => "password",
+        "(none)"   => "",
+        _          => "username",
+    };
+
+    let styles = "LABEL: \"text-sm font-medium text-[var(--color-label-primary)]\"".to_string();
+
+    let code = r#"EqLabel { for_id: "username", "Username" }
+
+EqLabel { "Label without for attribute" }"#.to_string();
+
     rsx! {
         DemoSection { title: "EqLabel",
-            div { class: "space-y-2",
-                EqLabel { for_id: "demo", "Form label (for=\"demo\")" }
-                EqLabel { "Label without for attribute" }
+            div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-3",
+                EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Props" }
+                PropSelect { label: "for_id", value: for_id_str(), options: vec!["username", "email", "password", "(none)"], onchange: move |v: String| for_id_str.set(v) }
+                PropInput { label: "content", value: content(), placeholder: "Label text", onchange: move |v: String| content.set(v) }
             }
+            div { class: "rounded-lg border border-dashed border-[var(--color-card-border)] p-6",
+                EqLabel { for_id: for_id, "{content}" }
+            }
+            StyleInfo { file: "eq_label_styles.rs", styles: styles }
+            CodeBlock { code: code }
         }
     }
 }
 
 #[component]
 fn DemoEqLink() -> Element {
+    let mut href = use_signal(|| "https://example.com".to_string());
+    let mut content = use_signal(|| "Click me".to_string());
+
+    let styles = "LINK: \"text-[var(--color-label-primary)] underline hover:text-[var(--color-label-bold)] transition\"".to_string();
+
+    let code = r##"EqLink { href: "#", "Internal link" }
+
+EqLink { href: "https://example.com", "External link" }"##.to_string();
+
     rsx! {
         DemoSection { title: "EqLink",
-            div { class: "flex gap-6",
-                EqLink { href: "#".to_string(), "Default link" }
-                EqLink { href: "https://example.com".to_string(), "External link" }
+            div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-3",
+                EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Props" }
+                PropInput { label: "href", value: href(), placeholder: "https://…", onchange: move |v: String| href.set(v) }
+                PropInput { label: "content", value: content(), placeholder: "Link text", onchange: move |v: String| content.set(v) }
             }
+            div { class: "rounded-lg border border-dashed border-[var(--color-card-border)] p-6",
+                EqLink { href: href(), "{content}" }
+            }
+            StyleInfo { file: "eq_link_styles.rs", styles: styles }
+            CodeBlock { code: code }
         }
     }
 }
 
 #[component]
 fn DemoEqInput() -> Element {
-    let mut demo_input = use_signal(|| String::new());
-    let mut demo_email = use_signal(|| String::new());
-    let mut demo_textarea = use_signal(|| String::new());
+    let mut kind_str = use_signal(|| "Text".to_string());
+    let mut placeholder_str = use_signal(|| "Type something…".to_string());
+    let mut disabled = use_signal(|| false);
+    let mut required = use_signal(|| false);
+    let mut demo_value = use_signal(|| String::new());
+
+    let kind = match kind_str().as_str() {
+        "Email"    => InputKind::Email,
+        "Password" => InputKind::Password,
+        "Textarea" => InputKind::Textarea,
+        _          => InputKind::Text,
+    };
+    let placeholder: &'static str = match placeholder_str().as_str() {
+        "you@example.com"     => "you@example.com",
+        "Enter password…"     => "Enter password…",
+        "Write a message…"    => "Write a message…",
+        "(none)"              => "",
+        _                     => "Type something…",
+    };
+
+    let styles = "CONTROL:  \"w-full rounded-md border px-3 py-2 text-sm outline-none transition ...\"\nTEXTAREA: \"min-h-[120px] resize-y\"\nDISABLED: \"opacity-60 cursor-not-allowed\"".to_string();
+
+    let code = r#"let mut value = use_signal(|| String::new());
+
+EqInput {
+    id: "email",
+    kind: InputKind::Email,
+    placeholder: "you@example.com",
+    value: value(),
+    oninput: move |e: FormEvent| value.set(e.value()),
+}
+
+EqInput {
+    kind: InputKind::Textarea,
+    placeholder: "Write a message…",
+    value: value(),
+    oninput: move |e: FormEvent| value.set(e.value()),
+}
+
+EqInput {
+    placeholder: "Cannot edit",
+    disabled: true,
+    value: String::new(),
+    oninput: move |_| {},
+}"#.to_string();
 
     rsx! {
         DemoSection { title: "EqInput",
+            div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-3",
+                EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Props" }
+                PropSelect { label: "kind", value: kind_str(), options: vec!["Text", "Email", "Password", "Textarea"], onchange: move |v: String| kind_str.set(v) }
+                PropSelect { label: "placeholder", value: placeholder_str(), options: vec!["Type something…", "you@example.com", "Enter password…", "Write a message…", "(none)"], onchange: move |v: String| placeholder_str.set(v) }
+                PropToggle { label: "disabled", value: disabled(), onchange: move |v: bool| disabled.set(v) }
+                PropToggle { label: "required", value: required(), onchange: move |v: bool| required.set(v) }
+            }
+            div { class: "rounded-lg border border-dashed border-[var(--color-card-border)] p-6 max-w-md",
+                EqInput {
+                    kind: kind,
+                    placeholder: placeholder,
+                    disabled: disabled(),
+                    required: required(),
+                    value: demo_value(),
+                    oninput: move |e: FormEvent| demo_value.set(e.value()),
+                }
+            }
             div { class: "space-y-4 max-w-md",
-                div { class: "space-y-1",
-                    EqLabel { for_id: "text-demo", "Text input" }
-                    EqInput {
-                        id: "text-demo",
-                        placeholder: "Type something…",
-                        value: demo_input(),
-                        oninput: move |e: FormEvent| demo_input.set(e.value()),
-                    }
-                }
-                div { class: "space-y-1",
-                    EqLabel { for_id: "email-demo", "Email input" }
-                    EqInput {
-                        kind: InputKind::Email,
-                        id: "email-demo",
-                        placeholder: "you@example.com",
-                        value: demo_email(),
-                        oninput: move |e: FormEvent| demo_email.set(e.value()),
-                    }
-                }
-                div { class: "space-y-1",
-                    EqLabel { for_id: "pw-demo", "Password input" }
-                    EqInput {
-                        kind: InputKind::Password,
-                        id: "pw-demo",
-                        placeholder: "••••••••",
-                        value: String::new(),
-                        oninput: move |_| {},
-                    }
-                }
-                div { class: "space-y-1",
-                    EqLabel { for_id: "ta-demo", "Textarea" }
-                    EqInput {
-                        kind: InputKind::Textarea,
-                        id: "ta-demo",
-                        placeholder: "Write a longer message…",
-                        value: demo_textarea(),
-                        oninput: move |e: FormEvent| demo_textarea.set(e.value()),
-                    }
-                }
-                div { class: "space-y-1",
-                    EqLabel { "Disabled input" }
-                    EqInput {
-                        placeholder: "Cannot edit this",
-                        disabled: true,
-                        value: String::new(),
-                        oninput: move |_| {},
+                EqText { variant: TextVariant::Emphasis, "All kinds" }
+                for (label, k) in [("Text", InputKind::Text), ("Email", InputKind::Email), ("Password", InputKind::Password), ("Textarea", InputKind::Textarea)] {
+                    div { class: "space-y-1",
+                        EqLabel { "{label}" }
+                        EqInput {
+                            kind: k,
+                            placeholder: "Example…",
+                            value: String::new(),
+                            oninput: move |_| {},
+                        }
                     }
                 }
             }
+            StyleInfo { file: "eq_input_styles.rs", styles: styles }
+            CodeBlock { code: code }
         }
     }
 }
 
 #[component]
 fn DemoEqImage() -> Element {
+    let mut size_str = use_signal(|| "Md".to_string());
+    let mut ratio_str = use_signal(|| "Free".to_string());
+    let mut fit_str = use_signal(|| "Cover".to_string());
+    let mut rounded = use_signal(|| false);
+
+    let size = match size_str().as_str() {
+        "Sm"   => AtomImageSize::Sm,
+        "Lg"   => AtomImageSize::Lg,
+        "Full" => AtomImageSize::Full,
+        _      => AtomImageSize::Md,
+    };
+    let aspect_ratio = match ratio_str().as_str() {
+        "Ratio16_9" => AspectRatio::Ratio16_9,
+        "Ratio4_3"  => AspectRatio::Ratio4_3,
+        "Square"    => AspectRatio::Square,
+        _           => AspectRatio::Free,
+    };
+    let object_fit = match fit_str().as_str() {
+        "Contain" => ObjectFit::Contain,
+        "Fill"    => ObjectFit::Fill,
+        _         => ObjectFit::Cover,
+    };
+
+    let styles = "WRAPPER: \"relative overflow-hidden\"\nSM/MD/LG/FULL: \"w-48\" / \"w-64\" / \"w-96\" / \"w-full\"\nRATIO_16_9: \"aspect-video\"\nRATIO_4_3: \"aspect-[4/3]\"\nRATIO_SQUARE: \"aspect-square\"\nOBJECT_COVER/CONTAIN/FILL: \"object-cover\" / ...\nIMAGE_ELEMENT: \"w-full h-full bg-[var(--color-card)]/40\"\nROUNDED: \"rounded-lg\"".to_string();
+
+    let code = r#"EqImage {
+    src: "https://example.com/photo.jpg",
+    alt: "A scenic view",
+    size: AtomImageSize::Md,
+    aspect_ratio: AspectRatio::Ratio16_9,
+    rounded: true,
+}
+
+EqImage {
+    src: "avatar.png",
+    alt: "User avatar",
+    size: AtomImageSize::Sm,
+    aspect_ratio: AspectRatio::Square,
+    object_fit: ObjectFit::Cover,
+}"#.to_string();
+
     rsx! {
         DemoSection { title: "EqImage",
-            div { class: "space-y-6",
-                div { class: "space-y-2",
-                    span { class: "text-sm text-[var(--color-label-secondary)]",
-                        "Small — default ratio, cover"
-                    }
-                    EqImage {
-                        src: "https://picsum.photos/seed/eq-sm/400/300",
-                        alt: "Small placeholder",
-                        size: AtomImageSize::Sm,
-                    }
-                }
-                div { class: "space-y-2",
-                    span { class: "text-sm text-[var(--color-label-secondary)]",
-                        "Medium — 16:9, rounded"
-                    }
-                    EqImage {
-                        src: "https://picsum.photos/seed/eq-md/800/450",
-                        alt: "Medium 16:9 placeholder",
-                        size: AtomImageSize::Md,
-                        aspect_ratio: AspectRatio::Ratio16_9,
-                        rounded: true,
-                    }
-                }
-                div { class: "space-y-2",
-                    span { class: "text-sm text-[var(--color-label-secondary)]",
-                        "Large — square, contain"
-                    }
-                    EqImage {
-                        src: "https://picsum.photos/seed/eq-lg/600/600",
-                        alt: "Large square placeholder",
-                        size: AtomImageSize::Lg,
-                        aspect_ratio: AspectRatio::Square,
-                        object_fit: ObjectFit::Contain,
-                        rounded: true,
-                    }
-                }
-                div { class: "space-y-2",
-                    span { class: "text-sm text-[var(--color-label-secondary)]",
-                        "Full width — 4:3, cover"
-                    }
-                    EqImage {
-                        src: "https://picsum.photos/seed/eq-full/1200/900",
-                        alt: "Full width placeholder",
-                        size: AtomImageSize::Full,
-                        aspect_ratio: AspectRatio::Ratio4_3,
-                        object_fit: ObjectFit::Cover,
-                    }
+            div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-3",
+                EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Props" }
+                PropSelect { label: "size", value: size_str(), options: vec!["Sm", "Md", "Lg", "Full"], onchange: move |v: String| size_str.set(v) }
+                PropSelect { label: "aspect_ratio", value: ratio_str(), options: vec!["Free", "Ratio16_9", "Ratio4_3", "Square"], onchange: move |v: String| ratio_str.set(v) }
+                PropSelect { label: "object_fit", value: fit_str(), options: vec!["Cover", "Contain", "Fill"], onchange: move |v: String| fit_str.set(v) }
+                PropToggle { label: "rounded", value: rounded(), onchange: move |v: bool| rounded.set(v) }
+            }
+            div { class: "rounded-lg border border-dashed border-[var(--color-card-border)] p-6 max-w-lg",
+                EqImage {
+                    src: "https://picsum.photos/seed/eq-preview/800/600",
+                    alt: "Preview image",
+                    size: size,
+                    aspect_ratio: aspect_ratio,
+                    object_fit: object_fit,
+                    rounded: rounded(),
                 }
             }
+            StyleInfo { file: "eq_image_styles.rs", styles: styles }
+            CodeBlock { code: code }
         }
     }
 }
 
 #[component]
 fn DemoEqIcon() -> Element {
+    let mut size_str = use_signal(|| "Md".to_string());
+    let mut muted = use_signal(|| false);
+
+    let size = match size_str().as_str() {
+        "Sm" => IconSize::Sm,
+        "Lg" => IconSize::Lg,
+        _    => IconSize::Md,
+    };
+
+    let styles = "WRAPPER: \"inline-flex items-center justify-center shrink-0\"\nSM/MD/LG: \"size-4\" / \"size-5\" / \"size-6\"\nDEFAULT: \"text-[var(--color-label-primary)]\"\nMUTED: \"text-[var(--color-label-secondary)]\"".to_string();
+
+    let code = "EqIcon { size: IconSize::Sm,\n    svg { /* your SVG icon */ }\n}\n\nEqIcon { size: IconSize::Lg, muted: true,\n    svg { /* dimmed icon */ }\n}".to_string();
+
     rsx! {
         DemoSection { title: "EqIcon",
-            div { class: "flex items-center gap-6",
-                div { class: "flex items-center gap-2",
-                    EqIcon { size: IconSize::Sm,
-                        svg {
-                            xmlns: "http://www.w3.org/2000/svg",
-                            fill: "none",
-                            view_box: "0 0 24 24",
-                            stroke_width: "2",
-                            stroke: "currentColor",
-                            path { d: "M12 4.5v15m7.5-7.5h-15" }
-                        }
+            div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-3",
+                EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Props" }
+                PropSelect { label: "size", value: size_str(), options: vec!["Sm", "Md", "Lg"], onchange: move |v: String| size_str.set(v) }
+                PropToggle { label: "muted", value: muted(), onchange: move |v: bool| muted.set(v) }
+            }
+            div { class: "rounded-lg border border-dashed border-[var(--color-card-border)] p-6",
+                EqIcon { size: size, muted: muted(),
+                    svg {
+                        xmlns: "http://www.w3.org/2000/svg",
+                        fill: "none",
+                        view_box: "0 0 24 24",
+                        stroke_width: "2",
+                        stroke: "currentColor",
+                        path { d: "M12 4.5v15m7.5-7.5h-15" }
                     }
-                    span { class: "text-sm text-[var(--color-label-secondary)]", "Sm" }
-                }
-                div { class: "flex items-center gap-2",
-                    EqIcon { size: IconSize::Md,
-                        svg {
-                            xmlns: "http://www.w3.org/2000/svg",
-                            fill: "none",
-                            view_box: "0 0 24 24",
-                            stroke_width: "2",
-                            stroke: "currentColor",
-                            path { d: "M12 4.5v15m7.5-7.5h-15" }
-                        }
-                    }
-                    span { class: "text-sm text-[var(--color-label-secondary)]", "Md (default)" }
-                }
-                div { class: "flex items-center gap-2",
-                    EqIcon { size: IconSize::Lg,
-                        svg {
-                            xmlns: "http://www.w3.org/2000/svg",
-                            fill: "none",
-                            view_box: "0 0 24 24",
-                            stroke_width: "2",
-                            stroke: "currentColor",
-                            path { d: "M12 4.5v15m7.5-7.5h-15" }
-                        }
-                    }
-                    span { class: "text-sm text-[var(--color-label-secondary)]", "Lg" }
-                }
-                div { class: "flex items-center gap-2",
-                    EqIcon { size: IconSize::Lg, muted: true,
-                        svg {
-                            xmlns: "http://www.w3.org/2000/svg",
-                            fill: "none",
-                            view_box: "0 0 24 24",
-                            stroke_width: "2",
-                            stroke: "currentColor",
-                            path { d: "M12 4.5v15m7.5-7.5h-15" }
-                        }
-                    }
-                    span { class: "text-sm text-[var(--color-label-secondary)]", "Lg muted" }
                 }
             }
+            div { class: "flex items-center gap-6",
+                EqText { variant: TextVariant::Emphasis, "All sizes" }
+                for (label, s) in [("Sm", IconSize::Sm), ("Md", IconSize::Md), ("Lg", IconSize::Lg)] {
+                    div { class: "flex items-center gap-2",
+                        EqIcon { size: s,
+                            svg {
+                                xmlns: "http://www.w3.org/2000/svg",
+                                fill: "none",
+                                view_box: "0 0 24 24",
+                                stroke_width: "2",
+                                stroke: "currentColor",
+                                path { d: "M12 4.5v15m7.5-7.5h-15" }
+                            }
+                        }
+                        EqText { variant: TextVariant::Caption, "{label}" }
+                    }
+                }
+            }
+            StyleInfo { file: "eq_icon_styles.rs", styles: styles }
+            CodeBlock { code: code }
         }
     }
 }
 
 #[component]
 fn DemoEqScrollableSpace() -> Element {
+    let mut item_count = use_signal(|| "20".to_string());
+    let count: usize = item_count().parse().unwrap_or(20).min(200);
+
+    let styles = "CONTAINER: \"overflow-y-auto flex-1 min-h-0\"\nSCROLLBAR: \"scrollbar-thin scrollbar-thumb-[var(--color-label-secondary)]/30 scrollbar-track-transparent\"".to_string();
+
+    let code = "// Wrap in a flex-col container with fixed height\ndiv { class: \"h-48 flex flex-col\",\n    EqScrollableSpace {\n        // Content that overflows will scroll\n        for item in items {\n            p { \"{item}\" }\n        }\n    }\n}\n\n// Or with a custom max-height\nEqScrollableSpace { max_height: \"max-h-96\",\n    // ...children\n}".to_string();
+
     rsx! {
         DemoSection { title: "EqScrollableSpace",
-            p { class: "text-sm text-[var(--color-label-secondary)] mb-4",
-                "A scrollable container with a fixed height. The content below overflows and scrolls."
+            div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-3",
+                EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Props" }
+                PropInput { label: "item count", value: item_count(), placeholder: "20", onchange: move |v: String| item_count.set(v) }
             }
-            div { class: "w-80 h-48 flex flex-col border border-[var(--color-card-border)] rounded-lg",
-                EqScrollableSpace {
-                    div { class: "p-4 space-y-3",
-                        for i in 1..=20 {
-                            p {
-                                key: "{i}",
-                                class: "text-sm text-[var(--color-label)]",
-                                "Scrollable item {i}"
+            div { class: "rounded-lg border border-dashed border-[var(--color-card-border)] p-6",
+                div { class: "w-80 h-48 flex flex-col border border-[var(--color-card-border)] rounded-lg",
+                    EqScrollableSpace {
+                        div { class: "p-4 space-y-3",
+                            for i in 1..=count {
+                                p {
+                                    key: "{i}",
+                                    class: "text-sm text-[var(--color-label)]",
+                                    "Scrollable item {i}"
+                                }
                             }
                         }
                     }
                 }
             }
+            StyleInfo { file: "eq_scrollable_space_styles.rs", styles: styles }
+            CodeBlock { code: code }
         }
     }
 }
 
 #[component]
 fn DemoEqDivider() -> Element {
+    let mut variant_str = use_signal(|| "Solid".to_string());
+    let mut weight_str = use_signal(|| "Normal".to_string());
+    let mut spacing_str = use_signal(|| "Default".to_string());
+
+    let variant = match variant_str().as_str() {
+        "Dashed" => DividerVariant::Dashed,
+        "Dotted" => DividerVariant::Dotted,
+        "Spacer" => DividerVariant::Spacer,
+        _        => DividerVariant::Solid,
+    };
+    let weight = match weight_str().as_str() {
+        "Thick"      => DividerWeight::Thick,
+        "ExtraThick" => DividerWeight::ExtraThick,
+        _            => DividerWeight::Normal,
+    };
+    let spacing = match spacing_str().as_str() {
+        "Compact" => DividerSpacing::Compact,
+        "Wide"    => DividerSpacing::Wide,
+        _         => DividerSpacing::Default,
+    };
+
+    let styles = "BASE: \"border-0 border-t border-[var(--color-card-border)]\"\nDASHED/DOTTED: \"border-dashed\" / \"border-dotted\"\nTHICK/EXTRA_THICK: \"border-t-2\" / \"border-t-4\"\nSPACER: \"border-0 my-4\"\nSPACING_COMPACT/DEFAULT/WIDE: \"my-2\" / \"my-4\" / \"my-8\"".to_string();
+
+    let code = "EqDivider {}  // solid, normal weight\n\nEqDivider { variant: DividerVariant::Dashed }\n\nEqDivider {\n    variant: DividerVariant::Dashed,\n    weight: DividerWeight::Thick,\n}\n\nEqDivider {\n    variant: DividerVariant::Spacer,\n    spacing: DividerSpacing::Wide,\n}".to_string();
+
     rsx! {
         DemoSection { title: "EqDivider",
-            div { class: "space-y-2 max-w-lg",
-                span { class: "text-sm font-medium text-[var(--color-label-bold)]", "Solid (default)" }
-                EqDivider {}
-
-                span { class: "text-sm font-medium text-[var(--color-label-bold)]", "Dashed" }
-                EqDivider { variant: DividerVariant::Dashed }
-
-                span { class: "text-sm font-medium text-[var(--color-label-bold)]", "Dotted" }
-                EqDivider { variant: DividerVariant::Dotted }
-
-                span { class: "text-sm font-medium text-[var(--color-label-bold)]", "Thick" }
-                EqDivider { weight: DividerWeight::Thick }
-
-                span { class: "text-sm font-medium text-[var(--color-label-bold)]", "Extra Thick" }
-                EqDivider { weight: DividerWeight::ExtraThick }
-
-                span { class: "text-sm font-medium text-[var(--color-label-bold)]", "Dashed + Thick" }
-                EqDivider {
-                    variant: DividerVariant::Dashed,
-                    weight: DividerWeight::Thick,
-                }
-
-                span { class: "text-sm font-medium text-[var(--color-label-bold)]", "Spacer (invisible)" }
+            div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-3",
+                EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Props" }
+                PropSelect { label: "variant", value: variant_str(), options: vec!["Solid", "Dashed", "Dotted", "Spacer"], onchange: move |v: String| variant_str.set(v) }
+                PropSelect { label: "weight", value: weight_str(), options: vec!["Normal", "Thick", "ExtraThick"], onchange: move |v: String| weight_str.set(v) }
+                PropSelect { label: "spacing", value: spacing_str(), options: vec!["Compact", "Default", "Wide"], onchange: move |v: String| spacing_str.set(v) }
+            }
+            div { class: "rounded-lg border border-dashed border-[var(--color-card-border)] p-6 max-w-lg",
                 div { class: "rounded-lg bg-[var(--color-card)]/30 p-2 text-sm text-[var(--color-label-secondary)]",
                     "Content above"
                 }
-                EqDivider {
-                    variant: DividerVariant::Spacer,
-                    spacing: DividerSpacing::Wide,
-                }
+                EqDivider { variant: variant, weight: weight, spacing: spacing }
                 div { class: "rounded-lg bg-[var(--color-card)]/30 p-2 text-sm text-[var(--color-label-secondary)]",
-                    "Content below (wide spacer between)"
+                    "Content below"
                 }
-
-                span { class: "text-sm font-medium text-[var(--color-label-bold)]", "Compact spacing" }
-                EqDivider { spacing: DividerSpacing::Compact }
-
-                span { class: "text-sm font-medium text-[var(--color-label-bold)]", "Wide spacing" }
-                EqDivider { spacing: DividerSpacing::Wide }
             }
+            StyleInfo { file: "eq_divider_styles.rs", styles: styles }
+            CodeBlock { code: code }
         }
     }
 }
@@ -565,135 +761,193 @@ fn DemoEqDivider() -> Element {
 
 #[component]
 fn DemoEqImageCard() -> Element {
+    let mut mode_str = use_signal(|| "Below".to_string());
+    let mut size_str = use_signal(|| "Lg".to_string());
+    let mut ratio_str = use_signal(|| "Ratio16_9".to_string());
+    let mut fit_str = use_signal(|| "Cover".to_string());
+    let mut rounded = use_signal(|| true);
+    let mut title = use_signal(|| "Alpine Meadow".to_string());
+    let mut description = use_signal(|| "A serene landscape captured during the golden hour.".to_string());
+    let mut attribution = use_signal(|| "Photo by Jane Doe".to_string());
+
+    let mode = match mode_str().as_str() {
+        "Overlay" => CaptionMode::Overlay,
+        _         => CaptionMode::Below,
+    };
+    let size = match size_str().as_str() {
+        "Sm"   => AtomImageSize::Sm,
+        "Md"   => AtomImageSize::Md,
+        "Full" => AtomImageSize::Full,
+        _      => AtomImageSize::Lg,
+    };
+    let aspect_ratio = match ratio_str().as_str() {
+        "Free"      => AspectRatio::Free,
+        "Ratio4_3"  => AspectRatio::Ratio4_3,
+        "Square"    => AspectRatio::Square,
+        _           => AspectRatio::Ratio16_9,
+    };
+    let object_fit = match fit_str().as_str() {
+        "Contain" => ObjectFit::Contain,
+        "Fill"    => ObjectFit::Fill,
+        _         => ObjectFit::Cover,
+    };
+
+    let title_val = title();
+    let desc_val = description();
+    let attr_val = attribution();
+
+    let styles = "CARD_WRAPPER: \"space-y-3\"\nFIGCAPTION: \"space-y-2 px-1 py-2\"\nCAPTION_TITLE: \"text-lg font-semibold ...\"\nOVERLAY_CONTAINER: \"relative\"\nOVERLAY_GRADIENT: \"absolute inset-0 bg-gradient-to-t from-black/80 ...\"".to_string();
+
+    let code = "EqImageCard {\n    src: \"photo.jpg\",\n    alt: \"Description\",\n    mode: CaptionMode::Below,\n    size: AtomImageSize::Lg,\n    aspect_ratio: AspectRatio::Ratio16_9,\n    rounded: true,\n    title: \"Card Title\",\n    description: \"A short description.\",\n    attribution: \"Photo by Author\",\n}\n\nEqImageCard {\n    mode: CaptionMode::Overlay,\n    // ...\n}".to_string();
+
     rsx! {
         DemoSection { title: "EqImageCard",
-            div { class: "space-y-8",
-                div { class: "space-y-2",
-                    span { class: "text-sm font-medium text-[var(--color-label-bold)]",
-                        "Caption Below"
-                    }
-                    EqImageCard {
-                        src: "https://picsum.photos/seed/eq-card1/800/500",
-                        alt: "Mountain landscape",
-                        mode: CaptionMode::Below,
-                        size: AtomImageSize::Lg,
-                        aspect_ratio: AspectRatio::Ratio16_9,
-                        rounded: true,
-                        title: "Alpine Meadow",
-                        description: "A serene landscape captured during the golden hour.",
-                        attribution: "Photo by Jane Doe",
-                    }
-                }
-                div { class: "space-y-2",
-                    span { class: "text-sm font-medium text-[var(--color-label-bold)]",
-                        "Overlay"
-                    }
-                    EqImageCard {
-                        src: "https://picsum.photos/seed/eq-card2/800/500",
-                        alt: "Ocean waves",
-                        mode: CaptionMode::Overlay,
-                        size: AtomImageSize::Lg,
-                        aspect_ratio: AspectRatio::Ratio16_9,
-                        rounded: true,
-                        title: "Ocean Power",
-                        description: "The raw energy of nature captured in motion.",
-                    }
+            div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-3",
+                EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Props" }
+                PropSelect { label: "mode", value: mode_str(), options: vec!["Below", "Overlay"], onchange: move |v: String| mode_str.set(v) }
+                PropSelect { label: "size", value: size_str(), options: vec!["Sm", "Md", "Lg", "Full"], onchange: move |v: String| size_str.set(v) }
+                PropSelect { label: "aspect_ratio", value: ratio_str(), options: vec!["Free", "Ratio16_9", "Ratio4_3", "Square"], onchange: move |v: String| ratio_str.set(v) }
+                PropSelect { label: "object_fit", value: fit_str(), options: vec!["Cover", "Contain", "Fill"], onchange: move |v: String| fit_str.set(v) }
+                PropToggle { label: "rounded", value: rounded(), onchange: move |v: bool| rounded.set(v) }
+                PropInput { label: "title", value: title(), placeholder: "Card title", onchange: move |v: String| title.set(v) }
+                PropInput { label: "description", value: description(), placeholder: "Card description", onchange: move |v: String| description.set(v) }
+                PropInput { label: "attribution", value: attribution(), placeholder: "Photo by…", onchange: move |v: String| attribution.set(v) }
+            }
+            div { class: "rounded-lg border border-dashed border-[var(--color-card-border)] p-6 max-w-lg",
+                EqImageCard {
+                    src: "https://picsum.photos/seed/eq-card1/800/500",
+                    alt: "Preview image card",
+                    mode: mode,
+                    size: size,
+                    aspect_ratio: aspect_ratio,
+                    object_fit: object_fit,
+                    rounded: rounded(),
+                    title: title_val,
+                    description: desc_val,
+                    attribution: attr_val,
                 }
             }
+            StyleInfo { file: "eq_image_card_styles.rs", styles: styles }
+            CodeBlock { code: code }
         }
     }
 }
 
 #[component]
 fn DemoEqCarousel() -> Element {
+    let mut mode_str = use_signal(|| "Default".to_string());
+    let mut gap_str = use_signal(|| "12".to_string());
+
+    let mode = match mode_str().as_str() {
+        "Peek" => CarouselMode::Peek,
+        _      => CarouselMode::Default,
+    };
+    let gap_val: u32 = gap_str().parse().unwrap_or(12);
+
+    let slides = vec![
+        rsx! {
+            EqImageCard {
+                src: "https://picsum.photos/seed/carousel1/800/450",
+                alt: "Slide one",
+                mode: CaptionMode::Overlay,
+                size: AtomImageSize::Full,
+                aspect_ratio: AspectRatio::Ratio16_9,
+                rounded: true,
+                title: "First Slide",
+                description: "A beautiful mountain landscape.",
+            }
+        },
+        rsx! {
+            EqImageCard {
+                src: "https://picsum.photos/seed/carousel2/800/450",
+                alt: "Slide two",
+                mode: CaptionMode::Overlay,
+                size: AtomImageSize::Full,
+                aspect_ratio: AspectRatio::Ratio16_9,
+                rounded: true,
+                title: "Second Slide",
+                description: "Waves crashing on the shore.",
+            }
+        },
+        rsx! {
+            EqImageCard {
+                src: "https://picsum.photos/seed/carousel3/800/450",
+                alt: "Slide three",
+                mode: CaptionMode::Overlay,
+                size: AtomImageSize::Full,
+                aspect_ratio: AspectRatio::Ratio16_9,
+                rounded: true,
+                title: "Third Slide",
+                description: "A dense forest at dawn.",
+            }
+        },
+        rsx! {
+            EqImageCard {
+                src: "https://picsum.photos/seed/carousel4/800/450",
+                alt: "Slide four",
+                mode: CaptionMode::Overlay,
+                size: AtomImageSize::Full,
+                aspect_ratio: AspectRatio::Ratio16_9,
+                rounded: true,
+                title: "Fourth Slide",
+                description: "Sunset over the desert.",
+            }
+        },
+    ];
+
+    let styles = "CAROUSEL: \"relative w-full overflow-hidden\"\nSLIDE_STRIP: \"flex transition-transform duration-500 ease-in-out\"\nSLIDE: \"w-full shrink-0\"\nARROW_BASE: \"absolute top-1/2 -translate-y-1/2 z-20 ...\"\nDOTS: \"flex justify-center items-center gap-2 mt-4\"".to_string();
+
+    let code = "// Default carousel with slide animation\nEqCarousel {\n    slides: vec![\n        rsx! { /* slide content */ },\n        rsx! { /* slide content */ },\n    ],\n}\n\n// Peek mode — shows neighbours with fade\nEqCarousel {\n    mode: CarouselMode::Peek,\n    gap: 24,  // default 12px\n    slides: vec![ /* ... */ ],\n}".to_string();
+
     rsx! {
         DemoSection { title: "EqCarousel",
-            div { class: "space-y-8",
-                // Default mode — full width with slide animation
-                div { class: "space-y-2",
-                    span { class: "text-sm font-medium text-[var(--color-label-bold)]",
-                        "Default (slide transition)"
-                    }
-                    div { class: "max-w-lg",
-                        EqCarousel {
-                            slides: vec![
-                                rsx! {
-                                    EqImageCard { src : "https://picsum.photos/seed/carousel1/800/450", alt :
-                                    "Slide one", mode : CaptionMode::Overlay, size : AtomImageSize::Full,
-                                    aspect_ratio : AspectRatio::Ratio16_9, rounded : true, title : "First Slide",
-                                    description : "A beautiful mountain landscape.", }
-                                },
-                                rsx! {
-                                    EqImageCard { src : "https://picsum.photos/seed/carousel2/800/450", alt :
-                                    "Slide two", mode : CaptionMode::Overlay, size : AtomImageSize::Full,
-                                    aspect_ratio : AspectRatio::Ratio16_9, rounded : true, title :
-                                    "Second Slide", description : "Waves crashing on the shore.", }
-                                },
-                                rsx! {
-                                    EqImageCard { src : "https://picsum.photos/seed/carousel3/800/450", alt :
-                                    "Slide three", mode : CaptionMode::Overlay, size : AtomImageSize::Full,
-                                    aspect_ratio : AspectRatio::Ratio16_9, rounded : true, title : "Third Slide",
-                                    description : "A dense forest at dawn.", }
-                                },
-                            ],
-                        }
-                    }
-                }
-
-                // Peek mode — neighbours visible with fade masks
-                div { class: "space-y-2",
-                    span { class: "text-sm font-medium text-[var(--color-label-bold)]",
-                        "Peek (show neighbours)"
-                    }
-                    EqCarousel {
-                        mode: CarouselMode::Peek,
-                        slides: vec![
-                            rsx! {
-                                EqImageCard { src : "https://picsum.photos/seed/peek1/800/450", alt :
-                                "Peek slide one", mode : CaptionMode::Overlay, size : AtomImageSize::Full,
-                                aspect_ratio : AspectRatio::Ratio16_9, rounded : true, title : "First Slide",
-                                description : "A beautiful mountain landscape.", }
-                            },
-                            rsx! {
-                                EqImageCard { src : "https://picsum.photos/seed/peek2/800/450", alt :
-                                "Peek slide two", mode : CaptionMode::Overlay, size : AtomImageSize::Full,
-                                aspect_ratio : AspectRatio::Ratio16_9, rounded : true, title :
-                                "Second Slide", description : "Waves crashing on the shore.", }
-                            },
-                            rsx! {
-                                EqImageCard { src : "https://picsum.photos/seed/peek3/800/450", alt :
-                                "Peek slide three", mode : CaptionMode::Overlay, size : AtomImageSize::Full,
-                                aspect_ratio : AspectRatio::Ratio16_9, rounded : true, title : "Third Slide",
-                                description : "A dense forest at dawn.", }
-                            },
-                            rsx! {
-                                EqImageCard { src : "https://picsum.photos/seed/peek4/800/450", alt :
-                                "Peek slide four", mode : CaptionMode::Overlay, size : AtomImageSize::Full,
-                                aspect_ratio : AspectRatio::Ratio16_9, rounded : true, title :
-                                "Fourth Slide", description : "Sunset over the desert.", }
-                            },
-                        ],
-                    }
+            div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-3",
+                EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Props" }
+                PropSelect { label: "mode", value: mode_str(), options: vec!["Default", "Peek"], onchange: move |v: String| mode_str.set(v) }
+                PropInput { label: "gap (px)", value: gap_str(), placeholder: "12", onchange: move |v: String| gap_str.set(v) }
+            }
+            div { class: "rounded-lg border border-dashed border-[var(--color-card-border)] p-6",
+                EqCarousel {
+                    mode: mode,
+                    gap: gap_val,
+                    slides: slides,
                 }
             }
+            StyleInfo { file: "eq_carousel_styles.rs", styles: styles }
+            CodeBlock { code: code }
         }
     }
 }
 
 #[component]
 fn DemoEqCard() -> Element {
+    let mut show_header = use_signal(|| true);
+    let mut show_footer = use_signal(|| true);
+
+    let styles = "CARD: \"rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card)]/60 shadow-sm\"\nCARD_HEADER: \"px-6 py-4 border-b border-[var(--color-card-border)]\"\nCARD_BODY: \"px-6 py-4\"\nCARD_FOOTER: \"px-6 py-4 border-t border-[var(--color-card-border)] flex justify-end gap-2\"".to_string();
+
+    let code = "EqCard {\n    EqCardHeader { \"Card Title\" }\n    EqCardBody { \"Card content goes here.\" }\n    EqCardFooter { \"Footer content\" }\n}\n\n// Minimal card\nEqCard {\n    EqCardBody { \"Body only — no header or footer.\" }\n}".to_string();
+
     rsx! {
         DemoSection { title: "EqCard",
-            div { class: "grid grid-cols-1 md:grid-cols-2 gap-4",
+            div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-3",
+                EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Props" }
+                PropToggle { label: "header", value: show_header(), onchange: move |v: bool| show_header.set(v) }
+                PropToggle { label: "footer", value: show_footer(), onchange: move |v: bool| show_footer.set(v) }
+            }
+            div { class: "rounded-lg border border-dashed border-[var(--color-card-border)] p-6 max-w-md",
                 EqCard {
-                    EqCardHeader { "Card Title" }
-                    EqCardBody { "A card with header, body, and footer sections." }
-                    EqCardFooter { "Footer content" }
-                }
-                EqCard {
-                    EqCardBody { "A minimal card — body only, no header or footer." }
+                    if show_header() {
+                        EqCardHeader { "Card Title" }
+                    }
+                    EqCardBody { "Card body content goes here." }
+                    if show_footer() {
+                        EqCardFooter { "Footer content" }
+                    }
                 }
             }
+            StyleInfo { file: "eq_card_styles.rs", styles: styles }
+            CodeBlock { code: code }
         }
     }
 }
@@ -701,6 +955,7 @@ fn DemoEqCard() -> Element {
 #[component]
 fn DemoEqTree() -> Element {
     let mut selected = use_signal(|| Option::<String>::None);
+    let mut show_count = use_signal(|| true);
 
     let tree = vec![
         TreeNode::new_with_children(
@@ -726,8 +981,16 @@ fn DemoEqTree() -> Element {
         ),
     ];
 
+    let styles = "TREE: \"flex flex-col gap-0.5 text-sm select-none\"\nNODE_ROW: \"flex items-center gap-1.5 px-2 py-1.5 rounded-md ...\"\nNODE_ACTIVE: \"... bg-[var(--color-primary)]/15 text-[var(--color-primary)]\"\nCHEVRON: \"size-4 shrink-0 transition-transform duration-200\"\nLABEL: \"truncate text-[var(--color-label)]\"\nCOUNT: \"ml-1 text-[var(--color-label-secondary)] opacity-60\"".to_string();
+
+    let code = "let nodes = vec![\n    TreeNode::new_with_children(\"branch\", \"Branch\", vec![\n        TreeNode::new(\"leaf-1\", \"Leaf 1\"),\n        TreeNode::new(\"leaf-2\", \"Leaf 2\"),\n    ]),\n];\n\nEqTree {\n    nodes: nodes,\n    selected: selected(),\n    on_select: move |id: String| selected.set(Some(id)),\n    show_count: true,\n}".to_string();
+
     rsx! {
         DemoSection { title: "EqTree",
+            div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-3",
+                EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Props" }
+                PropToggle { label: "show_count", value: show_count(), onchange: move |v: bool| show_count.set(v) }
+            }
             div { class: "flex gap-6",
                 div { class: "w-64 h-64 flex flex-col border border-[var(--color-card-border)] rounded-lg p-3",
                     EqScrollableSpace {
@@ -735,7 +998,7 @@ fn DemoEqTree() -> Element {
                             nodes: tree,
                             selected: selected(),
                             on_select: move |id: String| selected.set(Some(id)),
-                            show_count: true,
+                            show_count: show_count(),
                         }
                     }
                 }
@@ -747,6 +1010,91 @@ fn DemoEqTree() -> Element {
                     }
                 }
             }
+            StyleInfo { file: "eq_tree_styles.rs", styles: styles }
+            CodeBlock { code: code }
+        }
+    }
+}
+
+#[component]
+fn DemoEqAccordion() -> Element {
+    let mut mode_str = use_signal(|| "Single".to_string());
+    let mut panel_count_str = use_signal(|| "3".to_string());
+
+    let mode = match mode_str().as_str() {
+        "Multi" => AccordionMode::Multi,
+        _       => AccordionMode::Single,
+    };
+    let panel_count: usize = panel_count_str().parse().unwrap_or(3).min(6).max(1);
+
+    let sample_panels: Vec<(&str, &str, &str)> = vec![
+        ("what-is", "What is eq_ui?", "A portable Dioxus 0.7 component library following atomic design principles. It ships atoms, molecules, and organisms with 21 built-in themes."),
+        ("getting-started", "Getting started", "Add the crate to your Cargo.toml, include the Tailwind @source directive, and wire up the theme provider. Components are ready to use immediately."),
+        ("theming", "How does theming work?", "Themes are CSS variable sets applied at the root. Switch themes at runtime with a single function call — all components update instantly."),
+        ("customisation", "Can I customise styles?", "Every component exposes a class prop. Pass Tailwind utilities to extend defaults, or prefix with ! to replace them entirely."),
+        ("accordion", "Is this an accordion?", "Yes. You are looking at a live EqAccordion right now. It supports single-expand and multi-expand modes."),
+        ("animation", "How does the animation work?", "The body uses a CSS grid-rows transition between 0fr (collapsed) and 1fr (expanded), giving a smooth height animation without JavaScript measurement."),
+    ];
+
+    let items: Vec<AccordionItem> = sample_panels
+        .into_iter()
+        .take(panel_count)
+        .map(|(id, title, body)| {
+            AccordionItem::new(
+                id,
+                rsx! { "{title}" },
+                rsx! { "{body}" },
+            )
+        })
+        .collect();
+
+    let items_multi: Vec<AccordionItem> = vec![
+        AccordionItem::new("faq-1", rsx! { "Single mode" }, rsx! { "Only one panel can be open at a time." }),
+        AccordionItem::new("faq-2", rsx! { "Multi mode" }, rsx! { "Multiple panels can be open simultaneously." }),
+    ];
+
+    let styles = "ACCORDION: \"flex flex-col divide-y divide-[var(--color-card-border)]\"\nHEADER: \"flex items-center justify-between w-full gap-3 px-4 py-3 ...\"\nBODY: \"grid transition-[grid-template-rows] duration-200 ease-in-out\"\nBODY_OPEN: \"grid-rows-[1fr]\"\nBODY_CLOSED: \"grid-rows-[0fr]\"\nCONTENT: \"pb-4 text-sm text-[var(--color-label-secondary)]\"".to_string();
+
+    let code = "let items = vec![\n    AccordionItem::new(\n        \"panel-1\",\n        rsx! { \"First panel\" },\n        rsx! { \"Content for the first panel.\" },\n    ),\n    AccordionItem::new(\n        \"panel-2\",\n        rsx! { \"Second panel\" },\n        rsx! { \"Content for the second panel.\" },\n    ),\n];\n\n// Single expand (default)\nEqAccordion { items: items.clone() }\n\n// Multi expand\nEqAccordion {\n    items: items,\n    mode: AccordionMode::Multi,\n}".to_string();
+
+    rsx! {
+        DemoSection { title: "EqAccordion",
+            div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-3",
+                EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Props" }
+                PropSelect { label: "mode", value: mode_str(), options: vec!["Single", "Multi"], onchange: move |v: String| mode_str.set(v) }
+                PropInput { label: "panels", value: panel_count_str(), placeholder: "3", onchange: move |v: String| panel_count_str.set(v) }
+            }
+            div { class: "rounded-lg border border-dashed border-[var(--color-card-border)] overflow-hidden",
+                EqAccordion {
+                    items: items,
+                    mode: mode,
+                }
+            }
+            div { class: "space-y-4 mt-6",
+                EqText { variant: TextVariant::Emphasis, "Mode comparison" }
+                div { class: "grid grid-cols-1 md:grid-cols-2 gap-4",
+                    div { class: "space-y-2",
+                        EqText { variant: TextVariant::Caption, "Single (default)" }
+                        div { class: "rounded-lg border border-[var(--color-card-border)] overflow-hidden",
+                            EqAccordion {
+                                items: items_multi.clone(),
+                                mode: AccordionMode::Single,
+                            }
+                        }
+                    }
+                    div { class: "space-y-2",
+                        EqText { variant: TextVariant::Caption, "Multi" }
+                        div { class: "rounded-lg border border-[var(--color-card-border)] overflow-hidden",
+                            EqAccordion {
+                                items: items_multi,
+                                mode: AccordionMode::Multi,
+                            }
+                        }
+                    }
+                }
+            }
+            StyleInfo { file: "eq_accordion_styles.rs", styles: styles }
+            CodeBlock { code: code }
         }
     }
 }
@@ -755,163 +1103,208 @@ fn DemoEqTree() -> Element {
 
 #[component]
 fn DemoEqHeader() -> Element {
+    let mut title_str = use_signal(|| "Equidevium".to_string());
+
+    let site_title: &'static str = match title_str().as_str() {
+        "My App"      => "My App",
+        "Dashboard"   => "Dashboard",
+        "Acme Corp"   => "Acme Corp",
+        _             => "Equidevium",
+    };
+
+    let styles = "HEADER: \"sticky top-0 z-50 border-b ... bg-[var(--color-primary-dark)]/80 backdrop-blur\"\nHEADER_INNER: \"flex items-center justify-between py-4\"\nBRAND: \"text-lg font-semibold tracking-tight ...\"\nNAV_UL: \"flex gap-4 items-center list-none m-0 p-0\"".to_string();
+
+    let code = "EqHeader {\n    site_title: \"My App\",\n    nav: rsx! {\n        li { a { href: \"/\", \"Home\" } }\n        li { a { href: \"/about\", \"About\" } }\n    },\n}".to_string();
+
     rsx! {
         DemoSection { title: "EqHeader",
-            div { class: "space-y-4",
-                div { class: "rounded-lg overflow-hidden border border-[var(--color-card-border)]",
-                    EqHeader {
-                        nav: rsx! {
-                            li {
-                                a {
-                                    href: "#",
-                                    class: "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] transition",
-                                    "Home"
-                                }
+            div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-3",
+                EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Props" }
+                PropSelect { label: "site_title", value: title_str(), options: vec!["Equidevium", "My App", "Dashboard", "Acme Corp"], onchange: move |v: String| title_str.set(v) }
+            }
+            div { class: "rounded-lg border border-dashed border-[var(--color-card-border)] overflow-hidden",
+                EqHeader {
+                    site_title: site_title,
+                    nav: rsx! {
+                        li {
+                            a {
+                                href: "#",
+                                class: "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] transition",
+                                "Home"
                             }
-                            li {
-                                a {
-                                    href: "#",
-                                    class: "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] transition",
-                                    "About"
-                                }
+                        }
+                        li {
+                            a {
+                                href: "#",
+                                class: "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] transition",
+                                "About"
                             }
-                            li {
-                                a {
-                                    href: "#",
-                                    class: "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] transition",
-                                    "Contact"
-                                }
+                        }
+                        li {
+                            a {
+                                href: "#",
+                                class: "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] transition",
+                                "Contact"
                             }
-                        },
-                    }
-                }
-                p { class: "text-sm text-[var(--color-label-secondary)]",
-                    "Header with nav links passed as an Element prop."
+                        }
+                    },
                 }
             }
+            StyleInfo { file: "eq_header_styles.rs", styles: styles }
+            CodeBlock { code: code }
         }
     }
 }
 
 #[component]
 fn DemoEqHeroShell() -> Element {
+    let mut title = use_signal(|| "Hero Shell Title".to_string());
+    let mut subtitle = use_signal(|| "A tagline or subtitle goes here.".to_string());
+    let mut title_color = use_signal(|| String::new());
+    let mut subtitle_color = use_signal(|| String::new());
+    let mut show_bg = use_signal(|| false);
+
+    let title_c_val = title_color();
+    let subtitle_c_val = subtitle_color();
+    let title_c: Option<String> = if title_c_val.is_empty() { None } else { Some(title_c_val) };
+    let subtitle_c: Option<String> = if subtitle_c_val.is_empty() { None } else { Some(subtitle_c_val) };
+
+    let styles = "HERO_SHELL: \"py-20 md:py-28 bg-[var(--gradient-background)]\"\nHERO_TITLE: \"text-4xl md:text-5xl font-semibold tracking-tight ...\"\nHERO_SUBTITLE: \"mt-4 max-w-2xl text-lg ...\"\nHERO_ACTIONS: \"mt-8 flex gap-4\"\nHERO_BG: \"absolute inset-0 w-full h-full\"\nHERO_OVERLAY: \"absolute inset-0 bg-black/50\"".to_string();
+
+    let code = "EqHeroShell {\n    title: \"Welcome\",\n    subtitle: \"Build something great.\",\n}\n\nEqHeroShell {\n    title: \"Welcome\",\n    subtitle: \"Build something great.\",\n    title_color: \"#ff6b6b\",\n    background: rsx! {\n        EqImage { src: \"hero.jpg\", alt: \"Hero\",\n            size: AtomImageSize::Full,\n            aspect_ratio: AspectRatio::Ratio4_3,\n            object_fit: ObjectFit::Cover }\n    },\n}".to_string();
+
     rsx! {
         DemoSection { title: "EqHeroShell",
-            div { class: "space-y-8",
-                div { class: "space-y-2",
-                    span { class: "text-sm font-medium text-[var(--color-label-bold)]",
-                        "Default"
-                    }
+            div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-3",
+                EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Props" }
+                PropInput { label: "title", value: title(), placeholder: "Hero title", onchange: move |v: String| title.set(v) }
+                PropInput { label: "subtitle", value: subtitle(), placeholder: "Subtitle text", onchange: move |v: String| subtitle.set(v) }
+                PropInput { label: "title_color", value: title_color(), placeholder: "#ff6b6b (empty = theme)", onchange: move |v: String| title_color.set(v) }
+                PropInput { label: "sub_color", value: subtitle_color(), placeholder: "#ffd93d (empty = theme)", onchange: move |v: String| subtitle_color.set(v) }
+                PropToggle { label: "background", value: show_bg(), onchange: move |v: bool| show_bg.set(v) }
+            }
+            div { class: "rounded-lg border border-dashed border-[var(--color-card-border)] overflow-hidden",
+                if show_bg() {
                     EqHeroShell {
-                        title: "Hero Shell Title",
-                        subtitle: "A tagline or subtitle goes here.",
-                    }
-                }
-
-                div { class: "space-y-2",
-                    span { class: "text-sm font-medium text-[var(--color-label-bold)]",
-                        "With background image"
-                    }
-                    EqHeroShell {
-                        title: "Hero Shell Title",
-                        subtitle: "A tagline or subtitle goes here.",
+                        title: title(),
+                        subtitle: subtitle(),
+                        title_color: title_c.clone(),
+                        subtitle_color: subtitle_c.clone(),
                         background: rsx! {
                             EqImage {
                                 src: "https://picsum.photos/seed/eq-full/1200/900",
-                                alt: "Full width placeholder",
+                                alt: "Background image",
                                 size: AtomImageSize::Full,
                                 aspect_ratio: AspectRatio::Ratio4_3,
                                 object_fit: ObjectFit::Cover,
                             }
                         },
                     }
-                }
-
-                div { class: "space-y-2",
-                    span { class: "text-sm font-medium text-[var(--color-label-bold)]",
-                        "With custom colors"
-                    }
+                } else {
                     EqHeroShell {
-                        title: "Hero Shell Title",
-                        subtitle: "A tagline or subtitle goes here.",
-                        title_color: "#ff6b6b",
-                        subtitle_color: "#ffd93d",
-                        background: rsx! {
-                            EqImage {
-                                src: "https://picsum.photos/seed/eq-full/1200/900",
-                                alt: "Full width placeholder",
-                                size: AtomImageSize::Full,
-                                aspect_ratio: AspectRatio::Ratio4_3,
-                                object_fit: ObjectFit::Cover,
-                            }
-                        },
-                    }
-                }
-
-                div { class: "space-y-2",
-                    span { class: "text-sm font-medium text-[var(--color-label-bold)]",
-                        "With CSS variable colors"
-                    }
-                    EqHeroShell {
-                        title: "Hero Shell Title",
-                        subtitle: "A tagline or subtitle goes here.",
-                        title_color: "#ff6b6b",
-                        subtitle_color: "var(--color-label-bold)",
-                        background: rsx! {
-                            EqImage {
-                                src: "https://picsum.photos/seed/eq-full/1200/900",
-                                alt: "Full width placeholder",
-                                size: AtomImageSize::Full,
-                                aspect_ratio: AspectRatio::Ratio4_3,
-                                object_fit: ObjectFit::Cover,
-                            }
-                        },
+                        title: title(),
+                        subtitle: subtitle(),
+                        title_color: title_c.clone(),
+                        subtitle_color: subtitle_c.clone(),
                     }
                 }
             }
+            StyleInfo { file: "eq_hero_shell_styles.rs", styles: styles }
+            CodeBlock { code: code }
         }
     }
 }
 
 #[component]
 fn DemoEqPageSection() -> Element {
+    let mut title = use_signal(|| "Section Title".to_string());
+    let mut description = use_signal(|| "A description of this section with some context.".to_string());
+
+    let title_val: Option<String> = if title().is_empty() { None } else { Some(title()) };
+    let desc_val: Option<String> = if description().is_empty() { None } else { Some(description()) };
+
+    let styles = "SECTION_WRAP: \"py-12 md:py-16\"\nSECTION_TITLE: \"text-2xl md:text-3xl font-semibold tracking-tight\"\nSECTION_DESC: \"mt-2 w-full text-[var(--color-label-secondary)]\"\nSECTION_BODY: \"mt-8\"".to_string();
+
+    let code = "EqPageSection {\n    title: \"Features\",\n    description: \"What makes this product special.\",\n}\n\nEqPageSection {\n    title: \"With Children\",\n    description: \"Extra content below.\",\n    div { \"Nested child content\" }\n}".to_string();
+
     rsx! {
         DemoSection { title: "EqPageSection",
-            div { class: "space-y-4",
+            div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-3",
+                EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Props" }
+                PropInput { label: "title", value: title(), placeholder: "Section title", onchange: move |v: String| title.set(v) }
+                PropInput { label: "description", value: description(), placeholder: "Section description", onchange: move |v: String| description.set(v) }
+            }
+            div { class: "rounded-lg border border-dashed border-[var(--color-card-border)] overflow-hidden",
                 EqPageSection {
-                    title: "Section Title",
-                    description: "A description of this section with some context.",
-                }
-                EqPageSection {
-                    title: "Section with Children",
-                    description: "This section has extra content below.",
+                    title: title_val,
+                    description: desc_val,
                     div { class: "mt-4 p-4 rounded-lg bg-[var(--color-card)]/40",
                         "Child content inside a PageSection."
                     }
                 }
             }
+            StyleInfo { file: "eq_page_section_styles.rs", styles: styles }
+            CodeBlock { code: code }
         }
     }
 }
 
 #[component]
 fn DemoEqFooter() -> Element {
+    let mut holder_str = use_signal(|| "Equidevium".to_string());
+    let mut tagline_str = use_signal(|| "Building the future, one line at a time.".to_string());
+    let mut year_str = use_signal(|| "2026".to_string());
+
+    let copyright_holder: &'static str = match holder_str().as_str() {
+        "Acme Corp"   => "Acme Corp",
+        "My Company"  => "My Company",
+        _             => "Equidevium",
+    };
+    let tagline: &'static str = match tagline_str().as_str() {
+        "Innovate. Build. Ship."    => "Innovate. Build. Ship.",
+        "Making the web beautiful." => "Making the web beautiful.",
+        _                           => "Building the future, one line at a time.",
+    };
+    let year: u16 = year_str().parse().unwrap_or(2026);
+
+    let styles = "FOOTER: \"mt-16 border-t border-[var(--color-card-border)] bg-[var(--color-primary-dark)]\"\nFOOTER_INNER: \"mx-auto max-w-6xl px-4 py-12\"\nFOOTER_GRID: \"grid gap-10 md:grid-cols-3\"\nFOOTER_BOTTOM: \"mt-10 flex flex-col gap-2 ...\"".to_string();
+
+    let code = "EqFooter {}\n\nEqFooter {\n    copyright_holder: \"Acme Corp\",\n    year: 2026,\n    tagline: \"Innovate. Build. Ship.\",\n}".to_string();
+
     rsx! {
         DemoSection { title: "EqFooter",
-            div { class: "rounded-lg overflow-hidden border border-[var(--color-card-border)]",
-                EqFooter {}
+            div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-3",
+                EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Props" }
+                PropSelect { label: "holder", value: holder_str(), options: vec!["Equidevium", "Acme Corp", "My Company"], onchange: move |v: String| holder_str.set(v) }
+                PropSelect { label: "tagline", value: tagline_str(), options: vec!["Building the future, one line at a time.", "Innovate. Build. Ship.", "Making the web beautiful."], onchange: move |v: String| tagline_str.set(v) }
+                PropInput { label: "year", value: year_str(), placeholder: "2026", onchange: move |v: String| year_str.set(v) }
             }
+            div { class: "rounded-lg border border-dashed border-[var(--color-card-border)] overflow-hidden",
+                EqFooter {
+                    copyright_holder: copyright_holder,
+                    year: year,
+                    tagline: tagline,
+                }
+            }
+            StyleInfo { file: "eq_footer_styles.rs", styles: styles }
+            CodeBlock { code: code }
         }
     }
 }
 
 #[component]
 fn DemoEqAppShell() -> Element {
+    let styles = "APP: \"min-h-screen bg-[var(--color-primary-dark)] text-[var(--color-label-primary)]\"\nCONTAINER_LAYOUT: \"mx-auto max-w-6xl px-4\"\nMAIN_CONTENT: \"flex-1\"\nMAIN_INNER: \"py-10\"".to_string();
+
+    let code = "EqAppShell {\n    header: rsx! {\n        EqHeader { site_title: \"My App\",\n            nav: rsx! { li { \"Nav item\" } },\n        }\n    },\n    footer: rsx! { EqFooter {} },\n\n    // Page content as children\n    div { \"Your page content here\" }\n}".to_string();
+
     rsx! {
         DemoSection { title: "EqAppShell",
-            p { class: "text-sm text-[var(--color-label-secondary)]",
+            EqText { variant: TextVariant::Muted,
                 "EqAppShell wraps header + footer + children into a full page layout. It is the outermost layout component — you are looking at a live example right now. This playground itself uses EqAppShell."
             }
+            StyleInfo { file: "theme.rs (shared)", styles: styles }
+            CodeBlock { code: code }
         }
     }
 }

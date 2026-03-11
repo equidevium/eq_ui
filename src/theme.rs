@@ -3,6 +3,25 @@
 //! When an actual atom/molecule component is created (e.g. EqButton),
 //! its specific constants move from here to the component's `_styles.rs`.
 
+// ── Class Override Utility ──────────────────────────────────────────
+
+/// Merges default component classes with an optional consumer override.
+///
+/// - Empty string → returns `defaults` unchanged.
+/// - Starts with `!` → full replacement: defaults are discarded, only the
+///   consumer's classes (after the `!`) are used.
+/// - Anything else → appended after `defaults` so the consumer can extend.
+pub fn merge_classes(defaults: &str, class_override: &str) -> String {
+    let trimmed = class_override.trim();
+    if trimmed.is_empty() {
+        return defaults.to_string();
+    }
+    if let Some(replacement) = trimmed.strip_prefix('!') {
+        return replacement.trim().to_string();
+    }
+    format!("{defaults} {trimmed}")
+}
+
 // ── Layout ──────────────────────────────────────────────────────────
 pub const APP: &str =
     "min-h-screen bg-[var(--color-primary-dark)] text-[var(--color-label-primary)]";

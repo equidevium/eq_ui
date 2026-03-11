@@ -1,5 +1,4 @@
 mod eq_app_shell;
-mod eq_app_shell_styles;
 mod eq_footer;
 pub mod eq_footer_styles;
 mod eq_header;

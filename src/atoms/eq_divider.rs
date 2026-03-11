@@ -1,4 +1,5 @@
 use super::eq_divider_styles as s;
+use crate::theme::merge_classes;
 use dioxus::prelude::*;
 
 /// Visual style of the divider line.
@@ -53,6 +54,9 @@ pub fn EqDivider(
     /// Vertical spacing around the divider.
     #[props(default)]
     spacing: DividerSpacing,
+    /// Optional class override — extend or replace default styles.
+    #[props(into, default)]
+    class: String,
 ) -> Element {
     let spacing_class = match spacing {
         DividerSpacing::Compact => s::SPACING_COMPACT,
@@ -62,8 +66,10 @@ pub fn EqDivider(
 
     // Spacer is a special case — invisible, just spacing
     if variant == DividerVariant::Spacer {
+        let base = format!("{} {}", s::SPACER, spacing_class);
+        let cls = merge_classes(&base, &class);
         return rsx! {
-            hr { class: "{s::SPACER} {spacing_class}" }
+            hr { class: "{cls}" }
         };
     }
 
@@ -80,7 +86,10 @@ pub fn EqDivider(
         DividerWeight::ExtraThick => s::EXTRA_THICK,
     };
 
+    let base = format!("{} {} {} {}", s::BASE, variant_class, weight_class, spacing_class);
+    let cls = merge_classes(&base, &class);
+
     rsx! {
-        hr { class: "{s::BASE} {variant_class} {weight_class} {spacing_class}" }
+        hr { class: "{cls}" }
     }
 }

@@ -1,5 +1,6 @@
 use super::eq_image_card_styles as s;
 use crate::atoms::{AspectRatio, AtomImageSize, EqImage, ObjectFit};
+use crate::theme::merge_classes;
 use dioxus::prelude::*;
 
 /// Controls how the caption is displayed relative to the image.
@@ -10,6 +11,29 @@ pub enum CaptionMode {
     Below,
     /// Caption text overlaid on the image with a gradient backdrop.
     Overlay,
+}
+
+/// Internal helper — renders title, description, and attribution text.
+#[component]
+fn CaptionContent(
+    title_class: &'static str,
+    description_class: &'static str,
+    attribution_class: &'static str,
+    title: Option<String>,
+    description: Option<String>,
+    attribution: Option<String>,
+) -> Element {
+    rsx! {
+        if let Some(t) = title {
+            p { class: title_class, "{t}" }
+        }
+        if let Some(d) = description {
+            p { class: description_class, "{d}" }
+        }
+        if let Some(a) = attribution {
+            p { class: attribution_class, "{a}" }
+        }
+    }
 }
 
 /// Image card molecule.
@@ -47,61 +71,48 @@ pub fn EqImageCard(
     /// Optional attribution / photo credit.
     #[props(into)]
     attribution: Option<String>,
+    /// Optional class override — extend or replace default wrapper styles.
+    #[props(into, default)]
+    class: String,
 ) -> Element {
     let has_caption = title.is_some() || description.is_some() || attribution.is_some();
 
     match mode {
-        CaptionMode::Below => rsx! {
-            figure { class: s::CARD_WRAPPER,
-                EqImage {
-                    src,
-                    alt,
-                    size,
-                    aspect_ratio,
-                    object_fit,
-                    rounded,
-                }
+        CaptionMode::Below => {
+            let cls = merge_classes(s::CARD_WRAPPER, &class);
+            rsx! {
+            figure { class: "{cls}",
+                EqImage { src, alt, size, aspect_ratio, object_fit, rounded }
                 if has_caption {
                     figcaption { class: s::FIGCAPTION,
-                        if let Some(t) = title {
-                            p { class: s::CAPTION_TITLE, "{t}" }
-                        }
-                        if let Some(d) = description {
-                            p { class: s::CAPTION_DESCRIPTION, "{d}" }
-                        }
-                        if let Some(a) = attribution {
-                            p { class: s::CAPTION_ATTRIBUTION, "{a}" }
+                        CaptionContent {
+                            title_class: s::CAPTION_TITLE,
+                            description_class: s::CAPTION_DESCRIPTION,
+                            attribution_class: s::CAPTION_ATTRIBUTION,
+                            title, description, attribution,
                         }
                     }
                 }
             }
-        },
-        CaptionMode::Overlay => rsx! {
-            div { class: s::OVERLAY_CONTAINER,
-                EqImage {
-                    src,
-                    alt,
-                    size,
-                    aspect_ratio,
-                    object_fit,
-                    rounded,
-                }
+        }},
+        CaptionMode::Overlay => {
+            let cls = merge_classes(s::OVERLAY_CONTAINER, &class);
+            rsx! {
+            div { class: "{cls}",
+                EqImage { src, alt, size, aspect_ratio, object_fit, rounded }
                 if has_caption {
                     div { class: s::OVERLAY_GRADIENT,
                         div { class: s::OVERLAY_TEXT_WRAPPER,
-                            if let Some(t) = title {
-                                p { class: s::OVERLAY_TITLE, "{t}" }
-                            }
-                            if let Some(d) = description {
-                                p { class: s::OVERLAY_DESCRIPTION, "{d}" }
-                            }
-                            if let Some(a) = attribution {
-                                p { class: s::OVERLAY_ATTRIBUTION, "{a}" }
+                            CaptionContent {
+                                title_class: s::OVERLAY_TITLE,
+                                description_class: s::OVERLAY_DESCRIPTION,
+                                attribution_class: s::OVERLAY_ATTRIBUTION,
+                                title, description, attribution,
                             }
                         }
                     }
                 }
             }
-        },
+        }},
     }
 }

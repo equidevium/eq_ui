@@ -1,5 +1,6 @@
 use dioxus::prelude::*;
 use super::eq_input_styles as s;
+use crate::theme::merge_classes;
 
 /// Input kind — determines the rendered element and `type` attribute.
 #[derive(Clone, PartialEq, Default)]
@@ -13,6 +14,8 @@ pub enum InputKind {
 
 /// Atomic input component.
 /// Renders a styled `<input>` or `<textarea>` depending on `kind`.
+///
+/// Use `class` to extend or replace the default styles .
 #[component]
 pub fn EqInput(
     #[props(default)]
@@ -29,21 +32,28 @@ pub fn EqInput(
     required: bool,
     #[props(default = String::new())]
     value: String,
+    /// Optional class override — extend or replace default styles.
+    #[props(into, default)]
+    class: String,
     oninput: EventHandler<FormEvent>,
 ) -> Element {
     let disabled_class = if disabled { s::DISABLED } else { "" };
 
     match kind {
-        InputKind::Textarea => rsx! {
-            textarea {
-                class: "{s::CONTROL} {s::TEXTAREA} {disabled_class}",
-                name: "{name}",
-                id: "{id}",
-                placeholder: "{placeholder}",
-                disabled: disabled,
-                required: required,
-                value: "{value}",
-                oninput: move |e| oninput.call(e),
+        InputKind::Textarea => {
+            let base = format!("{} {} {}", s::CONTROL, s::TEXTAREA, disabled_class);
+            let cls = merge_classes(&base, &class);
+            rsx! {
+                textarea {
+                    class: "{cls}",
+                    name: "{name}",
+                    id: "{id}",
+                    placeholder: "{placeholder}",
+                    disabled: disabled,
+                    required: required,
+                    value: "{value}",
+                    oninput: move |e| oninput.call(e),
+                }
             }
         },
         _ => {
@@ -52,9 +62,11 @@ pub fn EqInput(
                 InputKind::Password => "password",
                 _ => "text",
             };
+            let base = format!("{} {}", s::CONTROL, disabled_class);
+            let cls = merge_classes(&base, &class);
             rsx! {
                 input {
-                    class: "{s::CONTROL} {disabled_class}",
+                    class: "{cls}",
                     r#type: "{input_type}",
                     name: "{name}",
                     id: "{id}",

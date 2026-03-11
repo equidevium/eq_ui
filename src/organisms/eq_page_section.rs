@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 use super::eq_page_section_styles::*;
-use crate::theme::CONTAINER_LAYOUT;
+use crate::theme::{merge_classes, CONTAINER_LAYOUT};
 
 /// A structural wrapper for a page block/section.
 /// Use this in pages to keep spacing and width consistent.
@@ -17,10 +17,15 @@ pub fn EqPageSection(
     /// Optional section content
     #[props(default)]
     children: Element,
+    /// Optional class override — extend or replace default wrapper styles.
+    #[props(into, default)]
+    class: String,
 ) -> Element {
+    let base = format!("{CONTAINER_LAYOUT} {SECTION_WRAP}");
+    let cls = merge_classes(&base, &class);
     rsx! {
         section { id,
-            div { class: "{CONTAINER_LAYOUT} {SECTION_WRAP}",
+            div { class: "{cls}",
                 if let Some(title) = title {
                     h2 { class: SECTION_TITLE, "{title}" }
                 }

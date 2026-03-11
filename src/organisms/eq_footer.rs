@@ -1,5 +1,6 @@
 use dioxus::prelude::*;
 use super::eq_footer_styles as s;
+use crate::theme::merge_classes;
 
 /// Footer link representation
 #[derive(Clone, PartialEq)]
@@ -52,9 +53,13 @@ pub fn EqFooter(
     #[props(default = 2026)] year: u16,
     #[props(default = default_link_groups())] link_groups: Vec<FooterLinkGroup>,
     #[props(default = "Building the future, one line at a time.")] tagline: &'static str,
+    /// Optional class override — extend or replace default wrapper styles.
+    #[props(into, default)]
+    class: String,
 ) -> Element {
+    let cls = merge_classes(s::FOOTER, &class);
     rsx! {
-        footer { class: s::FOOTER,
+        footer { class: "{cls}",
             div { class: s::FOOTER_INNER,
 
                 if !link_groups.is_empty() {

@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 use super::eq_header_styles as s;
-use crate::theme::CONTAINER_LAYOUT;
+use crate::theme::{merge_classes, CONTAINER_LAYOUT};
 
 /// Portable header component.
 /// Accepts nav content as an Element prop so the platform crate
@@ -12,9 +12,13 @@ pub fn EqHeader(
     /// Navigation content — the caller provides `<li>` elements.
     /// EqHeader wraps them in `<nav><ul>` with correct styling.
     nav: Option<Element>,
+    /// Optional class override — extend or replace default wrapper styles.
+    #[props(into, default)]
+    class: String,
 ) -> Element {
+    let cls = merge_classes(s::HEADER, &class);
     rsx! {
-        header { class: s::HEADER,
+        header { class: "{cls}",
             div { class: "{CONTAINER_LAYOUT} {s::HEADER_INNER}",
                 h1 {
                     a {

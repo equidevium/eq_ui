@@ -14,11 +14,15 @@
 - `EqInput` — Text, email, password, textarea inputs
 - `EqIcon` — Icon wrapper with size variants (Sm, Md, Lg)
 - `EqImage` — Full-featured image atom (sizing, aspect ratios, object-fit, rounded corners)
+- `EqScrollableSpace` — Scrollable container with themed scrollbar
+- `EqDivider` — Separator with variants (Solid, Dashed, Dotted, Spacer), weights, and spacing
 
 ### Molecules
 - `EqCard` — Card with header, body, footer slots
 - `EqImageCard` — Image card with caption modes (Below, Overlay)
-- `EqCarousel` — Generic content carousel with arrow navigation and dot indicators
+- `EqCarousel` — Generic content carousel with Default and Peek modes
+- `EqTree` — Collapsible tree view with select, expand/collapse, and child count
+- `EqAccordion` — Collapsible panels with single-expand and multi-expand modes, smooth CSS grid animation, element headers
 
 ### Organisms
 - `EqAppShell` — Full-page layout (header + main + footer)
@@ -29,17 +33,18 @@
 - `EqPageSection` — Content section with title and description
 
 ### Theming
-- `EqTheme` — Theme enum with 14 built-in themes + custom CSS support
+- `EqTheme` — Theme enum with custom CSS support
 - `EqThemeRenderer` — Runtime theme switcher using `document::Style`
 - Theme context via `use_theme_provider()` / `use_theme()` / `set_theme()`
 - Built-in themes (21): Unghosty, Burgundy, Gold, PurplePink, Monochrome, Watermelon, Sunset, Ocean, Spacetime, Gruvbox, Monokai, Hellas, Egypt, Dometrain, Catppuccin, Dracula, Nord, OneDark, RosePine, SolarizedDark, TokyoNight
 
 ### Infrastructure
 - Co-located `_styles.rs` pattern for all components
-- `theme.rs` shared style tokens
+- `theme.rs` shared style tokens + `merge_classes()` utility
 - CSS variable system (`colors.css`, `buttons.css`, `index.css`)
 - Tailwind CSS v4 with `@source` directives scanning `.rs` files
-- Showcase example (`dx serve --example showcase --platform web`)
+- `class` prop on every component for style overrides via `merge_classes()`
+- EqPlayground — interactive component playground with prop controls, variant galleries, CSS documentation, and usage examples
 
 ---
 
@@ -48,69 +53,18 @@
 These are the items currently being worked on or immediately planned.
 
 ### Components
-- [ ] **EqAccordion** (Molecule) - Collapsible panels that accept any element as content. Supports single and multi-expand modes.
 - [ ] **EqVideo** (Organism) - Video player organism. To be decomposed into smaller molecules/atoms (play button, progress bar, controls, thumbnail).
 - [ ] **EqButton** (Atom) - Dedicated button component. Style tokens already exist in `theme.rs` (`BTN_BASE`, `BTN_PRIMARY`, `BTN_GHOST`, `BTN_DANGER`, size variants). Needs its own component file + `_styles.rs`.
 
 ### Theming & Customization
-- [ ] **Tailwind Class Merger (`merge_classes`)** - A utility function in `theme.rs` (or a dedicated `utils.rs`) that lets consumers extend or fully replace a component's default Tailwind classes via a single `class_override` prop. This is the foundation for the style override system.
-
-  **How it works:**
-  ```rust
-  // In theme.rs or utils.rs
-  pub fn merge_classes(base: &str, override_class: &str) -> String {
-      if override_class.is_empty() {
-          base.to_string()
-      } else if override_class.starts_with("!") {
-          // "!" prefix = full replacement, discard defaults
-          override_class[1..].to_string()
-      } else {
-          // Append to defaults
-          format!("{base} {override_class}")
-      }
-  }
-  ```
-
-  **How components use it:**
-  ```rust
-  use crate::theme::merge_classes;
-
-  #[component]
-  pub fn EqCard(
-      #[props(into, default)]
-      class_override: String,
-      children: Element,
-  ) -> Element {
-      rsx! {
-          div { class: "{merge_classes(s::CARD_WRAPPER, &class_override)}",
-              {children}
-          }
-      }
-  }
-  ```
-
-  **How consumers use it:**
-  ```rust
-  // Extend - appends extra classes to the defaults
-  EqCard { class_override: "shadow-xl border-2 border-red-500", ... }
-
-  // Full replace - "!" prefix discards all default styles
-  EqCard { class_override: "!my-custom-card p-8 bg-white rounded-none", ... }
-
-  // No override - uses defaults as-is
-  EqCard { ... }
-  ```
-
-  **Rollout plan:** Start with components that benefit most from customization (`EqCard`, `EqHeroShell`, `EqPageSection`), then expand to others incrementally. Not every component needs `class_override` - some should stay opinionated.
-
-- [ ] **Style override system** - Apply the `merge_classes` pattern to components. Started with `title_color`/`subtitle_color` on `EqHeroShell` for CSS color overrides. The `class_override` prop (powered by `merge_classes`) handles Tailwind class overrides.
-- [ ] **EqHeroShell overlay customizability** - Make the overlay opacity/color configurable instead of hardcoded `bg-black/50`. Can use `class_override` on the overlay div or a dedicated `overlay_class` prop.
 - [ ] **Custom theme loading** - Finalize `set_custom_theme()` for loading user-provided CSS strings at runtime.
+
+### Refactoring
+- [ ] **EqCard macro unification** - The four EqCard sub-components (`EqCard`, `EqCardHeader`, `EqCardBody`, `EqCardFooter`) are structurally identical wrappers. Unify via a declarative macro to reduce duplication.
 
 ### Documentation & Tooling
 - [ ] **Integration guide** - Step-by-step instructions for adding eq_ui to a consuming project (git dependency, Tailwind `@source`, theme setup, `EqThemeRenderer` wiring).
-- [ ] **Showcase improvements** - Add theming section to showcase. Document all component prop variations.
-- [ ] **EqPlayground** - Storybook alternative for eq_ui. Two-panel layout: collapsible component tree on the left (grouped by Atoms/Molecules/Organisms), preview area on the right with interactive prop controls and variant gallery. Theme switcher in the header. Built as a separate binary crate to evaluate hot reload behavior. Dogfoods eq_ui components for its own UI. See Rule 15 in RULES.md for full layout spec.
+- [ ] **Playground improvements** - Continue refining interactive demos, adding new component demos as they ship.
 
 ---
 
@@ -119,13 +73,11 @@ These are the items currently being worked on or immediately planned.
 Items to tackle once the "Now" batch stabilizes.
 
 ### Components
-- [ ] **EqTree** (Molecule/Organism) - Hierarchical tree component. Each branch can contain sub-branches and leaf items. Supports expand/collapse.
 - [ ] **EqModal** (Molecule) - Modal dialog with backdrop, configurable size, and close behavior.
 - [ ] **EqToast / EqNotification** (Molecule) - Toast notifications with auto-dismiss, severity levels (info, success, warning, error).
 - [ ] **EqTabs** (Molecule) - Tabbed content panels.
 - [ ] **EqBadge** (Atom) - Small status indicator/label.
 - [ ] **EqAvatar** (Atom) - User avatar with image, initials fallback, and size variants.
-- [ ] **EqDivider** (Atom) - Horizontal/vertical separator.
 - [ ] **EqTooltip** (Atom/Molecule) - Hover tooltip.
 - [ ] **EqDropdown** (Molecule) - Dropdown menu with selectable items.
 
@@ -170,10 +122,9 @@ Longer-term ideas and aspirations.
 
 ## Contributing
 
-
-To run the showcase locally:
+To run the playground locally:
 ```bash
-dx serve --example showcase --platform web
+dx serve --example playground --platform web
 ```
 
 To update the library in a consuming project:

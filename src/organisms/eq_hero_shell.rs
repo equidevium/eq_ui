@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 use super::eq_hero_shell_styles::*;
-use crate::theme::CONTAINER_LAYOUT;
+use crate::theme::{merge_classes, CONTAINER_LAYOUT};
 
 #[component]
 pub fn EqHeroShell(
@@ -14,9 +14,14 @@ pub fn EqHeroShell(
     subtitle_color: Option<String>,
     actions: Option<Element>,
     background: Option<Element>,
+    /// Optional class override — extend or replace default wrapper styles.
+    #[props(into, default)]
+    class: String,
 ) -> Element {
+    let base = format!("{HERO_SHELL} {HERO_SHELL_RELATIVE}");
+    let cls = merge_classes(&base, &class);
     rsx! {
-        section { class: "{HERO_SHELL} {HERO_SHELL_RELATIVE}",
+        section { class: "{cls}",
             if let Some(bg) = background {
                 div { class: HERO_BG,
                     {bg}

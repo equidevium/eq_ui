@@ -1,4 +1,5 @@
 use super::eq_tree_styles as s;
+use crate::theme::merge_classes;
 use dioxus::prelude::*;
 
 // ---------------------------------------------------------------------------
@@ -147,18 +148,21 @@ impl TreeNode {
     }
 
     /// Find a node anywhere in the subtree by `parent_id` and add a child to it.
-    /// Returns `true` if the parent was found and the child was inserted.
-    pub fn add_child_to(&mut self, parent_id: &str, child: TreeNode) -> bool {
+    /// Returns `Ok(())` if the parent was found and the child was inserted,
+    /// or `Err(child)` if the parent was not found (returns the child back).
+    pub fn add_child_to(&mut self, parent_id: &str, child: TreeNode) -> Result<(), TreeNode> {
         if self.id == parent_id {
             self.add_child(child);
-            return true;
+            return Ok(());
         }
+        let mut orphan = child;
         for c in &mut self.children {
-            if c.add_child_to(parent_id, child.clone()) {
-                return true;
+            match c.add_child_to(parent_id, orphan) {
+                Ok(()) => return Ok(()),
+                Err(returned) => orphan = returned,
             }
         }
-        false
+        Err(orphan)
     }
 
     /// Remove a node by id from anywhere in the subtree.
@@ -196,10 +200,9 @@ impl TreeNode {
                 return false;
             }
         }
-        // Remove the node first
+        // Remove the node first, then insert under the new parent
         if let Some(removed) = self.remove_node(node_id) {
-            // Insert under the new parent
-            if self.add_child_to(new_parent_id, removed) {
+            if self.add_child_to(new_parent_id, removed).is_ok() {
                 return true;
             }
         }
@@ -227,9 +230,13 @@ pub fn EqTree(
     /// When `true`, branch nodes show their direct child count, e.g. "Atoms (8)".
     #[props(default)]
     show_count: bool,
+    /// Optional class override — extend or replace default wrapper styles.
+    #[props(into, default)]
+    class: String,
 ) -> Element {
+    let cls = merge_classes(s::TREE, &class);
     rsx! {
-        div { class: s::TREE,
+        div { class: "{cls}",
             for node in nodes {
                 TreeBranch {
                     key: "{node.id}",

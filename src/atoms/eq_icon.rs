@@ -1,5 +1,6 @@
 use dioxus::prelude::*;
 use super::eq_icon_styles as s;
+use crate::theme::merge_classes;
 
 /// Icon size variant.
 #[derive(Clone, PartialEq, Default)]
@@ -25,6 +26,9 @@ pub fn EqIcon(
     size: IconSize,
     #[props(default = false)]
     muted: bool,
+    /// Optional class override — extend or replace default styles.
+    #[props(into, default)]
+    class: String,
     children: Element,
 ) -> Element {
     let size_class = match size {
@@ -33,9 +37,11 @@ pub fn EqIcon(
         IconSize::Lg => s::LG,
     };
     let color_class = if muted { s::MUTED } else { s::DEFAULT };
+    let base = format!("{} {} {}", s::WRAPPER, size_class, color_class);
+    let cls = merge_classes(&base, &class);
 
     rsx! {
-        span { class: "{s::WRAPPER} {size_class} {color_class}",
+        span { class: "{cls}",
             {children}
         }
     }
