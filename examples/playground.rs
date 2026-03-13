@@ -211,41 +211,320 @@ fn DemoSection(title: &'static str, children: Element) -> Element {
     }
 }
 
-/// Renders a themed code block with monospace font and subtle background.
-/// Uses `dangerous_inner_html` to avoid rsx! format-string parsing of braces.
+// ── Gruvbox Dark palette ────────────────────────────────────────────
+
+const GRV_BG: &str = "#282828";
+const GRV_BG_SOFT: &str = "#3c3836";
+const GRV_FG: &str = "#ebdbb2";
+const GRV_GREY: &str = "#928374";
+const GRV_RED: &str = "#fb4934";
+const GRV_GREEN: &str = "#b8bb26";
+const GRV_YELLOW: &str = "#fabd2f";
+const GRV_ORANGE: &str = "#fe8019";
+const GRV_PURPLE: &str = "#d3869b";
+const GRV_AQUA: &str = "#8ec07c";
+const GRV_BLUE: &str = "#7cc6d4";
+
+const RUST_KEYWORDS: &[&str] = &[
+    "as", "async", "await", "break", "const", "continue", "crate", "dyn",
+    "else", "enum", "extern", "false", "fn", "for", "if", "impl", "in",
+    "let", "loop", "match", "mod", "move", "mut", "pub", "ref", "return",
+    "self", "Self", "static", "struct", "super", "trait", "true", "type",
+    "unsafe", "use", "where", "while",
+];
+
+/// Append a char to `buf`, HTML-escaping &, <, >.
+fn push_escaped(buf: &mut String, ch: char) {
+    match ch {
+        '&' => buf.push_str("&amp;"),
+        '<' => buf.push_str("&lt;"),
+        '>' => buf.push_str("&gt;"),
+        _ => buf.push(ch),
+    }
+}
+
+/// HTML-escape a full string slice.
+fn html_escape(s: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    for ch in s.chars() {
+        push_escaped(&mut out, ch);
+    }
+    out
+}
+
+/// Escape a string for embedding inside a JS string literal (single-quoted).
+fn js_escape(s: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    for ch in s.chars() {
+        match ch {
+            '\\' => out.push_str("\\\\"),
+            '\'' => out.push_str("\\'"),
+            '\n' => out.push_str("\\n"),
+            '\r' => out.push_str("\\r"),
+            _ => out.push(ch),
+        }
+    }
+    out
+}
+
+/// Tokenize a Rust code string into syntax-highlighted HTML spans.
+fn highlight_rust(code: &str) -> String {
+    let chars: Vec<char> = code.chars().collect();
+    let len = chars.len();
+    let mut out = String::with_capacity(code.len() * 2);
+    let mut i = 0;
+
+    while i < len {
+        let ch = chars[i];
+
+        // Line comments
+        if ch == '/' && i + 1 < len && chars[i + 1] == '/' {
+            out.push_str(&format!("<span style=\"color:{}\">", GRV_GREY));
+            while i < len && chars[i] != '\n' {
+                push_escaped(&mut out, chars[i]);
+                i += 1;
+            }
+            out.push_str("</span>");
+            continue;
+        }
+
+        // String literals
+        if ch == '"' {
+            out.push_str(&format!("<span style=\"color:{}\">", GRV_GREEN));
+            push_escaped(&mut out, ch);
+            i += 1;
+            while i < len && chars[i] != '"' {
+                if chars[i] == '\\' && i + 1 < len {
+                    push_escaped(&mut out, chars[i]);
+                    i += 1;
+                    push_escaped(&mut out, chars[i]);
+                    i += 1;
+                } else {
+                    push_escaped(&mut out, chars[i]);
+                    i += 1;
+                }
+            }
+            if i < len {
+                push_escaped(&mut out, chars[i]);
+                i += 1;
+            }
+            out.push_str("</span>");
+            continue;
+        }
+
+        // Numbers
+        if ch.is_ascii_digit() && (i == 0 || !chars[i - 1].is_alphanumeric()) {
+            out.push_str(&format!("<span style=\"color:{}\">", GRV_PURPLE));
+            while i < len && (chars[i].is_ascii_alphanumeric() || chars[i] == '.' || chars[i] == '_') {
+                push_escaped(&mut out, chars[i]);
+                i += 1;
+            }
+            out.push_str("</span>");
+            continue;
+        }
+
+        // Identifiers, keywords, macros, types
+        if ch.is_alphabetic() || ch == '_' {
+            let start = i;
+            while i < len && (chars[i].is_alphanumeric() || chars[i] == '_') {
+                i += 1;
+            }
+            let word: String = chars[start..i].iter().collect();
+
+            // Macro (word followed by !)
+            if i < len && chars[i] == '!' {
+                out.push_str(&format!("<span style=\"color:{}\">{}!</span>", GRV_AQUA, html_escape(&word)));
+                i += 1;
+                continue;
+            }
+
+            // Keyword
+            if RUST_KEYWORDS.contains(&word.as_str()) {
+                out.push_str(&format!("<span style=\"color:{}\">", GRV_ORANGE));
+                out.push_str(&html_escape(&word));
+                out.push_str("</span>");
+                continue;
+            }
+
+            // PascalCase type/component name
+            if word.len() > 1 && word.chars().next().unwrap().is_uppercase() && word.chars().any(|c| c.is_lowercase()) {
+                out.push_str(&format!("<span style=\"color:{}\">", GRV_YELLOW));
+                out.push_str(&html_escape(&word));
+                out.push_str("</span>");
+                continue;
+            }
+
+            out.push_str(&html_escape(&word));
+            continue;
+        }
+
+        // Path separator ::
+        if ch == ':' && i + 1 < len && chars[i + 1] == ':' {
+            out.push_str(&format!("<span style=\"color:{}\">::</span>", GRV_GREY));
+            i += 2;
+            continue;
+        }
+
+        // Attributes #
+        if ch == '#' {
+            out.push_str(&format!("<span style=\"color:{}\">", GRV_RED));
+            push_escaped(&mut out, ch);
+            i += 1;
+            // Include [...] if present
+            if i < len && chars[i] == '[' {
+                let mut depth = 0;
+                while i < len {
+                    if chars[i] == '[' { depth += 1; }
+                    if chars[i] == ']' { depth -= 1; }
+                    push_escaped(&mut out, chars[i]);
+                    i += 1;
+                    if depth == 0 { break; }
+                }
+            }
+            out.push_str("</span>");
+            continue;
+        }
+
+        // Everything else
+        push_escaped(&mut out, ch);
+        i += 1;
+    }
+
+    out
+}
+
+/// Tokenize a styles definition string into highlighted HTML.
+/// Constant names (SCREAMING_CAPS) render in yellow, colons in grey,
+/// and quoted Tailwind class strings render in light blue.
+fn highlight_styles(input: &str) -> String {
+    let chars: Vec<char> = input.chars().collect();
+    let len = chars.len();
+    let mut out = String::with_capacity(input.len() * 2);
+    let mut i = 0;
+
+    while i < len {
+        let ch = chars[i];
+
+        // Quoted string → light blue (Tailwind classes)
+        if ch == '"' {
+            out.push_str(&format!("<span style=\"color:{}\">", GRV_BLUE));
+            push_escaped(&mut out, ch);
+            i += 1;
+            while i < len && chars[i] != '"' {
+                if chars[i] == '\\' && i + 1 < len {
+                    push_escaped(&mut out, chars[i]);
+                    i += 1;
+                    push_escaped(&mut out, chars[i]);
+                    i += 1;
+                } else {
+                    push_escaped(&mut out, chars[i]);
+                    i += 1;
+                }
+            }
+            if i < len {
+                push_escaped(&mut out, chars[i]);
+                i += 1;
+            }
+            out.push_str("</span>");
+            continue;
+        }
+
+        // SCREAMING_CAPS identifier → yellow
+        if ch.is_ascii_uppercase() || ch == '_' {
+            let start = i;
+            while i < len && (chars[i].is_ascii_uppercase() || chars[i].is_ascii_digit() || chars[i] == '_') {
+                i += 1;
+            }
+            let word: String = chars[start..i].iter().collect();
+            // Only colorize if it looks like a constant (has letters, not just underscores)
+            if word.chars().any(|c| c.is_ascii_uppercase()) {
+                out.push_str(&format!("<span style=\"color:{}\">", GRV_YELLOW));
+                out.push_str(&html_escape(&word));
+                out.push_str("</span>");
+            } else {
+                out.push_str(&html_escape(&word));
+            }
+            continue;
+        }
+
+        // Colon → grey
+        if ch == ':' {
+            out.push_str(&format!("<span style=\"color:{}\">:</span>", GRV_GREY));
+            i += 1;
+            continue;
+        }
+
+        // Slash separator → grey
+        if ch == '/' {
+            out.push_str(&format!("<span style=\"color:{}\">/</span>", GRV_GREY));
+            i += 1;
+            continue;
+        }
+
+        // Everything else (whitespace, etc.)
+        push_escaped(&mut out, ch);
+        i += 1;
+    }
+
+    out
+}
+
+/// Renders a Gruvbox-themed code block with Rust syntax highlighting and copy button.
 #[component]
 fn CodeBlock(code: String) -> Element {
-    let escaped = code
-        .replace('&', "&amp;")
-        .replace('<', "&lt;")
-        .replace('>', "&gt;");
+    let mut copied = use_signal(|| false);
+    let highlighted = highlight_rust(&code);
+    let js_code = js_escape(&code);
+
     rsx! {
         div { class: "mt-6 space-y-2",
             EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Example Usage" }
-            pre {
-                class: "rounded-lg bg-[var(--color-card)] border border-[var(--color-card-border)] p-4 overflow-x-auto text-xs leading-relaxed font-mono text-[var(--color-label)]",
-                code { dangerous_inner_html: "{escaped}" }
+            div {
+                class: "relative rounded-lg overflow-hidden",
+                style: "border: 1px solid #6b2020;",
+                button {
+                    class: "absolute top-2 right-2 px-2 py-1 rounded text-xs font-mono cursor-pointer transition-colors z-10",
+                    style: format!("background:{};color:{};", GRV_BG_SOFT, if copied() { GRV_GREEN } else { GRV_GREY }),
+                    onclick: move |_| {
+                        let js = format!("navigator.clipboard.writeText('{}')", js_code);
+                        document::eval(&js);
+                        copied.set(true);
+                        let reset_js = "new Promise(r => setTimeout(r, 1500))";
+                        let fut = document::eval(reset_js);
+                        spawn(async move {
+                            let _ = fut.await;
+                            copied.set(false);
+                        });
+                    },
+                    if copied() { "Copied!" } else { "Copy to clipboard" }
+                }
+                pre {
+                    class: "p-4 pr-36 overflow-x-auto text-xs leading-relaxed font-mono",
+                    style: format!("background:{};color:{};", GRV_BG, GRV_FG),
+                    code { dangerous_inner_html: "{highlighted}" }
+                }
             }
         }
     }
 }
 
-/// Shows which CSS constants a component uses and from which file.
-/// Uses `dangerous_inner_html` to avoid rsx! format-string parsing of braces.
+/// Shows which CSS constants a component uses, with Gruvbox syntax highlighting.
 #[component]
 fn StyleInfo(file: &'static str, styles: String) -> Element {
-    let escaped = styles
-        .replace('&', "&amp;")
-        .replace('<', "&lt;")
-        .replace('>', "&gt;");
+    let highlighted = highlight_styles(&styles);
     rsx! {
-        details { class: "mt-4 rounded-lg border border-[var(--color-card-border)] overflow-hidden",
-            summary { class: "px-4 py-2 cursor-pointer text-xs font-semibold uppercase tracking-wider text-[var(--color-label-secondary)] bg-[var(--color-card)]/40 hover:bg-[var(--color-card)]/60 transition select-none",
+        details {
+            class: "mt-4 rounded-lg overflow-hidden",
+            style: "border: 1px solid #6b2020;",
+            summary {
+                class: "px-4 py-2 cursor-pointer text-xs font-semibold tracking-wider select-none transition",
+                style: format!("background:{};color:{};", GRV_BG_SOFT, GRV_FG),
                 "Default Styles — {file}"
             }
             pre {
-                class: "p-4 overflow-x-auto text-xs leading-relaxed font-mono text-[var(--color-label)] bg-[var(--color-card)]/20",
-                code { dangerous_inner_html: "{escaped}" }
+                class: "p-4 overflow-x-auto text-xs leading-relaxed font-mono",
+                style: format!("background:{};color:{};", GRV_BG, GRV_FG),
+                code { dangerous_inner_html: "{highlighted}" }
             }
         }
     }
@@ -1166,8 +1445,8 @@ fn DemoEqHeroShell() -> Element {
 
     let title_c_val = title_color();
     let subtitle_c_val = subtitle_color();
-    let title_c: Option<String> = if title_c_val.is_empty() { None } else { Some(title_c_val) };
-    let subtitle_c: Option<String> = if subtitle_c_val.is_empty() { None } else { Some(subtitle_c_val) };
+    let title_c: Option<String> = if title_c_val.is_empty() { None } else { Some(title_c_val.clone()) };
+    let subtitle_c: Option<String> = if subtitle_c_val.is_empty() { None } else { Some(subtitle_c_val.clone()) };
 
     let styles = "HERO_SHELL: \"py-20 md:py-28 bg-[var(--gradient-background)]\"\nHERO_TITLE: \"text-4xl md:text-5xl font-semibold tracking-tight ...\"\nHERO_SUBTITLE: \"mt-4 max-w-2xl text-lg ...\"\nHERO_ACTIONS: \"mt-8 flex gap-4\"\nHERO_BG: \"absolute inset-0 w-full h-full\"\nHERO_OVERLAY: \"absolute inset-0 bg-black/50\"".to_string();
 
@@ -1179,8 +1458,8 @@ fn DemoEqHeroShell() -> Element {
                 EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Props" }
                 PropInput { label: "title", value: title(), placeholder: "Hero title", onchange: move |v: String| title.set(v) }
                 PropInput { label: "subtitle", value: subtitle(), placeholder: "Subtitle text", onchange: move |v: String| subtitle.set(v) }
-                PropInput { label: "title_color", value: title_color(), placeholder: "#ff6b6b (empty = theme)", onchange: move |v: String| title_color.set(v) }
-                PropInput { label: "sub_color", value: subtitle_color(), placeholder: "#ffd93d (empty = theme)", onchange: move |v: String| subtitle_color.set(v) }
+                PropInput { label: "title_color", value: title_c_val.clone(), placeholder: "#ff6b6b (empty = theme)", onchange: move |v: String| title_color.set(v) }
+                PropInput { label: "sub_color", value: subtitle_c_val.clone(), placeholder: "#ffd93d (empty = theme)", onchange: move |v: String| subtitle_color.set(v) }
                 PropToggle { label: "background", value: show_bg(), onchange: move |v: bool| show_bg.set(v) }
             }
             div { class: "rounded-lg border border-dashed border-[var(--color-card-border)] overflow-hidden",

@@ -77,7 +77,7 @@ Items to tackle once the "Now" batch stabilizes.
 - [ ] **EqToast / EqNotification** (Molecule) - Toast notifications with auto-dismiss, severity levels (info, success, warning, error).
 - [ ] **EqTabs** (Molecule) - Tabbed content panels.
 - [ ] **EqBadge** (Atom) - Small status indicator/label.
-- [ ] **EqAvatar** (Atom) - User avatar with image, initials fallback, and size variants.
+- [ ] **EqAvatar** (Atom) - User avatar with image, initials fallback, and size variants. Note: EqImage currently forces aspect ratios that don't work well for a circular profile crop — EqAvatar will need either a dedicated circular image mode or a raw `img` element with `rounded-full` + `object-cover` instead of going through EqImage.
 - [ ] **EqTooltip** (Atom/Molecule) - Hover tooltip.
 - [ ] **EqDropdown** (Molecule) - Dropdown menu with selectable items.
 
