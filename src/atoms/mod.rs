@@ -32,3 +32,8 @@ mod eq_divider;
 mod eq_divider_styles;
 
 pub use eq_divider::{EqDivider, DividerVariant, DividerWeight, DividerSpacing};
+
+mod eq_video;
+mod eq_video_styles;
+
+pub use eq_video::EqVideo;

@@ -85,6 +85,7 @@ fn build_component_tree() -> Vec<TreeNode> {
             TreeNode::new("icon", "EqIcon"),
             TreeNode::new("scrollable-space", "EqScrollableSpace"),
             TreeNode::new("divider", "EqDivider"),
+            TreeNode::new("video", "EqVideo"),
         ]),
         TreeNode::new_with_children("molecules", "Molecules", vec![
             TreeNode::new("image-card", "EqImageCard"),
@@ -165,6 +166,7 @@ fn PreviewPanel(selected: Option<String>) -> Element {
         Some("icon")             => rsx! { DemoEqIcon {} },
         Some("scrollable-space") => rsx! { DemoEqScrollableSpace {} },
         Some("divider")          => rsx! { DemoEqDivider {} },
+        Some("video")            => rsx! { DemoEqVideo {} },
 
         // Molecules
         Some("image-card") => rsx! { DemoEqImageCard {} },
@@ -1031,6 +1033,72 @@ fn DemoEqDivider() -> Element {
                 }
             }
             StyleInfo { file: "eq_divider_styles.rs", styles: styles }
+            CodeBlock { code: code }
+        }
+    }
+}
+
+#[component]
+fn DemoEqVideo() -> Element {
+    let mut autoplay = use_signal(|| false);
+    let mut muted = use_signal(|| true);
+    let mut loop_video = use_signal(|| false);
+    let mut controls = use_signal(|| true);
+    let mut rounded = use_signal(|| true);
+    let mut size_str = use_signal(|| "Full".to_string());
+    let mut ratio_str = use_signal(|| "Ratio16_9".to_string());
+    let mut show_poster = use_signal(|| true);
+
+    let size = match size_str().as_str() {
+        "Sm"   => AtomImageSize::Sm,
+        "Md"   => AtomImageSize::Md,
+        "Lg"   => AtomImageSize::Lg,
+        _      => AtomImageSize::Full,
+    };
+    let aspect_ratio = match ratio_str().as_str() {
+        "Ratio4_3" => AspectRatio::Ratio4_3,
+        "Square"   => AspectRatio::Square,
+        "Free"     => AspectRatio::Free,
+        _          => AspectRatio::Ratio16_9,
+    };
+
+    let poster_url = if show_poster() {
+        "https://picsum.photos/seed/eq-video/1280/720".to_string()
+    } else {
+        String::new()
+    };
+
+    let styles = "WRAPPER: \"relative overflow-hidden\"\nSM/MD/LG/FULL: \"w-48\" / \"w-64\" / \"w-96\" / \"w-full\"\nRATIO_16_9: \"aspect-video\"\nRATIO_4_3: \"aspect-[4/3]\"\nVIDEO_ELEMENT: \"w-full h-full\"\nPOSTER_OVERLAY: \"absolute inset-0 z-10 cursor-pointer\"\nPLAY_CIRCLE: \"size-16 rounded-full bg-black/60 ...\"".to_string();
+
+    let code = "EqVideo {\n    src: \"https://example.com/video.mp4\",\n    controls: true,\n    rounded: true,\n}\n\nEqVideo {\n    src: \"https://example.com/video.mp4\",\n    poster: \"https://example.com/thumb.jpg\",\n    muted: true,\n    loop_video: true,\n}".to_string();
+
+    rsx! {
+        DemoSection { title: "EqVideo",
+            div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-3",
+                EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Props" }
+                PropSelect { label: "size", value: size_str(), options: vec!["Sm", "Md", "Lg", "Full"], onchange: move |v: String| size_str.set(v) }
+                PropSelect { label: "ratio", value: ratio_str(), options: vec!["Ratio16_9", "Ratio4_3", "Square", "Free"], onchange: move |v: String| ratio_str.set(v) }
+                PropToggle { label: "autoplay", value: autoplay(), onchange: move |v: bool| autoplay.set(v) }
+                PropToggle { label: "muted", value: muted(), onchange: move |v: bool| muted.set(v) }
+                PropToggle { label: "loop", value: loop_video(), onchange: move |v: bool| loop_video.set(v) }
+                PropToggle { label: "controls", value: controls(), onchange: move |v: bool| controls.set(v) }
+                PropToggle { label: "rounded", value: rounded(), onchange: move |v: bool| rounded.set(v) }
+                PropToggle { label: "poster", value: show_poster(), onchange: move |v: bool| show_poster.set(v) }
+            }
+            div { class: "rounded-lg border border-dashed border-[var(--color-card-border)] overflow-hidden p-4",
+                EqVideo {
+                    src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                    poster: poster_url,
+                    size: size,
+                    aspect_ratio: aspect_ratio,
+                    autoplay: autoplay(),
+                    muted: muted(),
+                    loop_video: loop_video(),
+                    controls: controls(),
+                    rounded: rounded(),
+                }
+            }
+            StyleInfo { file: "eq_video_styles.rs", styles: styles }
             CodeBlock { code: code }
         }
     }
