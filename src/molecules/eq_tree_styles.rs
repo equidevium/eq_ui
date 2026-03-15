@@ -12,7 +12,7 @@ pub const NODE_ACTIVE: &str =
     "flex items-center gap-1.5 px-2 py-1.5 rounded-md cursor-pointer bg-[var(--color-primary)]/15 text-[var(--color-primary)]";
 
 /// Chevron icon for branch nodes.
-pub const CHEVRON: &str = "size-4 shrink-0 transition-transform duration-200";
+pub const CHEVRON: &str = "size-4 shrink-0 transition-transform duration-[var(--transition-fast)]";
 
 /// Chevron rotated when expanded.
 pub const CHEVRON_EXPANDED: &str = "rotate-90";

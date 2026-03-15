@@ -1,17 +1,128 @@
 @layer components {
+
+    /* --- Base button reset --- */
     .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
         font-weight: 500;
-        transition: all 0.2s;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all var(--transition-normal, 0.25s) ease;
+    }
+    .btn:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px var(--color-focus-ring);
+    }
+    .btn:active {
+        transform: scale(0.96);
+        transition: all var(--transition-fast, 0.15s) ease;
+    }
+    .btn:disabled {
+        opacity: 0.5;
+        pointer-events: none;
     }
 
+    /* --- Primary --- */
     .btn-primary {
-        background: var(--color-secondary-dark);
-        border: 2px solid var(--color-secondary-dark);
-        border-radius: 8px;
+        background: var(--btn-primary-bg);
+        color: var(--btn-primary-text);
+        border: none;
+        padding: 0.5rem 1rem;
+    }
+    .btn-primary:hover {
+        background: var(--btn-primary-hover);
+    }
+    .btn-primary:active {
+        background: var(--btn-primary-hover);
+        filter: brightness(0.85);
+    }
+
+    /* --- Ghost --- */
+    .btn-ghost {
+        background: transparent;
+        color: var(--color-label-secondary);
+        border: none;
+        padding: 0.5rem 1rem;
+    }
+    .btn-ghost:hover {
+        background: var(--btn-ghost-hover);
         color: var(--color-label-primary);
     }
-
-    .btn-primary:hover {
-        background-color: var(--color-hover-button);
+    .btn-ghost:active {
+        background: var(--btn-ghost-hover);
+        filter: brightness(0.8);
     }
+
+    /* --- Outline --- */
+    .btn-outline {
+        background: var(--color-primary-dark);
+        color: var(--color-label-secondary);
+        border: 2px solid var(--btn-outline-border);
+        padding: 0.5rem 1rem;
+    }
+    .btn-outline:hover {
+        background: var(--btn-outline-hover-bg);
+        border-color: var(--btn-outline-hover-border);
+        color: var(--color-label-primary);
+    }
+    .btn-outline:active {
+        filter: brightness(0.8);
+    }
+
+    /* --- Card --- */
+    .btn-card {
+        background: var(--color-card);
+        color: var(--color-label-primary);
+        border: 2px solid var(--color-card-border);
+        border-radius: 0.75rem;
+        padding: 0.5rem 1rem;
+    }
+    .btn-card:hover {
+        border-color: var(--color-card-border-bright);
+        box-shadow: 0 4px 12px var(--color-shadow-glow);
+        transform: translateY(-2px);
+    }
+    .btn-card:active {
+        transform: translateY(0) scale(0.97);
+        box-shadow: 0 1px 4px var(--color-shadow-glow);
+        transition: all var(--transition-fast, 0.15s) ease;
+    }
+
+    /* --- Interactive card --- */
+    .card-interactive {
+        border: 2px solid var(--color-card-border);
+        transition: all var(--transition-normal, 0.25s) ease;
+    }
+    .card-interactive:hover {
+        border-color: var(--color-card-border-bright);
+        box-shadow: 0 4px 12px var(--color-shadow-glow);
+        transform: translateY(-4px);
+    }
+    .card-interactive:active {
+        border-color: var(--color-card-border-bright);
+        box-shadow: 0 1px 4px var(--color-shadow-glow);
+        transform: translateY(0) scale(0.97);
+        transition: all var(--transition-fast, 0.15s) ease;
+    }
+
+    /* --- Danger --- */
+    .btn-danger {
+        background: var(--btn-danger-bg);
+        color: #ffffff;
+        border: none;
+        padding: 0.5rem 1rem;
+    }
+    .btn-danger:hover {
+        opacity: 0.85;
+    }
+    .btn-danger:active {
+        filter: brightness(0.75);
+    }
+
+    /* --- Sizes --- */
+    .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.875rem; }
+    .btn-md { padding: 0.5rem 1rem; font-size: 0.875rem; }
+    .btn-lg { padding: 0.75rem 1.25rem; font-size: 1rem; }
 }

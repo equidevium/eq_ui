@@ -80,4 +80,28 @@
     --color-code-comment: #6272a4;
     --color-code-keyword: #ff79c6;
     --color-code-string: #f1fa8c;
+
+    /* --- Buttons --- */
+    --btn-primary-bg: var(--gradient-primary-tricolor);
+    --btn-primary-hover: #21222c;
+    --btn-primary-text: #f8f8f2;
+    --btn-ghost-hover: #343746;
+    --btn-outline-border: var(--color-card-border);
+    --btn-outline-hover-border: #5e627c;
+    --btn-outline-hover-bg: var(--gradient-primary-duocolor);
+    --btn-danger-bg: #ff5555;
+
+    /* --- Interactive states --- */
+    --color-card-border-bright: #4f5369;
+    --color-focus-ring: #bd93f9;
+    --color-shadow-glow: rgba(255, 121, 198, 0.35);
+    --color-primary: #ff79c6;
+
+    /* --- Transitions --- */
+    --transition-fast: 0.15s;
+    --transition-normal: 0.25s;
+
+    /* --- Scrollbar --- */
+    --color-scrollbar-thumb: rgba(191, 195, 212, 0.3);
+    --color-scrollbar-track: transparent;
 }

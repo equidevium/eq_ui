@@ -16,14 +16,14 @@ pub const HEADER_TEXT: &str =
 
 /// Chevron icon for expand/collapse indicator.
 pub const CHEVRON: &str =
-    "size-5 shrink-0 text-[var(--color-label-secondary)] transition-transform duration-200";
+    "size-5 shrink-0 text-[var(--color-label-secondary)] transition-transform duration-[var(--transition-fast)]";
 
 /// Chevron rotated when panel is open.
 pub const CHEVRON_OPEN: &str = "rotate-180";
 
 /// Content body wrapper — uses grid for smooth height animation.
 pub const BODY: &str =
-    "grid transition-[grid-template-rows] duration-200 ease-in-out";
+    "grid transition-[grid-template-rows] duration-[var(--transition-fast)] ease-in-out";
 
 /// Grid row sizing when collapsed.
 pub const BODY_CLOSED: &str = "grid-rows-[0fr]";

@@ -27,8 +27,11 @@ pub const ROUNDED: &str = "rounded-lg";
 /// Video element — fills wrapper
 pub const VIDEO_ELEMENT: &str = "w-full h-full";
 
-/// Poster overlay container — covers the video, click to play
+/// Poster overlay container — positioned absolutely when over video, static when alone
 pub const POSTER_OVERLAY: &str = "absolute inset-0 z-10 cursor-pointer";
+
+/// Poster container when no video is in the DOM (fills wrapper as sole child)
+pub const POSTER_OVERLAY_STATIC: &str = "relative w-full h-full cursor-pointer";
 
 /// Play icon circle centered on poster
 pub const PLAY_ICON: &str = "absolute inset-0 flex items-center justify-center";

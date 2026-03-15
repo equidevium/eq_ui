@@ -17,7 +17,7 @@ pub const CONTROL: &str =
      bg-[var(--color-card)]/40 text-[var(--color-label-primary)] \
      border-[var(--color-card-border)] \
      placeholder:text-[var(--color-label-secondary)]/70 \
-     focus:ring-2 focus:ring-[var(--color-hover-button)]/60 focus:border-[var(--color-hover-button)]";
+     focus:ring-2 focus:ring-[var(--color-focus-ring)]/60 focus:border-[var(--color-focus-ring)]";
 
 /// Extra classes applied only to `<textarea>`
 pub const TEXTAREA: &str = "min-h-[120px] resize-y";

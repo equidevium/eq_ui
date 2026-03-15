@@ -16,6 +16,7 @@
 - `EqImage` — Full-featured image atom (sizing, aspect ratios, object-fit, rounded corners)
 - `EqScrollableSpace` — Scrollable container with themed scrollbar
 - `EqDivider` — Separator with variants (Solid, Dashed, Dotted, Spacer), weights, and spacing
+- `EqVideo` — Video atom with poster overlay (EqImage + play icon), autoplay, muted, loop, controls, aspect ratio
 
 ### Molecules
 - `EqCard` — Card with header, body, footer slots
@@ -41,7 +42,8 @@
 ### Infrastructure
 - Co-located `_styles.rs` pattern for all components
 - `theme.rs` shared style tokens + `merge_classes()` utility
-- CSS variable system (`colors.css`, `buttons.css`, `index.css`)
+- CSS variable system (`colors.css`, `buttons.css`, `index.css`) — 57 variables per theme covering core darks, labels, gradients, accents, states, borders, inputs, surfaces, code, buttons, interactive states, transitions, and scrollbar
+- Theme Showcase in EqPlayground — displays all CSS variables with color swatches, gradient previews, live button variants, and interactive card demos
 - Tailwind CSS v4 with `@source` directives scanning `.rs` files
 - `class` prop on every component for style overrides via `merge_classes()`
 - EqPlayground — interactive component playground with prop controls, variant galleries, CSS documentation, and usage examples
@@ -53,8 +55,8 @@
 These are the items currently being worked on or immediately planned.
 
 ### Components
-- [ ] **EqVideo** (Organism) - Video player organism. To be decomposed into smaller molecules/atoms (play button, progress bar, controls, thumbnail).
-- [ ] **EqButton** (Atom) - Dedicated button component. Style tokens already exist in `theme.rs` (`BTN_BASE`, `BTN_PRIMARY`, `BTN_GHOST`, `BTN_DANGER`, size variants). Needs its own component file + `_styles.rs`.
+- [ ] **EqButton** (Atom) - Dedicated button component. Five variants: Primary (gradient), Ghost (transparent), Outline (bordered with gradient hover), Card (card-styled with glow hover), Danger. Three sizes (sm/md/lg). CSS classes already defined in `buttons.css`. Needs Dioxus component + `_styles.rs`.
+- [ ] **EqCTA** (Molecule) - Call-to-action section. A prominent banner with title, description, and action slot (typically an EqButton). Used for conversion points: sign-up prompts, upgrade nudges, newsletter subscriptions. Style tokens already exist in `theme.rs` (`CTA`, `CTA_TITLE`, `CTA_DESCRIPTION`, `CTA_ACTION`). Needs its own component + `_styles.rs`.
 
 ### Theming & Customization
 - [ ] **Custom theme loading** - Finalize `set_custom_theme()` for loading user-provided CSS strings at runtime.

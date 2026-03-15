@@ -101,6 +101,9 @@ fn build_component_tree() -> Vec<TreeNode> {
             TreeNode::new("footer", "EqFooter"),
             TreeNode::new("app-shell", "EqAppShell"),
         ]),
+        TreeNode::new_with_children("theming", "Theming", vec![
+            TreeNode::new("theme-showcase", "Theme Showcase"),
+        ]),
     ]
 }
 
@@ -182,6 +185,9 @@ fn PreviewPanel(selected: Option<String>) -> Element {
         Some("footer")       => rsx! { DemoEqFooter {} },
         Some("app-shell")    => rsx! { DemoEqAppShell {} },
 
+        // Theming
+        Some("theme-showcase") => rsx! { DemoThemeShowcase {} },
+
         _ => rsx! {
             div { class: "flex flex-col items-center justify-center h-full min-h-[60vh] gap-4 text-[var(--color-label-secondary)]",
                 svg {
@@ -254,20 +260,6 @@ fn html_escape(s: &str) -> String {
     out
 }
 
-/// Escape a string for embedding inside a JS string literal (single-quoted).
-fn js_escape(s: &str) -> String {
-    let mut out = String::with_capacity(s.len());
-    for ch in s.chars() {
-        match ch {
-            '\\' => out.push_str("\\\\"),
-            '\'' => out.push_str("\\'"),
-            '\n' => out.push_str("\\n"),
-            '\r' => out.push_str("\\r"),
-            _ => out.push(ch),
-        }
-    }
-    out
-}
 
 /// Tokenize a Rust code string into syntax-highlighted HTML spans.
 fn highlight_rust(code: &str) -> String {
@@ -471,37 +463,19 @@ fn highlight_styles(input: &str) -> String {
     out
 }
 
-/// Renders a Gruvbox-themed code block with Rust syntax highlighting and copy button.
+/// Renders a Gruvbox-themed code block with Rust syntax highlighting.
 #[component]
 fn CodeBlock(code: String) -> Element {
-    let mut copied = use_signal(|| false);
     let highlighted = highlight_rust(&code);
-    let js_code = js_escape(&code);
 
     rsx! {
         div { class: "mt-6 space-y-2",
             EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Example Usage" }
             div {
-                class: "relative rounded-lg overflow-hidden",
+                class: "rounded-lg overflow-hidden",
                 style: "border: 1px solid #6b2020;",
-                button {
-                    class: "absolute top-2 right-2 px-2 py-1 rounded text-xs font-mono cursor-pointer transition-colors z-10",
-                    style: format!("background:{};color:{};", GRV_BG_SOFT, if copied() { GRV_GREEN } else { GRV_GREY }),
-                    onclick: move |_| {
-                        let js = format!("navigator.clipboard.writeText('{}')", js_code);
-                        document::eval(&js);
-                        copied.set(true);
-                        let reset_js = "new Promise(r => setTimeout(r, 1500))";
-                        let fut = document::eval(reset_js);
-                        spawn(async move {
-                            let _ = fut.await;
-                            copied.set(false);
-                        });
-                    },
-                    if copied() { "Copied!" } else { "Copy to clipboard" }
-                }
                 pre {
-                    class: "p-4 pr-36 overflow-x-auto text-xs leading-relaxed font-mono",
+                    class: "p-4 overflow-x-auto text-xs leading-relaxed font-mono",
                     style: format!("background:{};color:{};", GRV_BG, GRV_FG),
                     code { dangerous_inner_html: "{highlighted}" }
                 }
@@ -1652,6 +1626,272 @@ fn DemoEqAppShell() -> Element {
             }
             StyleInfo { file: "theme.rs (shared)", styles: styles }
             CodeBlock { code: code }
+        }
+    }
+}
+
+// ── Theme Showcase ─────────────────────────────────────────────────
+
+/// A single color swatch — shows the color + its variable name.
+#[component]
+fn ColorSwatch(label: &'static str, var_name: &'static str) -> Element {
+    rsx! {
+        div { class: "flex items-center gap-3",
+            div {
+                class: "size-10 rounded-md border border-[var(--color-card-border)] shrink-0",
+                style: format!("background: var(--{var_name});"),
+            }
+            div { class: "flex flex-col",
+                EqText { variant: TextVariant::Caption, class: "font-mono", "{label}" }
+                EqText { variant: TextVariant::Muted, class: "font-mono text-[10px]", "--{var_name}" }
+            }
+        }
+    }
+}
+
+/// A gradient preview strip.
+#[component]
+fn GradientSwatch(label: &'static str, var_name: &'static str) -> Element {
+    rsx! {
+        div { class: "space-y-1",
+            EqText { variant: TextVariant::Caption, class: "font-mono", "{label}" }
+            div {
+                class: "h-8 rounded-md border border-[var(--color-card-border)]",
+                style: format!("background: var(--{var_name});"),
+            }
+            EqText { variant: TextVariant::Muted, class: "font-mono text-[10px]", "--{var_name}" }
+        }
+    }
+}
+
+/// A labeled section within the showcase.
+#[component]
+fn ShowcaseSection(title: &'static str, children: Element) -> Element {
+    rsx! {
+        div { class: "space-y-3",
+            EqText { variant: TextVariant::H3, "{title}" }
+            div { class: "rounded-lg border border-[var(--color-card-border)] bg-[var(--color-card)]/20 p-4",
+                {children}
+            }
+        }
+    }
+}
+
+/// Transition speed comparison — uses signals for hover state.
+#[component]
+fn TransitionDemo() -> Element {
+    let mut fast_hover = use_signal(|| false);
+    let mut normal_hover = use_signal(|| false);
+
+    let fast_style = if fast_hover() {
+        "transition: all var(--transition-fast); background: var(--color-accent-primary); border-color: var(--color-card-border-bright); transform: scale(1.05);"
+    } else {
+        "transition: all var(--transition-fast); background: var(--color-card); border-color: var(--color-card-border); transform: scale(1);"
+    };
+    let normal_style = if normal_hover() {
+        "transition: all var(--transition-normal); background: var(--color-accent-primary); border-color: var(--color-card-border-bright); transform: scale(1.05);"
+    } else {
+        "transition: all var(--transition-normal); background: var(--color-card); border-color: var(--color-card-border); transform: scale(1);"
+    };
+
+    rsx! {
+        div { class: "space-y-3",
+            EqText { variant: TextVariant::Muted, class: "text-xs",
+                "Hover over each box to see the transition speed difference."
+            }
+            div { class: "flex flex-wrap gap-4",
+                div {
+                    class: "px-6 py-3 rounded-md border cursor-pointer select-none",
+                    style: "{fast_style}",
+                    onmouseenter: move |_| fast_hover.set(true),
+                    onmouseleave: move |_| fast_hover.set(false),
+                    EqText { variant: TextVariant::Caption, class: "font-mono", "Fast (0.15s)" }
+                }
+                div {
+                    class: "px-6 py-3 rounded-md border cursor-pointer select-none",
+                    style: "{normal_style}",
+                    onmouseenter: move |_| normal_hover.set(true),
+                    onmouseleave: move |_| normal_hover.set(false),
+                    EqText { variant: TextVariant::Caption, class: "font-mono", "Normal (0.25s)" }
+                }
+            }
+            EqText { variant: TextVariant::Muted, class: "text-xs",
+                "These tokens are used across the library: accordion chevrons, carousel slides, tree expand, and all button hovers."
+            }
+        }
+    }
+}
+
+/// Interactive card demo — pure CSS hover/active transitions via `.card-interactive`.
+#[component]
+fn InteractiveCardDemo() -> Element {
+    rsx! {
+        div { class: "flex gap-4",
+            div {
+                class: "card-interactive rounded-xl bg-[var(--color-card)]/60 p-6 cursor-pointer select-none",
+                EqText { variant: TextVariant::Body, "Hover and click me" }
+                EqText { variant: TextVariant::Muted, class: "mt-1", "Lift on hover, press down on click" }
+            }
+        }
+    }
+}
+
+#[component]
+fn DemoThemeShowcase() -> Element {
+    rsx! {
+        DemoSection { title: "Theme Showcase",
+            EqText { variant: TextVariant::Muted,
+                "All CSS custom properties available in the current theme. Switch themes using the dropdown above to see how each palette defines these tokens."
+            }
+
+            // ── Core Darks ──
+            ShowcaseSection { title: "Core Darks",
+                div { class: "grid grid-cols-2 md:grid-cols-4 gap-4",
+                    ColorSwatch { label: "Primary Dark", var_name: "color-primary-dark" }
+                    ColorSwatch { label: "Secondary Dark", var_name: "color-secondary-dark" }
+                    ColorSwatch { label: "Tertiary Dark", var_name: "color-tertiary-dark" }
+                    ColorSwatch { label: "Hover Button", var_name: "color-hover-button" }
+                    ColorSwatch { label: "Card", var_name: "color-card" }
+                    ColorSwatch { label: "Card Border", var_name: "color-card-border" }
+                    ColorSwatch { label: "Card Border Bright", var_name: "color-card-border-bright" }
+                    ColorSwatch { label: "Card Shadow", var_name: "color-card-shadow" }
+                    ColorSwatch { label: "Background", var_name: "color-background" }
+                    ColorSwatch { label: "Primary", var_name: "color-primary" }
+                }
+            }
+
+            // ── Labels / Text ──
+            ShowcaseSection { title: "Labels / Text",
+                div { class: "grid grid-cols-2 md:grid-cols-3 gap-4",
+                    ColorSwatch { label: "Label Primary", var_name: "color-label-primary" }
+                    ColorSwatch { label: "Label Secondary", var_name: "color-label-secondary" }
+                    ColorSwatch { label: "Label Bold", var_name: "color-label-bold" }
+                    ColorSwatch { label: "Label Muted", var_name: "color-label-muted" }
+                    ColorSwatch { label: "Label Disabled", var_name: "color-label-disabled" }
+                }
+            }
+
+            // ── Gradients ──
+            ShowcaseSection { title: "Gradients",
+                div { class: "space-y-4",
+                    div { class: "grid grid-cols-3 gap-4",
+                        ColorSwatch { label: "Gradient Start", var_name: "color-gradient-default-start" }
+                        ColorSwatch { label: "Gradient Mid", var_name: "color-gradient-default-mid" }
+                        ColorSwatch { label: "Gradient End", var_name: "color-gradient-default-end" }
+                    }
+                    GradientSwatch { label: "Tricolor Gradient", var_name: "gradient-primary-tricolor" }
+                    GradientSwatch { label: "Background Gradient", var_name: "gradient-background" }
+                    GradientSwatch { label: "Duocolor Gradient", var_name: "gradient-primary-duocolor" }
+                }
+            }
+
+            // ── Accent & Interaction ──
+            ShowcaseSection { title: "Accent & Interaction",
+                div { class: "grid grid-cols-2 md:grid-cols-3 gap-4",
+                    ColorSwatch { label: "Accent Primary", var_name: "color-accent-primary" }
+                    ColorSwatch { label: "Accent Secondary", var_name: "color-accent-secondary" }
+                    ColorSwatch { label: "Accent Muted", var_name: "color-accent-muted" }
+                    ColorSwatch { label: "Focus Ring", var_name: "color-focus-ring" }
+                    ColorSwatch { label: "Shadow Glow", var_name: "color-shadow-glow" }
+                }
+            }
+
+            // ── State / Feedback ──
+            ShowcaseSection { title: "State / Feedback",
+                div { class: "grid grid-cols-2 md:grid-cols-4 gap-4",
+                    ColorSwatch { label: "Success", var_name: "color-success" }
+                    ColorSwatch { label: "Warning", var_name: "color-warning" }
+                    ColorSwatch { label: "Error", var_name: "color-error" }
+                    ColorSwatch { label: "Info", var_name: "color-info" }
+                }
+            }
+
+            // ── Borders & Dividers ──
+            ShowcaseSection { title: "Borders & Dividers",
+                div { class: "grid grid-cols-2 md:grid-cols-3 gap-4",
+                    ColorSwatch { label: "Border Default", var_name: "color-border-default" }
+                    ColorSwatch { label: "Border Subtle", var_name: "color-border-subtle" }
+                    ColorSwatch { label: "Border Active", var_name: "color-border-active" }
+                }
+            }
+
+            // ── Input / Form ──
+            ShowcaseSection { title: "Input / Form Elements",
+                div { class: "grid grid-cols-2 md:grid-cols-4 gap-4",
+                    ColorSwatch { label: "Input BG", var_name: "color-input-bg" }
+                    ColorSwatch { label: "Input Border", var_name: "color-input-border" }
+                    ColorSwatch { label: "Input Focus", var_name: "color-input-focus" }
+                    ColorSwatch { label: "Placeholder", var_name: "color-input-placeholder" }
+                }
+            }
+
+            // ── Surfaces & Overlays ──
+            ShowcaseSection { title: "Surfaces & Overlays",
+                div { class: "grid grid-cols-2 md:grid-cols-3 gap-4",
+                    ColorSwatch { label: "Surface Elevated", var_name: "color-surface-elevated" }
+                    ColorSwatch { label: "Surface Overlay", var_name: "color-surface-overlay" }
+                    ColorSwatch { label: "Surface Tooltip", var_name: "color-surface-tooltip" }
+                }
+            }
+
+            // ── Code ──
+            ShowcaseSection { title: "Code / Terminal",
+                div { class: "grid grid-cols-2 md:grid-cols-3 gap-4",
+                    ColorSwatch { label: "Code BG", var_name: "color-code-bg" }
+                    ColorSwatch { label: "Code Text", var_name: "color-code-text" }
+                    ColorSwatch { label: "Code Comment", var_name: "color-code-comment" }
+                    ColorSwatch { label: "Code Keyword", var_name: "color-code-keyword" }
+                    ColorSwatch { label: "Code String", var_name: "color-code-string" }
+                }
+            }
+
+            // ── Scrollbar ──
+            ShowcaseSection { title: "Scrollbar",
+                div { class: "grid grid-cols-2 gap-4",
+                    ColorSwatch { label: "Thumb", var_name: "color-scrollbar-thumb" }
+                    ColorSwatch { label: "Track", var_name: "color-scrollbar-track" }
+                }
+            }
+
+            // ── Buttons (live interactive) ──
+            ShowcaseSection { title: "Button Variants",
+                div { class: "space-y-4",
+                    div { class: "grid grid-cols-2 md:grid-cols-4 gap-4",
+                        ColorSwatch { label: "Btn Primary BG", var_name: "btn-primary-bg" }
+                        ColorSwatch { label: "Btn Primary Hover", var_name: "btn-primary-hover" }
+                        ColorSwatch { label: "Btn Primary Text", var_name: "btn-primary-text" }
+                        ColorSwatch { label: "Btn Ghost Hover", var_name: "btn-ghost-hover" }
+                        ColorSwatch { label: "Btn Outline Border", var_name: "btn-outline-border" }
+                        ColorSwatch { label: "Btn Outline Hover", var_name: "btn-outline-hover-border" }
+                        ColorSwatch { label: "Btn Outline Hover BG", var_name: "btn-outline-hover-bg" }
+                        ColorSwatch { label: "Btn Danger BG", var_name: "btn-danger-bg" }
+                    }
+                    EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider mt-2", "Live Preview" }
+                    div { class: "flex flex-wrap gap-3 items-center",
+                        button { class: "btn btn-primary btn-md", "Primary" }
+                        button { class: "btn btn-ghost btn-md", "Ghost" }
+                        button { class: "btn btn-outline btn-md", "Outline" }
+                        button { class: "btn btn-card btn-md", "Card" }
+                        button { class: "btn btn-danger btn-md", "Danger" }
+                    }
+                    EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider mt-2", "Sizes" }
+                    div { class: "flex flex-wrap gap-3 items-center",
+                        button { class: "btn btn-primary btn-sm", "Small" }
+                        button { class: "btn btn-primary btn-md", "Medium" }
+                        button { class: "btn btn-primary btn-lg", "Large" }
+                    }
+                }
+            }
+
+            // ── Transitions ──
+            ShowcaseSection { title: "Transitions",
+                TransitionDemo {}
+            }
+
+            // ── Interactive Card Demo ──
+            ShowcaseSection { title: "Interactive Card (hover + click)",
+                InteractiveCardDemo {}
+            }
         }
     }
 }

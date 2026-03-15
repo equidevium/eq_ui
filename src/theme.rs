@@ -61,7 +61,7 @@ pub const BORDER_DEFAULT: &str = "border-[var(--color-card-border)]";
 pub const BORDER_SUBTLE: &str = "border-[var(--color-card-border)]/60";
 pub const BORDER_STRONG: &str = "border-[var(--color-card-border)]";
 pub const BORDER_FOCUS: &str =
-    "focus:border-[var(--color-hover-button)] focus:ring-2 focus:ring-[var(--color-hover-button)]/50";
+    "focus:border-[var(--color-focus-ring)] focus:ring-2 focus:ring-[var(--color-focus-ring)]/50";
 
 // ── Surfaces ────────────────────────────────────────────────────────
 pub const SURFACE: &str =
@@ -79,27 +79,15 @@ pub const SHADOW_LG: &str = "shadow-lg shadow-black/30";
 pub const SHADOW_FOCUS: &str = "focus:shadow-md focus:shadow-black/30";
 
 // ── Buttons (move to eq_button_styles.rs when EqButton is created) ─
-pub const BTN_BASE: &str =
-    "inline-flex items-center justify-center \
-     rounded-md font-medium \
-     transition focus:outline-none focus-visible:ring-2 \
-     disabled:opacity-50 disabled:pointer-events-none";
-pub const BTN_PRIMARY: &str =
-    "px-4 py-2 \
-     bg-[var(--color-hover-button)] \
-     text-[var(--color-label-primary)] \
-     hover:opacity-90";
-pub const BTN_GHOST: &str =
-    "px-4 py-2 \
-     bg-transparent \
-     text-[var(--color-label-secondary)] \
-     hover:text-[var(--color-label-primary)]";
-pub const BTN_DANGER: &str =
-    "px-4 py-2 \
-     bg-red-600 text-white hover:bg-red-700";
-pub const BTN_SM: &str = "px-3 py-1.5 text-sm";
-pub const BTN_MD: &str = "px-4 py-2 text-sm";
-pub const BTN_LG: &str = "px-5 py-3 text-base";
+pub const BTN_BASE: &str = "btn";
+pub const BTN_PRIMARY: &str = "btn btn-primary";
+pub const BTN_GHOST: &str = "btn btn-ghost";
+pub const BTN_OUTLINE: &str = "btn btn-outline";
+pub const BTN_CARD: &str = "btn btn-card";
+pub const BTN_DANGER: &str = "btn btn-danger";
+pub const BTN_SM: &str = "btn-sm";
+pub const BTN_MD: &str = "btn-md";
+pub const BTN_LG: &str = "btn-lg";
 
 // ── CTAs (move to eq_cta_styles.rs when EqCta is created) ──────────
 pub const CTA: &str =

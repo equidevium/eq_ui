@@ -6,7 +6,7 @@ pub const CAROUSEL: &str = "relative w-full overflow-hidden";
 /// The horizontal strip that holds all slides side-by-side.
 /// `translateX` is set dynamically via inline style.
 pub const SLIDE_STRIP: &str =
-    "flex transition-transform duration-500 ease-in-out";
+    "flex transition-transform duration-[var(--transition-normal)] ease-in-out";
 
 /// A single slide within the strip — full width of the carousel.
 pub const SLIDE: &str = "w-full shrink-0";
@@ -18,7 +18,7 @@ pub const CAROUSEL_PEEK: &str = "relative w-full overflow-hidden";
 
 /// Peek strip — like SLIDE_STRIP but slides are narrower (80%).
 pub const SLIDE_STRIP_PEEK: &str =
-    "flex transition-transform duration-500 ease-in-out";
+    "flex transition-transform duration-[var(--transition-normal)] ease-in-out";
 
 /// Each slide in peek mode is 80% width so neighbours are visible.
 pub const SLIDE_PEEK: &str = "shrink-0";

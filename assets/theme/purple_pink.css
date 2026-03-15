@@ -79,4 +79,28 @@
     --color-code-comment: #7a5f94;
     --color-code-keyword: #ff80d5;
     --color-code-string: #e8a0f0;
+
+    /* --- Buttons --- */
+    --btn-primary-bg: var(--gradient-primary-tricolor);
+    --btn-primary-hover: #1a0a2e;
+    --btn-primary-text: #ffffff;
+    --btn-ghost-hover: #281240;
+    --btn-outline-border: var(--color-card-border);
+    --btn-outline-hover-border: #8958ae;
+    --btn-outline-hover-bg: var(--gradient-primary-duocolor);
+    --btn-danger-bg: #ff4d5e;
+
+    /* --- Interactive states --- */
+    --color-card-border-bright: #774b99;
+    --color-focus-ring: #d46fff;
+    --color-shadow-glow: rgba(176, 125, 212, 0.35);
+    --color-primary: #b07dd4;
+
+    /* --- Transitions --- */
+    --transition-fast: 0.15s;
+    --transition-normal: 0.25s;
+
+    /* --- Scrollbar --- */
+    --color-scrollbar-thumb: rgba(200, 179, 224, 0.3);
+    --color-scrollbar-track: transparent;
 }
