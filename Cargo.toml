@@ -3,9 +3,15 @@ name = "eq_ui"
 version = "0.1.1"
 edition = "2024"
 description = "Portable Dioxus UI component library - atoms, molecules, organisms + theme"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/equidevium/eq_ui"
+homepage = "https://github.com/equidevium/eq_ui"
+readme = "README.md"
+keywords = ["dioxus", "ui", "components", "theme", "tailwind"]
+categories = ["gui", "web-programming"]
 
 [dependencies]
-dioxus = "0.7.3"
+dioxus = "=0.7.3"
 
 [[example]]
 name = "playground"
