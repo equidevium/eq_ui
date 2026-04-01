@@ -127,6 +127,7 @@ fn build_component_tree() -> Vec<TreeNode> {
 fn App() -> Element {
     let _theme = EqTheme::use_theme_provider();
     let mut selected = use_signal(|| Option::<String>::None);
+    let mut sidebar_open = use_signal(|| false);
 
     rsx! {
         document::Link { rel: "stylesheet", href: UI_TAILWIND_CSS }
@@ -140,6 +141,28 @@ fn App() -> Element {
                 EqHeader {
                     site_title: "EqPlayground",
                     nav: rsx! {
+                        // Hamburger button — mobile only
+                        li { class: "md:hidden",
+                            button {
+                                class: "p-2 rounded-md text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] active:text-[var(--color-label-primary)] transition",
+                                onclick: move |_| sidebar_open.set(!sidebar_open()),
+                                svg {
+                                    class: "size-5",
+                                    xmlns: "http://www.w3.org/2000/svg",
+                                    fill: "none",
+                                    view_box: "0 0 24 24",
+                                    stroke_width: "2",
+                                    stroke: "currentColor",
+                                    if sidebar_open() {
+                                        // X icon
+                                        path { d: "M6 18 18 6M6 6l12 12" }
+                                    } else {
+                                        // Hamburger icon
+                                        path { d: "M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" }
+                                    }
+                                }
+                            }
+                        }
                         li { ThemeSwitcher {} }
                     },
                 }
@@ -149,20 +172,37 @@ fn App() -> Element {
             },
 
             // Two-panel layout
-            div { class: "flex min-h-[calc(100vh-8rem)]",
-                // Left sidebar
-                aside { class: "w-64 shrink-0 border-r border-[var(--color-card-border)] p-3 flex flex-col",
+            div { class: "flex min-h-[calc(100vh-8rem)] relative",
+
+                // Mobile overlay backdrop
+                if sidebar_open() {
+                    div {
+                        class: "fixed inset-0 z-30 bg-black/50 md:hidden",
+                        onclick: move |_| sidebar_open.set(false),
+                    }
+                }
+
+                // Sidebar — overlay on mobile, static on desktop
+                aside {
+                    class: if sidebar_open() {
+                        "fixed inset-y-0 left-0 z-40 w-64 bg-[var(--color-primary-dark)] border-r border-[var(--color-card-border)] p-3 flex flex-col pt-16 md:pt-3 md:relative md:inset-auto md:z-auto"
+                    } else {
+                        "hidden md:flex w-64 shrink-0 border-r border-[var(--color-card-border)] p-3 flex-col"
+                    },
                     EqScrollableSpace {
                         EqTree {
                             nodes: build_component_tree(),
                             selected: selected(),
-                            on_select: move |id: String| selected.set(Some(id)),
+                            on_select: move |id: String| {
+                                selected.set(Some(id));
+                                sidebar_open.set(false);
+                            },
                             show_count: true,
                         }
                     }
                 }
 
-                // Right preview panel
+                // Right preview panel — full width on mobile
                 div { class: "flex-1 overflow-y-auto",
                     PreviewPanel { selected: selected() }
                 }
