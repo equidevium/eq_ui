@@ -39,7 +39,7 @@ pub const ARROW_BASE: &str =
      flex items-center justify-center \
      size-10 rounded-full \
      bg-black/30 text-white \
-     hover:bg-black/50 \
+     hover:bg-black/50 active:bg-black/50 \
      transition cursor-pointer";
 
 /// Left arrow positioning
@@ -58,11 +58,11 @@ pub const DOTS: &str = "flex justify-center items-center gap-2 mt-4";
 
 /// Inactive dot
 pub const DOT: &str =
-    "size-2.5 rounded-full bg-[var(--color-label-secondary)]/40 \
-     hover:bg-[var(--color-label-secondary)]/70 \
+    "size-3 md:size-2.5 rounded-full bg-[var(--color-label-secondary)]/40 \
+     hover:bg-[var(--color-label-secondary)]/70 active:bg-[var(--color-label-secondary)]/70 \
      transition cursor-pointer";
 
 /// Active dot
 pub const DOT_ACTIVE: &str =
-    "size-2.5 rounded-full bg-[var(--color-label-bold)] \
+    "size-3 md:size-2.5 rounded-full bg-[var(--color-label-bold)] \
      cursor-pointer";

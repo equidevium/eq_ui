@@ -25,9 +25,9 @@ pub fn merge_classes(defaults: &str, class_override: &str) -> String {
 // ── Layout ──────────────────────────────────────────────────────────
 pub const APP: &str =
     "min-h-screen bg-[var(--color-primary-dark)] text-[var(--color-label-primary)]";
-pub const CONTAINER_LAYOUT: &str = "mx-auto max-w-6xl px-4";
+pub const CONTAINER_LAYOUT: &str = "mx-auto max-w-6xl px-4 md:px-6";
 pub const MAIN_CONTENT: &str = "flex-1";
-pub const MAIN_INNER: &str = "py-10";
+pub const MAIN_INNER: &str = "py-6 md:py-10";
 
 // ── Not Found (web page) ───────────────────────────────────────────
 pub const NOTFOUND: &str = "mx-auto max-w-2xl py-16";
@@ -42,10 +42,10 @@ pub const STACK_MD: &str = "space-y-4";
 pub const STACK_LG: &str = "space-y-6";
 pub const STACK_XL: &str = "space-y-10";
 pub const SECTION_Y_SM: &str = "py-6";
-pub const SECTION_Y_MD: &str = "py-10";
-pub const SECTION_Y_LG: &str = "py-16";
-pub const PAGE_Y: &str = "py-10";
-pub const PAGE_Y_LG: &str = "py-16";
+pub const SECTION_Y_MD: &str = "py-6 md:py-10";
+pub const SECTION_Y_LG: &str = "py-10 md:py-16";
+pub const PAGE_Y: &str = "py-6 md:py-10";
+pub const PAGE_Y_LG: &str = "py-10 md:py-16";
 pub const GAP_SM: &str = "gap-2";
 pub const GAP_MD: &str = "gap-4";
 pub const GAP_LG: &str = "gap-6";
@@ -93,7 +93,7 @@ pub const BTN_LG: &str = "btn-lg";
 pub const CTA: &str =
     "rounded-xl border border-[var(--color-card-border)] \
      bg-[var(--color-tertiary-dark)]/60 \
-     p-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between";
+     p-4 md:p-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between";
 pub const CTA_TEXT_GROUP: &str = "space-y-1";
 pub const CTA_TITLE: &str =
     "text-lg font-semibold text-[var(--color-label-primary)]";
@@ -103,9 +103,9 @@ pub const CTA_ACTION: &str = "shrink-0";
 
 // ── Section cards (move when component is created) ──────────────────
 pub const SECTION_CARD: &str =
-    "rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card)]/60 p-6 shadow-sm";
+    "rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card)]/60 p-4 md:p-6 shadow-sm";
 pub const SECTION_CARD_SM: &str =
-    "rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card)]/60 p-4 shadow-sm";
+    "rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card)]/60 p-3 md:p-4 shadow-sm";
 pub const SECTION_HEADER: &str = "space-y-2";
 pub const SECTION_TITLE: &str =
     "text-lg font-semibold text-[var(--color-label-primary)]";
@@ -117,7 +117,7 @@ pub const SECTION_STACK: &str = "space-y-6";
 pub const NAV: &str = "flex";
 pub const NAV_LIST: &str = "flex items-center gap-4 list-none m-0 p-0";
 pub const NAV_LINK: &str =
-    "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] transition";
+    "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] active:text-[var(--color-label-primary)] transition";
 pub const NAV_LINK_ACTIVE: &str =
     "text-[var(--color-label-primary)] font-medium";
 
@@ -127,4 +127,4 @@ pub const LINK_GROUP_TITLE: &str =
     "text-sm font-semibold tracking-wide text-[var(--color-label-primary)]";
 pub const LINK_GROUP_LIST: &str = "space-y-2";
 pub const LINK_GROUP_LINK: &str =
-    "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] transition";
+    "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] active:text-[var(--color-label-primary)] transition";

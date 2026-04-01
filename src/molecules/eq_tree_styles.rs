@@ -5,11 +5,11 @@ pub const TREE: &str = "flex flex-col gap-0.5 text-sm select-none";
 
 /// A single tree node row (branch or leaf).
 pub const NODE_ROW: &str =
-    "flex items-center gap-1.5 px-2 py-1.5 rounded-md cursor-pointer transition-colors hover:bg-[var(--color-card)]/60";
+    "flex items-center gap-1.5 px-2 py-2 md:py-1.5 rounded-md cursor-pointer transition-colors hover:bg-[var(--color-card)]/60 active:bg-[var(--color-card)]/60";
 
 /// Active/selected node highlight.
 pub const NODE_ACTIVE: &str =
-    "flex items-center gap-1.5 px-2 py-1.5 rounded-md cursor-pointer bg-[var(--color-primary)]/15 text-[var(--color-primary)]";
+    "flex items-center gap-1.5 px-2 py-2 md:py-1.5 rounded-md cursor-pointer bg-[var(--color-primary)]/15 text-[var(--color-primary)]";
 
 /// Chevron icon for branch nodes.
 pub const CHEVRON: &str = "size-4 shrink-0 transition-transform duration-[var(--transition-fast)]";

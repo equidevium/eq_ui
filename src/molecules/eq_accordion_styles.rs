@@ -8,7 +8,7 @@ pub const PANEL: &str = "";
 
 /// The clickable header row.
 pub const HEADER: &str =
-    "flex items-center justify-between w-full gap-3 px-4 py-3 cursor-pointer select-none text-left transition-colors hover:bg-[var(--color-card)]/40";
+    "flex items-center justify-between w-full gap-3 px-4 py-3 cursor-pointer select-none text-left transition-colors hover:bg-[var(--color-card)]/40 active:bg-[var(--color-card)]/40";
 
 /// Header text defaults.
 pub const HEADER_TEXT: &str =

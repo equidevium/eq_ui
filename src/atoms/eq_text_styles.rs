@@ -5,7 +5,7 @@ pub const H1: &str =
     "text-3xl md:text-4xl font-semibold tracking-tight text-[var(--color-label-primary)]";
 /// Sub-headline
 pub const H2: &str =
-    "text-2xl font-semibold tracking-tight text-[var(--color-label-primary)]";
+    "text-xl md:text-2xl font-semibold tracking-tight text-[var(--color-label-primary)]";
 /// Card / section title
 pub const H3: &str =
     "text-lg font-semibold text-[var(--color-label-primary)]";

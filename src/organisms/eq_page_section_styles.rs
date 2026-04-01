@@ -1,6 +1,6 @@
 //! Style constants for EqPageSection component.
 
-pub const SECTION_WRAP: &str = "py-12 md:py-16";
+pub const SECTION_WRAP: &str = "py-8 md:py-16";
 pub const SECTION_TITLE: &str = "text-2xl md:text-3xl font-semibold tracking-tight";
 pub const SECTION_DESC: &str = "mt-2 w-full text-[var(--color-label-secondary)]";
-pub const SECTION_BODY: &str = "mt-8";
+pub const SECTION_BODY: &str = "mt-6 md:mt-8";

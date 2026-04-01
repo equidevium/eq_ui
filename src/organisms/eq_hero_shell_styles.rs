@@ -1,16 +1,16 @@
 //! Style constants for EqHeroShell component.
 
 pub const HERO_SHELL: &str =
-    "py-20 md:py-28 bg-[var(--gradient-background)]";
+    "py-12 md:py-28 bg-[var(--gradient-background)]";
 
 pub const HERO_TITLE: &str =
-    "text-4xl md:text-5xl font-semibold tracking-tight text-[var(--color-label-primary)]";
+    "text-3xl md:text-5xl font-semibold tracking-tight text-[var(--color-label-primary)]";
 
 pub const HERO_SUBTITLE: &str =
-    "mt-4 max-w-2xl text-lg text-[var(--color-label-secondary)]";
+    "mt-3 md:mt-4 max-w-2xl text-base md:text-lg text-[var(--color-label-secondary)]";
 
 pub const HERO_ACTIONS: &str =
-    "mt-8 flex gap-4";
+    "mt-6 md:mt-8 flex flex-wrap gap-3 md:gap-4";
 
 pub const HERO_SHELL_RELATIVE: &str =
     "relative overflow-hidden";
