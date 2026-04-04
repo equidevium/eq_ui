@@ -17,7 +17,7 @@ categories = ["gui", "web-programming"]
 dioxus = "=0.7.3"
 
 [build-dependencies]
-eq_ui_build = "0.1.0"
+eq_ui_build = { path = "eq_ui_build" }
 
 [[example]]
 name = "playground"
