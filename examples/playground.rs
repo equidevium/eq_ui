@@ -111,6 +111,7 @@ fn build_component_tree() -> Vec<TreeNode> {
                 TreeNode::new("page-section", "EqPageSection"),
                 TreeNode::new("footer", "EqFooter"),
                 TreeNode::new("app-shell", "EqAppShell"),
+                TreeNode::new("grid", "EqGrid"),
             ],
         ),
         TreeNode::new_with_children(
@@ -282,6 +283,9 @@ fn PreviewPanel(selected: Option<String>) -> Element {
         },
         Some("app-shell") => rsx! {
             DemoEqAppShell {}
+        },
+        Some("grid") => rsx! {
+            DemoEqGrid {}
         },
 
         // Theming
@@ -2108,6 +2112,201 @@ fn DemoEqAppShell() -> Element {
                 "EqAppShell wraps header + footer + children into a full page layout. It is the outermost layout component — you are looking at a live example right now. This playground itself uses EqAppShell."
             }
             StyleInfo { file: "theme.rs (shared)", styles }
+            CodeBlock { code }
+        }
+    }
+}
+
+// ── EqGrid Demo ─────────────────────────────────────────────────────
+
+#[derive(Clone, PartialEq)]
+struct DemoEmployee {
+    name: String,
+    role: String,
+    department: String,
+    salary: f64,
+    status: bool,
+}
+
+fn demo_employees() -> Vec<DemoEmployee> {
+    vec![
+        DemoEmployee { name: "Ada Lovelace".into(), role: "Engineer".into(), department: "R&D".into(), salary: 95000.0, status: true },
+        DemoEmployee { name: "Grace Hopper".into(), role: "Architect".into(), department: "R&D".into(), salary: 120000.0, status: true },
+        DemoEmployee { name: "Alan Turing".into(), role: "Researcher".into(), department: "Science".into(), salary: 105000.0, status: false },
+        DemoEmployee { name: "Linus Torvalds".into(), role: "Lead".into(), department: "Engineering".into(), salary: 150000.0, status: true },
+        DemoEmployee { name: "Margaret Hamilton".into(), role: "Director".into(), department: "Engineering".into(), salary: 140000.0, status: true },
+        DemoEmployee { name: "Dennis Ritchie".into(), role: "Engineer".into(), department: "Systems".into(), salary: 98000.0, status: false },
+        DemoEmployee { name: "Barbara Liskov".into(), role: "Professor".into(), department: "Science".into(), salary: 130000.0, status: true },
+        DemoEmployee { name: "Ken Thompson".into(), role: "Engineer".into(), department: "Systems".into(), salary: 102000.0, status: true },
+        DemoEmployee { name: "Bjarne Stroustrup".into(), role: "Architect".into(), department: "Languages".into(), salary: 115000.0, status: true },
+        DemoEmployee { name: "Guido van Rossum".into(), role: "Lead".into(), department: "Languages".into(), salary: 125000.0, status: false },
+        DemoEmployee { name: "Hedy Lamarr".into(), role: "Inventor".into(), department: "R&D".into(), salary: 88000.0, status: true },
+        DemoEmployee { name: "Tim Berners-Lee".into(), role: "Architect".into(), department: "Web".into(), salary: 135000.0, status: true },
+        DemoEmployee { name: "John McCarthy".into(), role: "Researcher".into(), department: "AI".into(), salary: 110000.0, status: false },
+        DemoEmployee { name: "Frances Allen".into(), role: "Engineer".into(), department: "Compilers".into(), salary: 99000.0, status: true },
+        DemoEmployee { name: "Donald Knuth".into(), role: "Professor".into(), department: "Algorithms".into(), salary: 142000.0, status: true },
+    ]
+}
+
+fn demo_columns() -> Vec<EqColumnDef<DemoEmployee>> {
+    vec![
+        EqColumnDef::new("name", "Name", |e: &DemoEmployee| e.name.clone())
+            .filterable(true)
+            .min_width(140),
+        EqColumnDef::new("role", "Role", |e: &DemoEmployee| e.role.clone())
+            .filterable(true)
+            .min_width(100),
+        EqColumnDef::new("dept", "Department", |e: &DemoEmployee| e.department.clone())
+            .filterable(true)
+            .min_width(100),
+        EqColumnDef::new("salary", "Salary", |e: &DemoEmployee| e.salary.to_string())
+            .with_formatter(|e: &DemoEmployee| format!("${:.0}", e.salary))
+            .align(ColumnAlign::Right)
+            .comparator(|a: &DemoEmployee, b: &DemoEmployee| a.salary.partial_cmp(&b.salary).unwrap_or(std::cmp::Ordering::Equal))
+            .min_width(100),
+        EqColumnDef::new("status", "Status", |e: &DemoEmployee| e.status.to_string())
+            .with_renderer(|e: &DemoEmployee| {
+                let (label, color) = if e.status {
+                    ("Active", "text-[var(--color-success)]")
+                } else {
+                    ("Inactive", "text-[var(--color-error)]")
+                };
+                rsx! { span { class: "{color} font-medium text-xs", "{label}" } }
+            })
+            .sortable(false)
+            .align(ColumnAlign::Center)
+            .min_width(80),
+    ]
+}
+
+#[component]
+fn DemoEqGrid() -> Element {
+    let mut paginate = use_signal(|| true);
+    let mut striped = use_signal(|| true);
+    let mut col_borders = use_signal(|| false);
+    let mut quick_filter = use_signal(|| true);
+    let mut density_idx = use_signal(|| 1usize); // 0=Compact, 1=Normal, 2=Comfortable
+    let mut selection_idx = use_signal(|| 1usize); // 0=None, 1=Single
+    let mut page_size_idx = use_signal(|| 0usize); // 0=5, 1=10, 2=25
+
+    let density = match density_idx() {
+        0 => GridDensity::Compact,
+        2 => GridDensity::Comfortable,
+        _ => GridDensity::Normal,
+    };
+
+    let selection = match selection_idx() {
+        1 => RowSelection::Single,
+        _ => RowSelection::None,
+    };
+
+    let page_size = match page_size_idx() {
+        1 => 10,
+        2 => 25,
+        _ => 5,
+    };
+
+    let styles = "GRID_WRAPPER: \"rounded-xl border ... overflow-hidden\"\n\
+        TABLE: \"w-full border-collapse text-sm\"\n\
+        TH: \"px-3 py-2 md:px-4 md:py-3 ... font-semibold\"\n\
+        TD: \"px-3 py-2 md:px-4 md:py-3\"\n\
+        TR_STRIPED: \"even:bg-[var(--color-card)]/5\"\n\
+        QUICK_FILTER: \"px-3 py-2 md:px-4 md:py-3 ... flex items-center\"\n\
+        COLUMN_FILTER_INPUT: \"w-full mt-1 px-2 py-1 text-xs rounded ...\"\n\
+        PAGINATION_BAR: \"flex flex-col gap-2 md:flex-row ...\"".to_string();
+
+    let code = "#[derive(Clone, PartialEq)]\n\
+        struct Employee {\n\
+        \x20   name: String,\n\
+        \x20   role: String,\n\
+        \x20   salary: f64,\n\
+        }\n\
+        \n\
+        let columns = vec![\n\
+        \x20   EqColumnDef::new(\"name\", \"Name\", |e| e.name.clone())\n\
+        \x20       .filterable(true),\n\
+        \x20   EqColumnDef::new(\"role\", \"Role\", |e| e.role.clone())\n\
+        \x20       .filterable(true),\n\
+        \x20   EqColumnDef::new(\"salary\", \"Salary\", |e| e.salary.to_string())\n\
+        \x20       .with_formatter(|e| format!(\"${:.0}\", e.salary))\n\
+        \x20       .align(ColumnAlign::Right),\n\
+        ];\n\
+        \n\
+        EqGrid {\n\
+        \x20   data: employees,\n\
+        \x20   columns: columns,\n\
+        \x20   paginate: true,\n\
+        \x20   page_size: 10,\n\
+        \x20   row_selection: RowSelection::Single,\n\
+        \x20   quick_filter: true,\n\
+        \x20   striped: true,\n\
+        }".to_string();
+
+    rsx! {
+        DemoSection { title: "EqGrid",
+            // Prop controls
+            div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-3",
+                EqText {
+                    variant: TextVariant::Caption,
+                    class: "font-semibold uppercase tracking-wider",
+                    "Props"
+                }
+                div { class: "grid grid-cols-2 md:grid-cols-3 gap-3",
+                    PropToggle {
+                        label: "paginate",
+                        value: paginate(),
+                        onchange: move |v: bool| paginate.set(v),
+                    }
+                    PropToggle {
+                        label: "striped",
+                        value: striped(),
+                        onchange: move |v: bool| striped.set(v),
+                    }
+                    PropToggle {
+                        label: "column_borders",
+                        value: col_borders(),
+                        onchange: move |v: bool| col_borders.set(v),
+                    }
+                    PropToggle {
+                        label: "quick_filter",
+                        value: quick_filter(),
+                        onchange: move |v: bool| quick_filter.set(v),
+                    }
+                    PropSelect {
+                        label: "density",
+                        value: match density_idx() { 0 => "Compact", 2 => "Comfortable", _ => "Normal" }.to_string(),
+                        options: vec!["Compact", "Normal", "Comfortable"],
+                        onchange: move |v: String| density_idx.set(match v.as_str() { "Compact" => 0, "Comfortable" => 2, _ => 1 }),
+                    }
+                    PropSelect {
+                        label: "row_selection",
+                        value: match selection_idx() { 1 => "Single", _ => "None" }.to_string(),
+                        options: vec!["None", "Single"],
+                        onchange: move |v: String| selection_idx.set(match v.as_str() { "Single" => 1, _ => 0 }),
+                    }
+                    PropSelect {
+                        label: "page_size",
+                        value: match page_size_idx() { 1 => "10", 2 => "25", _ => "5" }.to_string(),
+                        options: vec!["5", "10", "25"],
+                        onchange: move |v: String| page_size_idx.set(match v.as_str() { "10" => 1, "25" => 2, _ => 0 }),
+                    }
+                }
+            }
+
+            // Live preview
+            EqGrid {
+                data: demo_employees(),
+                columns: demo_columns(),
+                paginate: paginate(),
+                page_size: page_size,
+                row_selection: selection,
+                density: density,
+                striped: striped(),
+                column_borders: col_borders(),
+                quick_filter: quick_filter(),
+            }
+
+            StyleInfo { file: "eq_grid/styles.rs", styles }
             CodeBlock { code }
         }
     }

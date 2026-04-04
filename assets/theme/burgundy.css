@@ -103,4 +103,9 @@
     /* --- Scrollbar --- */
     --color-scrollbar-thumb: rgba(203, 179, 195, 0.3);
     --color-scrollbar-track: transparent;
+
+    /* --- Grid --- */
+    --color-grid-header-bg: var(--color-primary-dark);
+    --color-grid-header-text: var(--color-label-primary);
+    --color-grid-border: var(--color-card-border);
 }

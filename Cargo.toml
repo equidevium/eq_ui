@@ -1,3 +1,6 @@
+[workspace]
+members = ["eq_ui_build"]
+
 [package]
 name = "eq_ui"
 version = "0.1.1"
@@ -12,6 +15,9 @@ categories = ["gui", "web-programming"]
 
 [dependencies]
 dioxus = "=0.7.3"
+
+[build-dependencies]
+eq_ui_build = { path = "eq_ui_build" }
 
 [[example]]
 name = "playground"

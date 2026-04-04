@@ -12,6 +12,7 @@ pub mod eq_input_styles;
 
 mod eq_icon;
 mod eq_icon_styles;
+pub mod eq_icon_paths;
 
 mod eq_image;
 mod eq_image_styles;
