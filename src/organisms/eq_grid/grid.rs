@@ -5,17 +5,18 @@
 //! density presets, loading/empty states, and full theme integration.
 
 use super::body::render_body;
+use super::bulk_actions::render_bulk_actions;
 use super::column_def::EqColumnDef;
 use super::header::render_header;
 use super::pagination::render_pagination;
 use super::quick_filter::render_quick_filter;
 use super::styles as s;
-use super::types::{GridDensity, RowSelection, SortDirection, SortState};
+use super::types::{ExportFormat, GridDensity, RowSelection, SortDirection, SortState};
 use crate::atoms::eq_icon_paths;
-use crate::atoms::{EqIcon, IconSize};
+use crate::atoms::EqIcon;
 use crate::theme::merge_classes;
 use dioxus::prelude::*;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 /// Feature-rich data grid organism.
 ///
@@ -57,6 +58,43 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
     /// Callback when a row is clicked (provides row index in original data).
     #[props(default)]
     on_row_click: Option<EventHandler<usize>>,
+    /// Callback when the set of selected rows changes (Multi selection mode).
+    /// Provides a sorted `Vec<usize>` of selected row indices.
+    #[props(default)]
+    on_selection_change: Option<EventHandler<Vec<usize>>>,
+    // ── Bulk action props ──────────────────────────────────────
+    /// Callback for the Delete bulk action. When provided, a Delete button
+    /// appears in the action bar. Receives sorted indices of selected rows.
+    #[props(default)]
+    on_delete: Option<EventHandler<Vec<usize>>>,
+    /// Enable the Export dropdown in the bulk action bar.
+    #[props(default = false)]
+    export: bool,
+    /// Callback when data is exported. Receives `(ExportFormat, Vec<u8>)`.
+    /// For text formats the bytes are UTF-8; for ODS they are raw ZIP bytes.
+    #[props(default)]
+    on_export: Option<EventHandler<(ExportFormat, Vec<u8>)>>,
+    /// Callback for clipboard copy. Receives the content as a `String`.
+    /// The consumer is responsible for writing to the platform clipboard.
+    #[props(default)]
+    on_clipboard: Option<EventHandler<String>>,
+    /// Column ID of the "status" column for the Change Status action.
+    #[props(default)]
+    status_column: Option<&'static str>,
+    /// Valid status values shown in the Change Status dropdown.
+    #[props(default)]
+    status_options: Vec<String>,
+    /// Callback when status is changed on selected rows.
+    /// Receives `(Vec<usize>, String)` — selected indices and the new status.
+    #[props(default)]
+    on_status_change: Option<EventHandler<(Vec<usize>, String)>>,
+    /// Column IDs to aggregate when rows are selected.
+    /// Numeric columns show a sum; non-numeric columns show a count.
+    #[props(default)]
+    aggregation_columns: Vec<&'static str>,
+    /// Extensible slot for consumer-defined custom bulk action buttons.
+    #[props(default)]
+    bulk_actions: Option<Element>,
     /// Optional class override.
     #[props(into, default)]
     class: String,
@@ -66,6 +104,7 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
     let sort_state = use_signal(|| Vec::<SortState>::new());
     let mut current_page = use_signal(|| 0usize);
     let selected_row = use_signal(|| Option::<usize>::None);
+    let selected_rows = use_signal(|| HashSet::<usize>::new());
     let quick_filter_text = use_signal(|| String::new());
     let column_filters = use_signal(|| HashMap::<&'static str, String>::new());
 
@@ -221,7 +260,7 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
                 } else {
                     // Table
                     table { class: s::TABLE,
-                        {render_header(&columns, sort_state, current_page, column_filters, density_cls)}
+                        {render_header(&columns, sort_state, current_page, column_filters, density_cls, row_selection, selected_rows, &visible_indices, &on_selection_change)}
                         {
                             render_body(
                                 &data,
@@ -232,10 +271,34 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
                                 column_borders,
                                 row_selection,
                                 selected_row,
+                                selected_rows,
                                 &on_row_click,
+                                &on_selection_change,
                             )
                         }
                     }
+                }
+            }
+
+            // Bulk action bar (visible when Multi selection has rows selected)
+            if row_selection == RowSelection::Multi && selected_rows.read().len() > 0 {
+                {
+                    let count = selected_rows.read().len();
+                    render_bulk_actions(
+                        &columns,
+                        &data,
+                        selected_rows,
+                        count,
+                        &on_delete,
+                        export,
+                        &on_export,
+                        &on_clipboard,
+                        status_column,
+                        &status_options,
+                        &on_status_change,
+                        &aggregation_columns,
+                        &bulk_actions,
+                    )
                 }
             }
 

@@ -14,7 +14,7 @@ pub use eq_app_shell::EqAppShell;
 pub use eq_footer::{EqFooter, FooterLink, FooterLinkGroup};
 pub use eq_grid::{
     EqGrid, EqColumnDef, ColumnAlign, SortDirection, SortState,
-    RowSelection, GridDensity,
+    RowSelection, GridDensity, ExportFormat,
 };
 pub use eq_header::EqHeader;
 pub use eq_hero_shell::EqHeroShell;

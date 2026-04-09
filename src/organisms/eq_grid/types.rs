@@ -31,6 +31,21 @@ pub enum RowSelection {
     #[default]
     None,
     Single,
+    /// Checkbox column with Select All header. Exposes selection via callback.
+    Multi,
+}
+
+/// Export format for bulk data export.
+#[derive(Clone, Copy, PartialEq)]
+pub enum ExportFormat {
+    /// Comma-separated values.
+    Csv,
+    /// JSON array of objects.
+    Json,
+    /// Tab-separated plain text.
+    Txt,
+    /// OpenDocument Spreadsheet (LibreOffice-compatible).
+    Ods,
 }
 
 /// Row height / cell padding preset.

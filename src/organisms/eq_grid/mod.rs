@@ -18,8 +18,10 @@ mod header;
 mod body;
 mod pagination;
 mod quick_filter;
+mod export;
+mod bulk_actions;
 mod grid;
 
-pub use types::{ColumnAlign, SortDirection, SortState, RowSelection, GridDensity};
+pub use types::{ColumnAlign, SortDirection, SortState, RowSelection, GridDensity, ExportFormat};
 pub use column_def::EqColumnDef;
 pub use grid::EqGrid;

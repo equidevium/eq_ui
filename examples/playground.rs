@@ -3,6 +3,7 @@ use eq_ui::atoms::*;
 use eq_ui::eq_theme::EqTheme;
 use eq_ui::molecules::*;
 use eq_ui::organisms::*;
+use wasm_bindgen_futures::spawn_local;
 use eq_ui::{UI_BUTTONS_CSS, UI_INDEX_CSS, UI_TAILWIND_CSS};
 
 fn main() {
@@ -2125,26 +2126,26 @@ struct DemoEmployee {
     role: String,
     department: String,
     salary: f64,
-    status: bool,
+    status: String,
 }
 
 fn demo_employees() -> Vec<DemoEmployee> {
     vec![
-        DemoEmployee { name: "Ada Lovelace".into(), role: "Engineer".into(), department: "R&D".into(), salary: 95000.0, status: true },
-        DemoEmployee { name: "Grace Hopper".into(), role: "Architect".into(), department: "R&D".into(), salary: 120000.0, status: true },
-        DemoEmployee { name: "Alan Turing".into(), role: "Researcher".into(), department: "Science".into(), salary: 105000.0, status: false },
-        DemoEmployee { name: "Linus Torvalds".into(), role: "Lead".into(), department: "Engineering".into(), salary: 150000.0, status: true },
-        DemoEmployee { name: "Margaret Hamilton".into(), role: "Director".into(), department: "Engineering".into(), salary: 140000.0, status: true },
-        DemoEmployee { name: "Dennis Ritchie".into(), role: "Engineer".into(), department: "Systems".into(), salary: 98000.0, status: false },
-        DemoEmployee { name: "Barbara Liskov".into(), role: "Professor".into(), department: "Science".into(), salary: 130000.0, status: true },
-        DemoEmployee { name: "Ken Thompson".into(), role: "Engineer".into(), department: "Systems".into(), salary: 102000.0, status: true },
-        DemoEmployee { name: "Bjarne Stroustrup".into(), role: "Architect".into(), department: "Languages".into(), salary: 115000.0, status: true },
-        DemoEmployee { name: "Guido van Rossum".into(), role: "Lead".into(), department: "Languages".into(), salary: 125000.0, status: false },
-        DemoEmployee { name: "Hedy Lamarr".into(), role: "Inventor".into(), department: "R&D".into(), salary: 88000.0, status: true },
-        DemoEmployee { name: "Tim Berners-Lee".into(), role: "Architect".into(), department: "Web".into(), salary: 135000.0, status: true },
-        DemoEmployee { name: "John McCarthy".into(), role: "Researcher".into(), department: "AI".into(), salary: 110000.0, status: false },
-        DemoEmployee { name: "Frances Allen".into(), role: "Engineer".into(), department: "Compilers".into(), salary: 99000.0, status: true },
-        DemoEmployee { name: "Donald Knuth".into(), role: "Professor".into(), department: "Algorithms".into(), salary: 142000.0, status: true },
+        DemoEmployee { name: "Ada Lovelace".into(), role: "Engineer".into(), department: "R&D".into(), salary: 95000.0, status: "Active".into() },
+        DemoEmployee { name: "Grace Hopper".into(), role: "Architect".into(), department: "R&D".into(), salary: 120000.0, status: "Active".into() },
+        DemoEmployee { name: "Alan Turing".into(), role: "Researcher".into(), department: "Science".into(), salary: 105000.0, status: "Inactive".into() },
+        DemoEmployee { name: "Linus Torvalds".into(), role: "Lead".into(), department: "Engineering".into(), salary: 150000.0, status: "Active".into() },
+        DemoEmployee { name: "Margaret Hamilton".into(), role: "Director".into(), department: "Engineering".into(), salary: 140000.0, status: "Active".into() },
+        DemoEmployee { name: "Dennis Ritchie".into(), role: "Engineer".into(), department: "Systems".into(), salary: 98000.0, status: "Inactive".into() },
+        DemoEmployee { name: "Barbara Liskov".into(), role: "Professor".into(), department: "Science".into(), salary: 130000.0, status: "Active".into() },
+        DemoEmployee { name: "Ken Thompson".into(), role: "Engineer".into(), department: "Systems".into(), salary: 102000.0, status: "Active".into() },
+        DemoEmployee { name: "Bjarne Stroustrup".into(), role: "Architect".into(), department: "Languages".into(), salary: 115000.0, status: "Active".into() },
+        DemoEmployee { name: "Guido van Rossum".into(), role: "Lead".into(), department: "Languages".into(), salary: 125000.0, status: "Inactive".into() },
+        DemoEmployee { name: "Hedy Lamarr".into(), role: "Inventor".into(), department: "R&D".into(), salary: 88000.0, status: "Active".into() },
+        DemoEmployee { name: "Tim Berners-Lee".into(), role: "Architect".into(), department: "Web".into(), salary: 135000.0, status: "Active".into() },
+        DemoEmployee { name: "John McCarthy".into(), role: "Researcher".into(), department: "AI".into(), salary: 110000.0, status: "Inactive".into() },
+        DemoEmployee { name: "Frances Allen".into(), role: "Engineer".into(), department: "Compilers".into(), salary: 99000.0, status: "Active".into() },
+        DemoEmployee { name: "Donald Knuth".into(), role: "Professor".into(), department: "Algorithms".into(), salary: 142000.0, status: "Active".into() },
     ]
 }
 
@@ -2164,12 +2165,12 @@ fn demo_columns() -> Vec<EqColumnDef<DemoEmployee>> {
             .align(ColumnAlign::Right)
             .comparator(|a: &DemoEmployee, b: &DemoEmployee| a.salary.partial_cmp(&b.salary).unwrap_or(std::cmp::Ordering::Equal))
             .min_width(100),
-        EqColumnDef::new("status", "Status", |e: &DemoEmployee| e.status.to_string())
+        EqColumnDef::new("status", "Status", |e: &DemoEmployee| e.status.clone())
             .with_renderer(|e: &DemoEmployee| {
-                let (label, color) = if e.status {
-                    ("Active", "text-[var(--color-success)]")
-                } else {
-                    ("Inactive", "text-[var(--color-error)]")
+                let (label, color) = match e.status.as_str() {
+                    "Active" => ("Active", "text-[var(--color-success)]"),
+                    "On Leave" => ("On Leave", "text-amber-400"),
+                    _ => ("Inactive", "text-[var(--color-error)]"),
                 };
                 rsx! { span { class: "{color} font-medium text-xs", "{label}" } }
             })
@@ -2197,8 +2198,15 @@ fn DemoEqGrid() -> Element {
 
     let selection = match selection_idx() {
         1 => RowSelection::Single,
+        2 => RowSelection::Multi,
         _ => RowSelection::None,
     };
+
+    let mut employees = use_signal(|| demo_employees());
+    let mut selection_count = use_signal(|| 0usize);
+    let mut bulk_status = use_signal(|| String::new());
+    let mut export_preview = use_signal(|| String::new());
+    let mut clipboard_preview = use_signal(|| String::new());
 
     let page_size = match page_size_idx() {
         1 => 10,
@@ -2280,9 +2288,9 @@ fn DemoEqGrid() -> Element {
                     }
                     PropSelect {
                         label: "row_selection",
-                        value: match selection_idx() { 1 => "Single", _ => "None" }.to_string(),
-                        options: vec!["None", "Single"],
-                        onchange: move |v: String| selection_idx.set(match v.as_str() { "Single" => 1, _ => 0 }),
+                        value: match selection_idx() { 1 => "Single", 2 => "Multi", _ => "None" }.to_string(),
+                        options: vec!["None", "Single", "Multi"],
+                        onchange: move |v: String| selection_idx.set(match v.as_str() { "Single" => 1, "Multi" => 2, _ => 0 }),
                     }
                     PropSelect {
                         label: "page_size",
@@ -2294,8 +2302,20 @@ fn DemoEqGrid() -> Element {
             }
 
             // Live preview
+            // Selection feedback + bulk action status
+            if selection == RowSelection::Multi {
+                div { class: "text-sm text-[var(--color-label-secondary)] py-1",
+                    "{selection_count()} row(s) selected"
+                }
+                if !bulk_status.read().is_empty() {
+                    div { class: "text-xs text-[var(--color-accent-primary)] bg-[var(--color-card)]/20 rounded px-3 py-1.5 mb-1",
+                        "{bulk_status}"
+                    }
+                }
+            }
+
             EqGrid {
-                data: demo_employees(),
+                data: employees(),
                 columns: demo_columns(),
                 paginate: paginate(),
                 page_size: page_size,
@@ -2304,6 +2324,104 @@ fn DemoEqGrid() -> Element {
                 striped: striped(),
                 column_borders: col_borders(),
                 quick_filter: quick_filter(),
+                on_selection_change: move |rows: Vec<usize>| {
+                    selection_count.set(rows.len());
+                },
+                // Bulk actions — these actually mutate the data signal
+                on_delete: move |rows: Vec<usize>| {
+                    let count = rows.len();
+                    let mut data = employees.write();
+                    // Remove in reverse order so indices stay valid.
+                    for &idx in rows.iter().rev() {
+                        if idx < data.len() {
+                            data.remove(idx);
+                        }
+                    }
+                    drop(data);
+                    selection_count.set(0);
+                    bulk_status.set(format!("Deleted {} row(s)", count));
+                },
+                export: true,
+                on_export: move |payload: (ExportFormat, Vec<u8>)| {
+                    let (fmt, bytes) = payload;
+                    let label = match fmt {
+                        ExportFormat::Csv => "CSV",
+                        ExportFormat::Json => "JSON",
+                        ExportFormat::Txt => "TXT",
+                        ExportFormat::Ods => "ODS",
+                    };
+                    // Show text content for text formats, byte count for binary.
+                    let preview = match fmt {
+                        ExportFormat::Ods => format!("[Binary ODS: {} bytes]", bytes.len()),
+                        _ => String::from_utf8(bytes.clone()).unwrap_or_else(|_| format!("[{} bytes]", bytes.len())),
+                    };
+                    clipboard_preview.set(String::new());
+                    export_preview.set(preview);
+                    bulk_status.set(format!("Exported {} ({} bytes)", label, bytes.len()));
+                },
+                on_clipboard: move |content: String| {
+                    let len = content.len();
+                    export_preview.set(String::new());
+                    clipboard_preview.set(content.clone());
+                    // Write to the system clipboard via the Web Clipboard API.
+                    spawn_local(async move {
+                        let window = web_sys::window().unwrap();
+                        let clipboard = window.navigator().clipboard();
+                        let _ = wasm_bindgen_futures::JsFuture::from(
+                            clipboard.write_text(&content)
+                        ).await;
+                    });
+                    bulk_status.set(format!("Copied to clipboard ({} chars)", len));
+                },
+                status_column: "status",
+                status_options: vec!["Active".into(), "Inactive".into(), "On Leave".into()],
+                on_status_change: move |payload: (Vec<usize>, String)| {
+                    let (rows, new_status) = payload;
+                    let count = rows.len();
+                    let mut data = employees.write();
+                    for &idx in &rows {
+                        if idx < data.len() {
+                            data[idx].status = new_status.clone();
+                        }
+                    }
+                    drop(data);
+                    bulk_status.set(format!("Changed {} row(s) to '{}'", count, new_status));
+                },
+                aggregation_columns: vec!["salary"],
+            }
+
+            // Export preview
+            if !export_preview.read().is_empty() {
+                div { class: "mt-3 rounded-lg border border-[var(--color-card-border)] overflow-hidden",
+                    div { class: "flex items-center justify-between px-3 py-1.5 bg-[var(--color-grid-header-bg)] border-b border-[var(--color-card-border)]",
+                        span { class: "text-xs font-semibold text-[var(--color-label-primary)]", "Export Preview" }
+                        button {
+                            class: "text-xs text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] cursor-pointer",
+                            onclick: move |_| export_preview.set(String::new()),
+                            "Close"
+                        }
+                    }
+                    pre { class: "px-3 py-2 text-xs text-[var(--color-label-primary)] bg-[var(--color-primary-dark)] overflow-x-auto max-h-64 overflow-y-auto whitespace-pre font-mono",
+                        "{export_preview}"
+                    }
+                }
+            }
+
+            // Clipboard preview
+            if !clipboard_preview.read().is_empty() {
+                div { class: "mt-3 rounded-lg border border-[var(--color-card-border)] overflow-hidden",
+                    div { class: "flex items-center justify-between px-3 py-1.5 bg-[var(--color-grid-header-bg)] border-b border-[var(--color-card-border)]",
+                        span { class: "text-xs font-semibold text-[var(--color-label-primary)]", "Clipboard Preview" }
+                        button {
+                            class: "text-xs text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] cursor-pointer",
+                            onclick: move |_| clipboard_preview.set(String::new()),
+                            "Close"
+                        }
+                    }
+                    pre { class: "px-3 py-2 text-xs text-[var(--color-label-primary)] bg-[var(--color-primary-dark)] overflow-x-auto max-h-64 overflow-y-auto whitespace-pre font-mono",
+                        "{clipboard_preview}"
+                    }
+                }
             }
 
             StyleInfo { file: "eq_grid/styles.rs", styles }

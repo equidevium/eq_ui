@@ -178,3 +178,68 @@ pub const CHECKBOX_ICON: &str =
 /// Checked checkbox icon.
 pub const CHECKBOX_ICON_CHECKED: &str =
     "size-4 mx-auto cursor-pointer text-[var(--color-accent-primary)]";
+
+// ── Bulk action bar ────────────────────────────────────────────────
+
+/// Container for the bulk action bar below the grid.
+pub const BULK_BAR: &str =
+    "flex flex-wrap items-center gap-2 px-3 py-2 md:px-4 md:py-3 \
+     border-t border-[var(--color-grid-border)] \
+     bg-[var(--color-grid-header-bg)]";
+
+/// Selection count label in the bulk action bar.
+pub const BULK_LABEL: &str =
+    "text-sm font-medium text-[var(--color-label-primary)] mr-2";
+
+/// Standard bulk action button.
+pub const BULK_BTN: &str =
+    "px-3 py-1.5 text-xs font-medium rounded \
+     bg-[var(--color-card)] text-[var(--color-label-primary)] \
+     border border-[var(--color-card-border)] \
+     hover:bg-[var(--color-card)]/80 active:bg-[var(--color-card)]/60 \
+     transition-colors cursor-pointer";
+
+/// Destructive bulk action button (delete).
+pub const BULK_BTN_DANGER: &str =
+    "px-3 py-1.5 text-xs font-medium rounded \
+     bg-red-500/10 text-red-400 \
+     border border-red-500/30 \
+     hover:bg-red-500/20 active:bg-red-500/30 \
+     transition-colors cursor-pointer";
+
+/// Dropdown menu container for export/status options.
+pub const BULK_DROPDOWN: &str =
+    "absolute bottom-full left-0 mb-1 min-w-[120px] \
+     bg-[var(--color-primary-dark)] \
+     border border-[var(--color-card-border)] rounded shadow-lg z-30";
+
+/// Individual option within a dropdown.
+pub const BULK_DROPDOWN_ITEM: &str =
+    "block w-full text-left px-3 py-1.5 text-xs \
+     text-[var(--color-label-primary)] \
+     hover:bg-[var(--color-card)]/30 \
+     transition-colors cursor-pointer";
+
+/// Separator between action groups.
+pub const BULK_SEPARATOR: &str =
+    "w-px h-6 bg-[var(--color-card-border)]";
+
+// ── Aggregation panel ──────────────────────────────────────────────
+
+/// Container for the aggregation summary below the bulk action bar.
+pub const AGGREGATION_PANEL: &str =
+    "flex flex-wrap items-center gap-4 px-3 py-2 md:px-4 md:py-3 \
+     border-t border-[var(--color-grid-border)] \
+     text-sm text-[var(--color-label-secondary)]";
+
+/// Individual aggregation value label.
+pub const AGGREGATION_ITEM: &str =
+    "flex items-center gap-1";
+
+/// Aggregation column name.
+pub const AGGREGATION_KEY: &str =
+    "font-medium text-[var(--color-label-primary)]";
+
+/// Aggregation computed value.
+pub const AGGREGATION_VALUE: &str =
+    "text-[var(--color-accent-primary)] font-semibold";

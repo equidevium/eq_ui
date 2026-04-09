@@ -2,11 +2,11 @@
 
 use super::column_def::EqColumnDef;
 use super::styles as s;
-use super::types::{ColumnAlign, SortDirection, SortState};
+use super::types::{ColumnAlign, RowSelection, SortDirection, SortState};
 use crate::atoms::eq_icon_paths;
 use crate::atoms::{EqIcon, IconSize};
 use dioxus::prelude::*;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 /// Render the sort indicator icon for a column header.
 /// When `priority` is provided and > 0, a small number badge is shown
@@ -58,12 +58,64 @@ pub(super) fn render_header<T: Clone + PartialEq + 'static>(
     mut current_page: Signal<usize>,
     mut column_filters: Signal<HashMap<&'static str, String>>,
     density_cls: &'static str,
+    row_selection: RowSelection,
+    mut selected_rows: Signal<HashSet<usize>>,
+    visible_indices: &[usize],
+    on_selection_change: &Option<EventHandler<Vec<usize>>>,
 ) -> Element {
     let sort_count = sort_state.read().len();
+
+    // Select All state: all visible rows selected?
+    let all_selected = row_selection == RowSelection::Multi
+        && !visible_indices.is_empty()
+        && visible_indices.iter().all(|idx| selected_rows.read().contains(idx));
+    let some_selected = row_selection == RowSelection::Multi
+        && !all_selected
+        && visible_indices.iter().any(|idx| selected_rows.read().contains(idx));
+
+    // Copy visible indices for the closure (can't capture slice).
+    let vis = visible_indices.to_vec();
+    let on_sel = on_selection_change.clone();
 
     rsx! {
         thead { class: s::THEAD,
             tr {
+                // Select All checkbox column
+                if row_selection == RowSelection::Multi {
+                    th {
+                        class: "{s::TH} {s::CHECKBOX_CELL} {density_cls}",
+                        onclick: move |_| {
+                            let mut set = selected_rows.write();
+                            if all_selected {
+                                // Deselect all visible rows.
+                                for &idx in vis.iter() {
+                                    set.remove(&idx);
+                                }
+                            } else {
+                                // Select all visible rows.
+                                for &idx in vis.iter() {
+                                    set.insert(idx);
+                                }
+                            }
+                            let sorted: Vec<usize> = {
+                                let mut v: Vec<usize> = set.iter().copied().collect();
+                                v.sort();
+                                v
+                            };
+                            drop(set);
+                            if let Some(ref handler) = on_sel {
+                                handler.call(sorted);
+                            }
+                        },
+                        if all_selected {
+                            EqIcon { path: eq_icon_paths::CHECK, size: IconSize::Sm, class: s::CHECKBOX_ICON_CHECKED }
+                        } else if some_selected {
+                            EqIcon { path: eq_icon_paths::MINUS, size: IconSize::Sm, class: s::CHECKBOX_ICON }
+                        } else {
+                            span { class: s::CHECKBOX_ICON, "\u{25A1}" }
+                        }
+                    }
+                }
                 for col in columns.iter() {
                     {
                         let col_id = col.id;
