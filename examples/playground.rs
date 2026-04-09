@@ -90,6 +90,7 @@ fn build_component_tree() -> Vec<TreeNode> {
                 TreeNode::new("scrollable-space", "EqScrollableSpace"),
                 TreeNode::new("divider", "EqDivider"),
                 TreeNode::new("video", "EqVideo"),
+                TreeNode::new("checkbox", "EqCheckbox"),
             ],
         ),
         TreeNode::new_with_children(
@@ -246,6 +247,9 @@ fn PreviewPanel(selected: Option<String>) -> Element {
         },
         Some("video") => rsx! {
             DemoEqVideo {}
+        },
+        Some("checkbox") => rsx! {
+            DemoEqCheckbox {}
         },
 
         // Molecules
@@ -2120,8 +2124,151 @@ fn DemoEqAppShell() -> Element {
 
 // ── EqGrid Demo ─────────────────────────────────────────────────────
 
+// ── EqCheckbox Demo ────────────────────────────────────────────────
+
+#[component]
+fn DemoEqCheckbox() -> Element {
+    let mut state_idx = use_signal(|| 0usize); // 0=Unchecked, 1=Checked, 2=Indeterminate
+    let mut disabled = use_signal(|| false);
+    let mut size_str = use_signal(|| "Sm".to_string());
+    let mut label_text = use_signal(|| String::new());
+
+    let state = match state_idx() {
+        1 => CheckboxState::Checked,
+        2 => CheckboxState::Indeterminate,
+        _ => CheckboxState::Unchecked,
+    };
+
+    let size = match size_str().as_str() {
+        "Md" => IconSize::Md,
+        "Lg" => IconSize::Lg,
+        _ => IconSize::Sm,
+    };
+
+    let styles = "WRAPPER: \"inline-flex items-center gap-2 cursor-pointer select-none\"\n\
+        WRAPPER_DISABLED: \"inline-flex items-center gap-2 cursor-not-allowed select-none opacity-50\"\n\
+        ICON: \"size-5 shrink-0 text-[var(--color-label-secondary)] transition-colors\"\n\
+        ICON_ACTIVE: \"size-5 shrink-0 text-[var(--color-accent-primary)] transition-colors\"\n\
+        LABEL: \"text-sm text-[var(--color-label-primary)]\"".to_string();
+
+    let code = "use eq_ui::atoms::{EqCheckbox, CheckboxState};\n\
+        \n\
+        let mut agreed = use_signal(|| CheckboxState::Unchecked);\n\
+        \n\
+        EqCheckbox {\n\
+        \x20   state: agreed(),\n\
+        \x20   label: \"I agree to the terms\",\n\
+        \x20   on_change: move |next| agreed.set(next),\n\
+        }\n\
+        \n\
+        // Indeterminate (e.g. header select-all with partial selection)\n\
+        EqCheckbox {\n\
+        \x20   state: CheckboxState::Indeterminate,\n\
+        \x20   on_change: move |_| { /* select all */ },\n\
+        }".to_string();
+
+    rsx! {
+        DemoSection { title: "EqCheckbox",
+            // Prop controls
+            div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-3",
+                EqText {
+                    variant: TextVariant::Caption,
+                    class: "font-semibold uppercase tracking-wider",
+                    "Props"
+                }
+                div { class: "grid grid-cols-2 md:grid-cols-3 gap-3",
+                    PropSelect {
+                        label: "state",
+                        value: match state_idx() { 1 => "Checked", 2 => "Indeterminate", _ => "Unchecked" }.to_string(),
+                        options: vec!["Unchecked", "Checked", "Indeterminate"],
+                        onchange: move |v: String| state_idx.set(match v.as_str() { "Checked" => 1, "Indeterminate" => 2, _ => 0 }),
+                    }
+                    PropToggle {
+                        label: "disabled",
+                        value: disabled(),
+                        onchange: move |v: bool| disabled.set(v),
+                    }
+                    PropSelect {
+                        label: "size",
+                        value: size_str(),
+                        options: vec!["Sm", "Md", "Lg"],
+                        onchange: move |v: String| size_str.set(v),
+                    }
+                    PropInput {
+                        label: "label",
+                        value: label_text(),
+                        placeholder: "Optional label",
+                        onchange: move |v: String| label_text.set(v),
+                    }
+                }
+            }
+
+            // Live preview
+            div { class: "rounded-lg border border-dashed border-[var(--color-card-border)] p-6 flex items-center gap-4",
+                EqCheckbox {
+                    state: state,
+                    disabled: disabled(),
+                    size: size,
+                    label: label_text(),
+                    on_change: move |next: CheckboxState| {
+                        state_idx.set(match next {
+                            CheckboxState::Checked => 1,
+                            CheckboxState::Indeterminate => 2,
+                            CheckboxState::Unchecked => 0,
+                        });
+                    },
+                }
+            }
+
+            // Variant gallery
+            div { class: "space-y-4",
+                EqText { variant: TextVariant::Emphasis, "All States" }
+                div { class: "flex flex-wrap items-center gap-6",
+                    for (label , st) in [
+                        ("Unchecked", CheckboxState::Unchecked),
+                        ("Checked", CheckboxState::Checked),
+                        ("Indeterminate", CheckboxState::Indeterminate),
+                    ] {
+                        div { class: "flex items-center gap-2",
+                            EqCheckbox { state: st, label: label }
+                        }
+                    }
+                }
+
+                EqText { variant: TextVariant::Emphasis, "Disabled" }
+                div { class: "flex flex-wrap items-center gap-6",
+                    for (label , st) in [
+                        ("Unchecked", CheckboxState::Unchecked),
+                        ("Checked", CheckboxState::Checked),
+                        ("Indeterminate", CheckboxState::Indeterminate),
+                    ] {
+                        div { class: "flex items-center gap-2",
+                            EqCheckbox { state: st, label: label, disabled: true }
+                        }
+                    }
+                }
+
+                EqText { variant: TextVariant::Emphasis, "Sizes" }
+                div { class: "flex flex-wrap items-center gap-6",
+                    for (label , sz) in [("Sm", IconSize::Sm), ("Md", IconSize::Md), ("Lg", IconSize::Lg)] {
+                        div { class: "flex items-center gap-2",
+                            EqCheckbox { state: CheckboxState::Checked, size: sz, label: label }
+                        }
+                    }
+                }
+            }
+
+            StyleInfo { file: "eq_checkbox_styles.rs", styles }
+            CodeBlock { code }
+        }
+    }
+}
+
+// ── EqGrid demo data ──────────────────────────────────────────────
+
 #[derive(Clone, PartialEq)]
 struct DemoEmployee {
+    index: usize,
     name: String,
     role: String,
     department: String,
@@ -2130,27 +2277,58 @@ struct DemoEmployee {
 }
 
 fn demo_employees() -> Vec<DemoEmployee> {
-    vec![
-        DemoEmployee { name: "Ada Lovelace".into(), role: "Engineer".into(), department: "R&D".into(), salary: 95000.0, status: "Active".into() },
-        DemoEmployee { name: "Grace Hopper".into(), role: "Architect".into(), department: "R&D".into(), salary: 120000.0, status: "Active".into() },
-        DemoEmployee { name: "Alan Turing".into(), role: "Researcher".into(), department: "Science".into(), salary: 105000.0, status: "Inactive".into() },
-        DemoEmployee { name: "Linus Torvalds".into(), role: "Lead".into(), department: "Engineering".into(), salary: 150000.0, status: "Active".into() },
-        DemoEmployee { name: "Margaret Hamilton".into(), role: "Director".into(), department: "Engineering".into(), salary: 140000.0, status: "Active".into() },
-        DemoEmployee { name: "Dennis Ritchie".into(), role: "Engineer".into(), department: "Systems".into(), salary: 98000.0, status: "Inactive".into() },
-        DemoEmployee { name: "Barbara Liskov".into(), role: "Professor".into(), department: "Science".into(), salary: 130000.0, status: "Active".into() },
-        DemoEmployee { name: "Ken Thompson".into(), role: "Engineer".into(), department: "Systems".into(), salary: 102000.0, status: "Active".into() },
-        DemoEmployee { name: "Bjarne Stroustrup".into(), role: "Architect".into(), department: "Languages".into(), salary: 115000.0, status: "Active".into() },
-        DemoEmployee { name: "Guido van Rossum".into(), role: "Lead".into(), department: "Languages".into(), salary: 125000.0, status: "Inactive".into() },
-        DemoEmployee { name: "Hedy Lamarr".into(), role: "Inventor".into(), department: "R&D".into(), salary: 88000.0, status: "Active".into() },
-        DemoEmployee { name: "Tim Berners-Lee".into(), role: "Architect".into(), department: "Web".into(), salary: 135000.0, status: "Active".into() },
-        DemoEmployee { name: "John McCarthy".into(), role: "Researcher".into(), department: "AI".into(), salary: 110000.0, status: "Inactive".into() },
-        DemoEmployee { name: "Frances Allen".into(), role: "Engineer".into(), department: "Compilers".into(), salary: 99000.0, status: "Active".into() },
-        DemoEmployee { name: "Donald Knuth".into(), role: "Professor".into(), department: "Algorithms".into(), salary: 142000.0, status: "Active".into() },
-    ]
+    let base = vec![
+        ("Ada Lovelace", "Engineer", "R&D", 95000.0, "Active"),
+        ("Grace Hopper", "Architect", "R&D", 120000.0, "Active"),
+        ("Alan Turing", "Researcher", "Science", 105000.0, "Inactive"),
+        ("Linus Torvalds", "Lead", "Engineering", 150000.0, "Active"),
+        ("Margaret Hamilton", "Director", "Engineering", 140000.0, "Active"),
+        ("Dennis Ritchie", "Engineer", "Systems", 98000.0, "Inactive"),
+        ("Barbara Liskov", "Professor", "Science", 130000.0, "Active"),
+        ("Ken Thompson", "Engineer", "Systems", 102000.0, "Active"),
+        ("Bjarne Stroustrup", "Architect", "Languages", 115000.0, "Active"),
+        ("Guido van Rossum", "Lead", "Languages", 125000.0, "Inactive"),
+        ("Hedy Lamarr", "Inventor", "R&D", 88000.0, "Active"),
+        ("Tim Berners-Lee", "Architect", "Web", 135000.0, "Active"),
+        ("John McCarthy", "Researcher", "AI", 110000.0, "Inactive"),
+        ("Frances Allen", "Engineer", "Compilers", 99000.0, "Active"),
+        ("Donald Knuth", "Professor", "Algorithms", 142000.0, "Active"),
+    ];
+    base.into_iter()
+        .enumerate()
+        .map(|(i, (n, r, d, s, st))| DemoEmployee {
+            index: i + 1, name: n.into(), role: r.into(), department: d.into(),
+            salary: s, status: st.into(),
+        })
+        .collect()
+}
+
+/// Generate a large dataset by cycling the base employees with index suffixes.
+fn demo_employees_large(count: usize) -> Vec<DemoEmployee> {
+    let base = demo_employees();
+    (0..count)
+        .map(|i| {
+            let src = &base[i % base.len()];
+            DemoEmployee {
+                index: i + 1,
+                name: src.name.clone(),
+                role: src.role.clone(),
+                department: src.department.clone(),
+                salary: src.salary + (i as f64 * 100.0),
+                status: src.status.clone(),
+            }
+        })
+        .collect()
 }
 
 fn demo_columns() -> Vec<EqColumnDef<DemoEmployee>> {
     vec![
+        EqColumnDef::new("idx", "#", |e: &DemoEmployee| e.index.to_string())
+            .sortable(false)
+            .resizable(false)
+            .align(ColumnAlign::Right)
+            .width(50)
+            .min_width(40),
         EqColumnDef::new("name", "Name", |e: &DemoEmployee| e.name.clone())
             .filterable(true)
             .min_width(140),
@@ -2164,7 +2342,8 @@ fn demo_columns() -> Vec<EqColumnDef<DemoEmployee>> {
             .with_formatter(|e: &DemoEmployee| format!("${:.0}", e.salary))
             .align(ColumnAlign::Right)
             .comparator(|a: &DemoEmployee, b: &DemoEmployee| a.salary.partial_cmp(&b.salary).unwrap_or(std::cmp::Ordering::Equal))
-            .min_width(100),
+            .width(120)
+            .min_width(80),
         EqColumnDef::new("status", "Status", |e: &DemoEmployee| e.status.clone())
             .with_renderer(|e: &DemoEmployee| {
                 let (label, color) = match e.status.as_str() {
@@ -2175,6 +2354,7 @@ fn demo_columns() -> Vec<EqColumnDef<DemoEmployee>> {
                 rsx! { span { class: "{color} font-medium text-xs", "{label}" } }
             })
             .sortable(false)
+            .resizable(false)
             .align(ColumnAlign::Center)
             .min_width(80),
     ]
@@ -2182,13 +2362,19 @@ fn demo_columns() -> Vec<EqColumnDef<DemoEmployee>> {
 
 #[component]
 fn DemoEqGrid() -> Element {
-    let mut paginate = use_signal(|| true);
+    let mut nav_idx = use_signal(|| 1usize); // 0=Standard, 1=Paginate, 2=Virtualize
     let mut striped = use_signal(|| true);
     let mut col_borders = use_signal(|| false);
     let mut quick_filter = use_signal(|| true);
     let mut density_idx = use_signal(|| 1usize); // 0=Compact, 1=Normal, 2=Comfortable
     let mut selection_idx = use_signal(|| 1usize); // 0=None, 1=Single
     let mut page_size_idx = use_signal(|| 0usize); // 0=5, 1=10, 2=25
+
+    let navigation = match nav_idx() {
+        0 => GridNavigation::Standard,
+        2 => GridNavigation::Virtualize,
+        _ => GridNavigation::Paginate,
+    };
 
     let density = match density_idx() {
         0 => GridDensity::Compact,
@@ -2203,6 +2389,15 @@ fn DemoEqGrid() -> Element {
     };
 
     let mut employees = use_signal(|| demo_employees());
+    // When virtualization is active, switch to a large dataset.
+    use_effect(move || {
+        let virt = nav_idx() == 2;
+        if virt && employees.read().len() < 100 {
+            employees.set(demo_employees_large(500));
+        } else if !virt && employees.read().len() > 100 {
+            employees.set(demo_employees());
+        }
+    });
     let mut selection_count = use_signal(|| 0usize);
     let mut bulk_status = use_signal(|| String::new());
     let mut export_preview = use_signal(|| String::new());
@@ -2243,7 +2438,7 @@ fn DemoEqGrid() -> Element {
         EqGrid {\n\
         \x20   data: employees,\n\
         \x20   columns: columns,\n\
-        \x20   paginate: true,\n\
+        \x20   navigation: GridNavigation::Paginate,\n\
         \x20   page_size: 10,\n\
         \x20   row_selection: RowSelection::Single,\n\
         \x20   quick_filter: true,\n\
@@ -2260,10 +2455,11 @@ fn DemoEqGrid() -> Element {
                     "Props"
                 }
                 div { class: "grid grid-cols-2 md:grid-cols-3 gap-3",
-                    PropToggle {
-                        label: "paginate",
-                        value: paginate(),
-                        onchange: move |v: bool| paginate.set(v),
+                    PropSelect {
+                        label: "navigation",
+                        value: match nav_idx() { 0 => "Standard", 2 => "Virtualize", _ => "Paginate" }.to_string(),
+                        options: vec!["Standard", "Paginate", "Virtualize"],
+                        onchange: move |v: String| nav_idx.set(match v.as_str() { "Standard" => 0, "Virtualize" => 2, _ => 1 }),
                     }
                     PropToggle {
                         label: "striped",
@@ -2317,7 +2513,7 @@ fn DemoEqGrid() -> Element {
             EqGrid {
                 data: employees(),
                 columns: demo_columns(),
-                paginate: paginate(),
+                navigation: navigation,
                 page_size: page_size,
                 row_selection: selection,
                 density: density,

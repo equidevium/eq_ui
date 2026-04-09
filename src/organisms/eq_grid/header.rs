@@ -2,9 +2,9 @@
 
 use super::column_def::EqColumnDef;
 use super::styles as s;
-use super::types::{ColumnAlign, RowSelection, SortDirection, SortState};
+use super::types::{ColumnAlign, ResizeState, RowSelection, SortDirection, SortState};
 use crate::atoms::eq_icon_paths;
-use crate::atoms::{EqIcon, IconSize};
+use crate::atoms::{EqCheckbox, CheckboxState, EqIcon, IconSize};
 use dioxus::prelude::*;
 use std::collections::{HashMap, HashSet};
 
@@ -62,6 +62,8 @@ pub(super) fn render_header<T: Clone + PartialEq + 'static>(
     mut selected_rows: Signal<HashSet<usize>>,
     visible_indices: &[usize],
     on_selection_change: &Option<EventHandler<Vec<usize>>>,
+    column_widths: Signal<HashMap<&'static str, f64>>,
+    mut resize_active: Signal<Option<ResizeState>>,
 ) -> Element {
     let sort_count = sort_state.read().len();
 
@@ -82,37 +84,42 @@ pub(super) fn render_header<T: Clone + PartialEq + 'static>(
             tr {
                 // Select All checkbox column
                 if row_selection == RowSelection::Multi {
-                    th {
-                        class: "{s::TH} {s::CHECKBOX_CELL} {density_cls}",
-                        onclick: move |_| {
-                            let mut set = selected_rows.write();
-                            if all_selected {
-                                // Deselect all visible rows.
-                                for &idx in vis.iter() {
-                                    set.remove(&idx);
-                                }
-                            } else {
-                                // Select all visible rows.
-                                for &idx in vis.iter() {
-                                    set.insert(idx);
-                                }
-                            }
-                            let sorted: Vec<usize> = {
-                                let mut v: Vec<usize> = set.iter().copied().collect();
-                                v.sort();
-                                v
-                            };
-                            drop(set);
-                            if let Some(ref handler) = on_sel {
-                                handler.call(sorted);
-                            }
-                        },
-                        if all_selected {
-                            EqIcon { path: eq_icon_paths::CHECK, size: IconSize::Sm, class: s::CHECKBOX_ICON_CHECKED }
+                    {
+                        let cb_state = if all_selected {
+                            CheckboxState::Checked
                         } else if some_selected {
-                            EqIcon { path: eq_icon_paths::MINUS, size: IconSize::Sm, class: s::CHECKBOX_ICON }
+                            CheckboxState::Indeterminate
                         } else {
-                            span { class: s::CHECKBOX_ICON, "\u{25A1}" }
+                            CheckboxState::Unchecked
+                        };
+                        rsx! {
+                            th {
+                                class: "{s::TH} {s::CHECKBOX_CELL} {density_cls}",
+                                EqCheckbox {
+                                    state: cb_state,
+                                    on_change: move |_new: CheckboxState| {
+                                        let mut set = selected_rows.write();
+                                        if all_selected {
+                                            for &idx in vis.iter() {
+                                                set.remove(&idx);
+                                            }
+                                        } else {
+                                            for &idx in vis.iter() {
+                                                set.insert(idx);
+                                            }
+                                        }
+                                        let sorted: Vec<usize> = {
+                                            let mut v: Vec<usize> = set.iter().copied().collect();
+                                            v.sort();
+                                            v
+                                        };
+                                        drop(set);
+                                        if let Some(ref handler) = on_sel {
+                                            handler.call(sorted);
+                                        }
+                                    },
+                                }
+                            }
                         }
                     }
                 }
@@ -128,10 +135,23 @@ pub(super) fn render_header<T: Clone + PartialEq + 'static>(
                         };
 
                         let sort_cls = if is_sortable { s::TH_SORTABLE } else { "" };
+                        let resize_cls = if col.resizable { s::TH_RESIZABLE } else { "" };
+                        let is_resizable = col.resizable;
+                        let col_min_width = col.min_width as f64;
+                        let col_initial_width = col.width.map(|w| w as f64)
+                            .unwrap_or(col_min_width.max(120.0));
 
-                        let width_style = col.width
-                            .map(|w| format!("width: {}px; min-width: {}px;", w, col.min_width))
-                            .unwrap_or_else(|| format!("min-width: {}px;", col.min_width));
+                        // Runtime width takes priority, then column def, then flex.
+                        let width_style = {
+                            let widths = column_widths.read();
+                            if let Some(&w) = widths.get(col_id) {
+                                format!("width: {:.0}px; min-width: {}px;", w, col.min_width)
+                            } else if let Some(w) = col.width {
+                                format!("width: {}px; min-width: {}px;", w, col.min_width)
+                            } else {
+                                format!("min-width: {}px;", col.min_width)
+                            }
+                        };
 
                         // Find this column's current sort direction and position.
                         let (current_sort_dir, sort_priority) = {
@@ -154,7 +174,7 @@ pub(super) fn render_header<T: Clone + PartialEq + 'static>(
                         rsx! {
                             th {
                                 key: "{col_id}",
-                                class: "{s::TH} {density_cls} {align_cls} {sort_cls} {header_class}",
+                                class: "{s::TH} {density_cls} {align_cls} {sort_cls} {resize_cls} {header_class}",
                                 style: "{width_style}",
                                 onclick: move |evt: Event<MouseData>| {
                                     if !is_sortable { return; }
@@ -231,6 +251,39 @@ pub(super) fn render_header<T: Clone + PartialEq + 'static>(
                                             }
                                             drop(filters);
                                             current_page.set(0);
+                                        },
+                                    }
+                                }
+
+                                // Resize drag handle on the right edge
+                                if is_resizable {
+                                    div {
+                                        class: s::RESIZE_HANDLE,
+                                        // Prevent sort click from firing when starting a resize.
+                                        onclick: move |evt: Event<MouseData>| { evt.stop_propagation(); },
+                                        onmousedown: {
+                                            let column_widths = column_widths;
+                                            move |evt: Event<MouseData>| {
+                                                evt.stop_propagation();
+                                                let current_w = {
+                                                    let widths = column_widths.read();
+                                                    widths.get(col_id).copied()
+                                                        .unwrap_or(col_initial_width)
+                                                };
+                                                resize_active.set(Some(ResizeState {
+                                                    column_id: col_id,
+                                                    start_x: evt.page_coordinates().x,
+                                                    start_width: current_w,
+                                                }));
+                                            }
+                                        },
+                                        // Double-click resets column to initial width.
+                                        ondoubleclick: {
+                                            let mut column_widths = column_widths;
+                                            move |evt: Event<MouseData>| {
+                                                evt.stop_propagation();
+                                                column_widths.write().remove(col_id);
+                                            }
                                         },
                                     }
                                 }

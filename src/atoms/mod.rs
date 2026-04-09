@@ -38,3 +38,8 @@ mod eq_video;
 mod eq_video_styles;
 
 pub use eq_video::EqVideo;
+
+mod eq_checkbox;
+mod eq_checkbox_styles;
+
+pub use eq_checkbox::{EqCheckbox, CheckboxState};

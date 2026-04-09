@@ -3,10 +3,9 @@
 use super::column_def::EqColumnDef;
 use super::styles as s;
 use super::types::{ColumnAlign, RowSelection};
-use crate::atoms::eq_icon_paths;
-use crate::atoms::{EqIcon, IconSize};
+use crate::atoms::{EqCheckbox, CheckboxState};
 use dioxus::prelude::*;
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 /// Render the `<tbody>` block.
 ///
@@ -24,6 +23,15 @@ pub(super) fn render_body<T: Clone + PartialEq + 'static>(
     mut selected_rows: Signal<HashSet<usize>>,
     on_row_click: &Option<EventHandler<usize>>,
     on_selection_change: &Option<EventHandler<Vec<usize>>>,
+    column_widths: Signal<HashMap<&'static str, f64>>,
+    top_spacer_height: f64,
+    bottom_spacer_height: f64,
+    row_height: f64,
+    // When provided, the first data row measures its rendered height
+    // and writes it into this signal so the viewport can self-correct.
+    row_measure: Option<Signal<f64>>,
+    // When true, selected rows get `draggable="true"`.
+    row_draggable: bool,
 ) -> Element {
     let border_cls = if column_borders {
         "border-r border-[var(--color-grid-border)] last:border-r-0"
@@ -31,9 +39,30 @@ pub(super) fn render_body<T: Clone + PartialEq + 'static>(
         ""
     };
 
+    // Row height style — only applied when virtualized (row_height > 0).
+    let row_h_style = if row_height > 0.0 {
+        format!("height: {:.0}px; max-height: {:.0}px; overflow: hidden;", row_height, row_height)
+    } else {
+        String::new()
+    };
+
+    // Total column count for spacer colspan (include checkbox column).
+    let col_count = columns.len() + if row_selection == RowSelection::Multi { 1 } else { 0 };
+    let col_span = format!("{col_count}");
+
     rsx! {
         tbody {
-            for &data_idx in visible_indices.iter() {
+            // Top spacer — pushes visible rows into their correct scroll position.
+            // Height is set on the <td> (not <tr>) because browsers ignore height on <tr>.
+            if top_spacer_height > 0.0 {
+                tr {
+                    td {
+                        colspan: "{col_span}",
+                        style: "height: {top_spacer_height:.0}px; padding: 0; border: none; line-height: 0;",
+                    }
+                }
+            }
+            for (vi, &data_idx) in visible_indices.iter().enumerate() {
                 {
                     let row = &data[data_idx];
                     let is_selected = match row_selection {
@@ -63,11 +92,30 @@ pub(super) fn render_body<T: Clone + PartialEq + 'static>(
 
                     let on_click = on_row_click.clone();
                     let on_sel = on_selection_change.clone();
+                    let measure_this = vi == 0 && row_measure.is_some();
+
+                    let is_draggable = row_draggable && is_selected;
 
                     rsx! {
                         tr {
                             key: "{data_idx}",
                             class: "{row_cls}",
+                            style: "{row_h_style}",
+                            draggable: if is_draggable { "true" } else { "false" },
+                            onmounted: move |evt: MountedEvent| {
+                                if measure_this {
+                                    if let Some(mut sig) = row_measure {
+                                        spawn(async move {
+                                            if let Ok(rect) = evt.get_client_rect().await {
+                                                let h = rect.height();
+                                                if h > 0.0 && (h - sig()).abs() > 1.0 {
+                                                    sig.set(h);
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            },
                             onclick: move |_| {
                                 match row_selection {
                                     RowSelection::Single => {
@@ -105,10 +153,8 @@ pub(super) fn render_body<T: Clone + PartialEq + 'static>(
                             if row_selection == RowSelection::Multi {
                                 td {
                                     class: "{s::TD} {s::CHECKBOX_CELL} {density_cls}",
-                                    if is_selected {
-                                        EqIcon { path: eq_icon_paths::CHECK, size: IconSize::Sm, class: s::CHECKBOX_ICON_CHECKED }
-                                    } else {
-                                        span { class: s::CHECKBOX_ICON, "\u{25A1}" }
+                                    EqCheckbox {
+                                        state: if is_selected { CheckboxState::Checked } else { CheckboxState::Unchecked },
                                     }
                                 }
                             }
@@ -119,6 +165,17 @@ pub(super) fn render_body<T: Clone + PartialEq + 'static>(
                                         ColumnAlign::Left => s::ALIGN_LEFT,
                                         ColumnAlign::Center => s::ALIGN_CENTER,
                                         ColumnAlign::Right => s::ALIGN_RIGHT,
+                                    };
+
+                                    let width_style = {
+                                        let widths = column_widths.read();
+                                        if let Some(&w) = widths.get(col.id) {
+                                            format!("width: {:.0}px; min-width: {}px;", w, col.min_width)
+                                        } else if let Some(w) = col.width {
+                                            format!("width: {}px; min-width: {}px;", w, col.min_width)
+                                        } else {
+                                            format!("min-width: {}px;", col.min_width)
+                                        }
                                     };
 
                                     let cell_content = if let Some(renderer) = col.cell_renderer {
@@ -134,12 +191,22 @@ pub(super) fn render_body<T: Clone + PartialEq + 'static>(
                                         td {
                                             key: "{col.id}",
                                             class: "{s::TD} {density_cls} {align_cls} {border_cls} {col.cell_class}",
+                                            style: "{width_style}",
                                             {cell_content}
                                         }
                                     }
                                 }
                             }
                         }
+                    }
+                }
+            }
+            // Bottom spacer — fills remaining scroll height below visible rows.
+            if bottom_spacer_height > 0.0 {
+                tr {
+                    td {
+                        colspan: "{col_span}",
+                        style: "height: {bottom_spacer_height:.0}px; padding: 0; border: none; line-height: 0;",
                     }
                 }
             }

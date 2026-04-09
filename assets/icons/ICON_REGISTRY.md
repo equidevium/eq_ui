@@ -22,3 +22,6 @@ Only icons actively used by a component are included. See Rule 20 in the project
 | check.svg | EqGrid (row selection checkbox) | 2026-04-02 |
 | minus.svg | EqGrid (indeterminate checkbox) | 2026-04-02 |
 | spinner.svg | EqGrid (loading overlay) | 2026-04-02 |
+| square.svg | EqCheckbox (unchecked state) | 2026-04-09 |
+| check-square.svg | EqCheckbox (checked state) | 2026-04-09 |
+| minus-square.svg | EqCheckbox (indeterminate state) | 2026-04-09 |

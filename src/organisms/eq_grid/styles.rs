@@ -12,7 +12,7 @@ pub const GRID_CONTAINER: &str = "overflow-x-auto";
 // ── Table ───────────────────────────────────────────────────────────
 
 /// The HTML `<table>` element.
-pub const TABLE: &str = "w-full border-collapse text-sm";
+pub const TABLE: &str = "w-full border-collapse table-fixed text-sm";
 
 // ── Header ──────────────────────────────────────────────────────────
 
@@ -24,7 +24,8 @@ pub const THEAD: &str =
 pub const TH: &str =
     "px-3 py-2 md:px-4 md:py-3 text-left font-semibold \
      text-[var(--color-grid-header-text)] \
-     border-b border-[var(--color-grid-border)] select-none whitespace-nowrap";
+     border-b border-[var(--color-grid-border)] select-none whitespace-nowrap \
+     overflow-hidden";
 
 /// Additional class appended when the column is sortable.
 pub const TH_SORTABLE: &str =
@@ -58,7 +59,7 @@ pub const TR_SELECTABLE: &str = "cursor-pointer";
 
 /// Default `<td>` cell.
 pub const TD: &str =
-    "px-3 py-2 md:px-4 md:py-3 text-[var(--color-label-primary)]";
+    "px-3 py-2 md:px-4 md:py-3 text-[var(--color-label-primary)] overflow-hidden text-ellipsis";
 
 // ── Density variants (applied to both th and td) ────────────────────
 
@@ -243,3 +244,49 @@ pub const AGGREGATION_KEY: &str =
 /// Aggregation computed value.
 pub const AGGREGATION_VALUE: &str =
     "text-[var(--color-accent-primary)] font-semibold";
+
+// ── Drag-and-drop ─────────────────────────────────────────────────
+
+/// Visual feedback on the grid container when it is a valid drop target
+/// and the user is hovering with a drag payload.
+pub const DROP_TARGET_ACTIVE: &str =
+    "ring-2 ring-[var(--color-accent-primary)]/60 \
+     bg-[var(--color-accent-primary)]/5 transition-all";
+
+// ── Virtual scroll info bar ────────────────────────────────────────
+
+/// Info bar shown below the virtualized viewport — displays the
+/// currently visible row range and total entry count.
+pub const VIRTUAL_INFO_BAR: &str =
+    "flex items-center justify-between \
+     px-3 py-2 md:px-4 md:py-2 border-t border-[var(--color-grid-border)] \
+     text-xs text-[var(--color-label-secondary)]";
+
+// ── Virtual scroll viewport ────────────────────────────────────────
+
+/// Fixed-height scrollable viewport used when virtualization is enabled.
+/// Height is set dynamically via inline style based on `visible_rows × row_height`.
+pub const VIRTUAL_VIEWPORT: &str =
+    "overflow-y-auto relative";
+
+/// Invisible spacer row used to push visible rows into their correct
+/// scroll position. Height is set via inline style.
+pub const VIRTUAL_SPACER: &str = "";
+
+// ── Column resize ──────────────────────────────────────────────────
+
+/// Header cell wrapper — relative positioning so the resize handle can
+/// be placed at the right edge.
+pub const TH_RESIZABLE: &str = "relative";
+
+/// Drag handle on the right edge of a resizable header cell.
+pub const RESIZE_HANDLE: &str =
+    "absolute top-0 right-0 w-1 h-full cursor-col-resize \
+     hover:bg-[var(--color-accent-primary)]/40 \
+     active:bg-[var(--color-accent-primary)]/60 \
+     transition-colors z-10";
+
+/// Transparent full-viewport overlay shown during a resize drag
+/// to capture mouse events regardless of cursor position.
+pub const RESIZE_OVERLAY: &str =
+    "fixed inset-0 z-50 cursor-col-resize";

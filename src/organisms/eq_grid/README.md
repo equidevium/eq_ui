@@ -26,7 +26,7 @@ rsx! {
     EqGrid {
         data: employees,
         columns: columns,
-        paginate: true,
+        navigation: GridNavigation::Paginate,
         page_size: 10,
         striped: true,
     }
@@ -39,10 +39,10 @@ The component is split into focused modules:
 
 | Module | Purpose |
 |--------|---------|
-| `types.rs` | Shared enums: ColumnAlign, SortDirection, SortState, RowSelection, GridDensity, ExportFormat |
+| `types.rs` | Shared enums and structs: ColumnAlign, SortDirection, SortState, RowSelection, GridDensity, GridNavigation, ExportFormat, ResizeState |
 | `column_def.rs` | `EqColumnDef<T>` struct and builder methods |
 | `styles.rs` | Co-located Tailwind class constants |
-| `header.rs` | `<thead>` rendering with sort indicators, feedback icons, and column filters |
+| `header.rs` | `<thead>` rendering with sort indicators, feedback icons, column filters, and resize handles |
 | `body.rs` | `<tbody>` rendering with row selection and cell formatting |
 | `pagination.rs` | Page navigation bar |
 | `quick_filter.rs` | Global search bar above the table |
@@ -58,8 +58,8 @@ The component is split into focused modules:
 |------|------|---------|-------------|
 | `data` | `Vec<T>` | *required* | Row data to display |
 | `columns` | `Vec<EqColumnDef<T>>` | *required* | Column definitions |
-| `paginate` | `bool` | `false` | Enable pagination |
-| `page_size` | `usize` | `25` | Rows per page |
+| `navigation` | `GridNavigation` | `Standard` | Navigation mode: Standard (all rows), Paginate (page controls), or Virtualize (virtual scroll) |
+| `page_size` | `usize` | `25` | Rows per page (Paginate) or visible rows in the viewport (Virtualize). Ignored when Standard. |
 | `row_selection` | `RowSelection` | `None` | Selection mode: None, Single, or Multi |
 | `density` | `GridDensity` | `Normal` | Row height: Compact, Normal, or Comfortable |
 | `striped` | `bool` | `true` | Alternating row backgrounds |
@@ -104,6 +104,7 @@ EqColumnDef::new("id", "Header", |row| row.field.clone())
     .with_formatter(|row| format!("${:.0}", row.salary))
     .with_renderer(|row| rsx! { span { class: "text-green-500", "Active" } })
     .comparator(|a, b| a.salary.partial_cmp(&b.salary).unwrap())
+    .resizable(true)             // Allow drag-to-resize (default: true)
     .cell_class("font-mono")
     .header_class("bg-blue-100")
 ```
@@ -113,9 +114,10 @@ EqColumnDef::new("id", "Header", |row| row.field.clone())
 | `new(id, header, value_getter)` | Required. The value_getter extracts a string for sorting, filtering, and display. |
 | `.sortable(bool)` | Enable/disable sorting. Default: `true`. |
 | `.filterable(bool)` | Enable per-column text filter input in the header. Default: `false`. |
+| `.resizable(bool)` | Enable drag-to-resize on the column header border. Default: `true`. |
 | `.align(ColumnAlign)` | Cell text alignment. |
-| `.width(u32)` | Fixed pixel width. |
-| `.min_width(u32)` | Minimum pixel width. Default: `50`. |
+| `.width(u32)` | Initial pixel width. Overridden at runtime during resize. |
+| `.min_width(u32)` | Minimum pixel width, enforced during resize. Default: `50`. |
 | `.with_formatter(fn)` | Transform the display value without affecting sort/filter. |
 | `.with_renderer(fn)` | Full custom cell rendering. Returns an `Element`. |
 | `.comparator(fn)` | Custom sort comparator. Overrides default string comparison. |
@@ -123,6 +125,14 @@ EqColumnDef::new("id", "Header", |row| row.field.clone())
 | `.header_class(&str)` | CSS class applied to the header cell. |
 
 ## Features
+
+### Column Resizing
+
+Columns are resizable by default. Drag the right border of any header cell to adjust the width. A thin handle appears on hover with a `col-resize` cursor. During the drag, a transparent overlay captures mouse events across the entire viewport so the resize works smoothly even if the cursor leaves the header.
+
+Double-click a resize handle to reset the column to its original width (or flex sizing if no explicit width was set). Set `.resizable(false)` on a column definition to lock its width.
+
+Runtime widths are applied to both header and body cells so columns stay aligned during and after resize. The `min_width` value is always enforced as a lower bound.
 
 ### Sorting
 
@@ -135,7 +145,7 @@ Two filter mechanisms work together in a pipeline:
 1. **Column filters** (AND logic): Each filterable column gets a text input in the header. A row must match ALL active column filters.
 2. **Quick filter** (OR logic): A global search bar above the table. A row matches if ANY column contains the search text.
 
-The pipeline runs: Column Filters -> Quick Filter -> Sort -> Paginate.
+The pipeline runs: Column Filters -> Quick Filter -> Sort -> Paginate/Virtualize.
 
 ### Row Selection
 
@@ -180,9 +190,19 @@ on_export: move |payload: (ExportFormat, Vec<u8>)| {
 },
 ```
 
+### Row Virtualization
+
+For large datasets, set `navigation: GridNavigation::Virtualize` to enable virtual scrolling. Only the rows visible in the viewport (plus a small buffer of 3 above and below) are rendered in the DOM. The viewport height is determined by `page_size` multiplied by the measured row height. On first render the density constant is used as an estimate (Compact = 32px, Normal = 44px, Comfortable = 56px); after mount the grid measures the actual first data row and self-corrects the viewport height automatically.
+
+The header is rendered as a separate table above the scroll viewport so it remains fixed while the body scrolls. A shared `<colgroup>` is injected into both tables to keep column widths perfectly aligned. A vertical scrollbar appears on the viewport, and spacer elements maintain the correct scroll height so the scrollbar thumb accurately reflects the full dataset. Scrolling updates the visible window in real time.
+
+An info bar below the viewport displays the currently visible row range ("Showing 1–15 of 500 entries") and the number of DOM rows rendered (including the buffer). The range updates in real time as the user scrolls.
+
+Virtualization requires uniform row heights. Custom cell renderers that vary row height will cause visual misalignment. Only one navigation mode is active at a time — set via the `GridNavigation` enum on the `navigation` prop.
+
 ### Pagination
 
-When `paginate: true`, the grid shows a navigation bar below the table with page numbers, prev/next buttons, and a "Showing X-Y of Z" label. The current page automatically clamps when data shrinks (e.g., after filtering or deleting rows).
+When `navigation: GridNavigation::Paginate`, the grid shows a navigation bar below the table with page numbers, prev/next buttons, and a "Showing X-Y of Z" label. The current page automatically clamps when data shrinks (e.g., after filtering or deleting rows).
 
 ### Density
 
@@ -219,7 +239,7 @@ rsx! {
                 })
                 .sortable(false),
         ],
-        paginate: true,
+        navigation: GridNavigation::Paginate,
         page_size: 10,
         row_selection: RowSelection::Multi,
         density: GridDensity::Normal,

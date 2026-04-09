@@ -35,6 +35,8 @@ pub struct EqColumnDef<T: Clone + PartialEq + 'static> {
     pub cell_class: &'static str,
     /// Custom class applied to the header cell.
     pub header_class: &'static str,
+    /// Allow this column to be resized by dragging the header border.
+    pub resizable: bool,
 }
 
 impl<T: Clone + PartialEq + 'static> Clone for EqColumnDef<T> {
@@ -53,6 +55,7 @@ impl<T: Clone + PartialEq + 'static> Clone for EqColumnDef<T> {
             comparator: self.comparator,
             cell_class: self.cell_class,
             header_class: self.header_class,
+            resizable: self.resizable,
         }
     }
 }
@@ -86,6 +89,7 @@ impl<T: Clone + PartialEq + 'static> EqColumnDef<T> {
             comparator: None,
             cell_class: "",
             header_class: "",
+            resizable: true,
         }
     }
 
@@ -136,6 +140,11 @@ impl<T: Clone + PartialEq + 'static> EqColumnDef<T> {
 
     pub fn comparator(mut self, f: fn(&T, &T) -> Ordering) -> Self {
         self.comparator = Some(f);
+        self
+    }
+
+    pub fn resizable(mut self, v: bool) -> Self {
+        self.resizable = v;
         self
     }
 }

@@ -50,6 +50,7 @@ pub(super) fn render_bulk_actions<T: Clone + PartialEq + 'static>(
     };
 
     // Clone data needed by closures.
+    let mut selected_rows = selected_rows;
     let del_handler = on_delete.clone();
     let del_indices = indices.clone();
 
@@ -101,8 +102,13 @@ pub(super) fn render_bulk_actions<T: Clone + PartialEq + 'static>(
                 button {
                     class: s::BULK_BTN_DANGER,
                     onclick: move |_| {
+                        // Clear selection before firing the callback so the
+                        // re-render triggered by the consumer's data mutation
+                        // sees an empty selection set.
+                        let rows = del_indices.clone();
+                        selected_rows.write().clear();
                         if let Some(ref handler) = del_handler {
-                            handler.call(del_indices.clone());
+                            handler.call(rows);
                         }
                     },
                     "Delete"
@@ -171,7 +177,7 @@ pub(super) fn render_bulk_actions<T: Clone + PartialEq + 'static>(
                     }
                     if show_status_menu() {
                         {render_status_dropdown(
-                            &selected_rows,
+                            selected_rows,
                             status_options,
                             &status_handler,
                             show_status_menu,
@@ -325,7 +331,7 @@ fn render_clipboard_dropdown<T: Clone + PartialEq + 'static>(
 // ── Status dropdown ────────────────────────────────────────────────
 
 fn render_status_dropdown(
-    selected_rows: &Signal<HashSet<usize>>,
+    mut selected_rows: Signal<HashSet<usize>>,
     status_options: &[String],
     on_status_change: &Option<EventHandler<(Vec<usize>, String)>>,
     mut show_menu: Signal<bool>,
@@ -348,8 +354,11 @@ fn render_status_dropdown(
                         button {
                             class: s::BULK_DROPDOWN_ITEM,
                             onclick: move |_| {
+                                let rows = idx.clone();
+                                let status = opt.clone();
+                                selected_rows.write().clear();
                                 if let Some(ref h) = handler {
-                                    h.call((idx.clone(), opt.clone()));
+                                    h.call((rows, status));
                                 }
                                 show_menu.set(false);
                             },

@@ -22,6 +22,6 @@ mod export;
 mod bulk_actions;
 mod grid;
 
-pub use types::{ColumnAlign, SortDirection, SortState, RowSelection, GridDensity, ExportFormat};
+pub use types::{ColumnAlign, SortDirection, SortState, RowSelection, GridDensity, GridNavigation, GridDragPayload, ExportFormat};
 pub use column_def::EqColumnDef;
 pub use grid::EqGrid;
