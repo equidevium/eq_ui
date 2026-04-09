@@ -74,6 +74,22 @@ pub const SORT_ICON: &str = "ml-1 align-middle text-[var(--color-label-secondary
 /// Sort icon when actively sorting this column.
 pub const SORT_ICON_ACTIVE: &str = "ml-1 align-middle text-[var(--color-accent-primary)]";
 
+/// Sort feedback indicator — green up arrow for ascending.
+pub const SORT_FEEDBACK_ASC: &str =
+    "ml-0.5 align-middle text-green-500";
+
+/// Sort feedback indicator — red down arrow for descending.
+pub const SORT_FEEDBACK_DESC: &str =
+    "ml-0.5 align-middle text-red-500";
+
+/// Sort feedback indicator — blue dash for columns not participating in sort.
+pub const SORT_FEEDBACK_NONE: &str =
+    "ml-0.5 align-middle text-blue-400";
+
+/// Sort priority badge — small number shown during multi-column sort.
+pub const SORT_PRIORITY: &str =
+    "text-[10px] leading-none font-semibold text-[var(--color-accent-primary)]";
+
 // ── Pagination ──────────────────────────────────────────────────────
 
 /// Pagination bar container — below the table.

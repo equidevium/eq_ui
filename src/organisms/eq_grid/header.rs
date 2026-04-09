@@ -9,27 +9,58 @@ use dioxus::prelude::*;
 use std::collections::HashMap;
 
 /// Render the sort indicator icon for a column header.
-fn sort_icon(direction: SortDirection) -> Element {
+/// When `priority` is provided and > 0, a small number badge is shown
+/// next to the icon to indicate multi-column sort order.
+fn sort_icon(direction: SortDirection, priority: Option<usize>) -> Element {
     let (path, cls) = match direction {
         SortDirection::None => (eq_icon_paths::CARET_UP_DOWN, s::SORT_ICON),
         SortDirection::Asc => (eq_icon_paths::CARET_UP, s::SORT_ICON_ACTIVE),
         SortDirection::Desc => (eq_icon_paths::CARET_DOWN, s::SORT_ICON_ACTIVE),
     };
-    rsx! { EqIcon { path: path, size: IconSize::Sm, class: cls } }
+    rsx! {
+        EqIcon { path: path, size: IconSize::Sm, class: cls }
+        if let Some(p) = priority {
+            span { class: s::SORT_PRIORITY, "{p}" }
+        }
+    }
+}
+
+/// Render a small colored feedback indicator showing the column's sort participation.
+///
+/// - **Asc** → green up arrow
+/// - **Desc** → red down arrow
+/// - **None** → blue dash
+fn sort_feedback(direction: SortDirection) -> Element {
+    let (path, cls) = match direction {
+        SortDirection::Asc => (eq_icon_paths::CARET_UP, s::SORT_FEEDBACK_ASC),
+        SortDirection::Desc => (eq_icon_paths::CARET_DOWN, s::SORT_FEEDBACK_DESC),
+        SortDirection::None => (eq_icon_paths::MINUS, s::SORT_FEEDBACK_NONE),
+    };
+    rsx! {
+        EqIcon { path: path, size: IconSize::Sm, class: cls }
+    }
 }
 
 /// Render the `<thead>` block.
 ///
-/// Handles sort-click cycling (None → Asc → Desc → None), resets the
-/// current page to 0 on every sort change, and renders per-column
+/// Handles sort-click cycling and multi-column sort via Shift+click.
+///
+/// - **Regular click**: replaces the entire sort with this column
+///   (cycles None → Asc → Desc → None).
+/// - **Shift+click**: appends or cycles this column within the
+///   existing multi-sort list.
+///
+/// Resets the current page to 0 on every sort change. Renders per-column
 /// filter inputs for columns with `filterable: true`.
 pub(super) fn render_header<T: Clone + PartialEq + 'static>(
     columns: &[EqColumnDef<T>],
-    mut sort_state: Signal<Option<SortState>>,
+    mut sort_state: Signal<Vec<SortState>>,
     mut current_page: Signal<usize>,
     mut column_filters: Signal<HashMap<&'static str, String>>,
     density_cls: &'static str,
 ) -> Element {
+    let sort_count = sort_state.read().len();
+
     rsx! {
         thead { class: s::THEAD,
             tr {
@@ -50,10 +81,15 @@ pub(super) fn render_header<T: Clone + PartialEq + 'static>(
                             .map(|w| format!("width: {}px; min-width: {}px;", w, col.min_width))
                             .unwrap_or_else(|| format!("min-width: {}px;", col.min_width));
 
-                        let current_sort_dir = sort_state.read().as_ref()
-                            .filter(|ss| ss.column_id == col_id)
-                            .map(|ss| ss.direction)
-                            .unwrap_or(SortDirection::None);
+                        // Find this column's current sort direction and position.
+                        let (current_sort_dir, sort_priority) = {
+                            let sorts = sort_state.read();
+                            let pos = sorts.iter().position(|ss| ss.column_id == col_id);
+                            match pos {
+                                Some(i) => (sorts[i].direction, if sort_count > 1 { Some(i + 1) } else { None }),
+                                None => (SortDirection::None, None),
+                            }
+                        };
 
                         let header_text = col.header;
                         let header_class = col.header_class;
@@ -68,26 +104,51 @@ pub(super) fn render_header<T: Clone + PartialEq + 'static>(
                                 key: "{col_id}",
                                 class: "{s::TH} {density_cls} {align_cls} {sort_cls} {header_class}",
                                 style: "{width_style}",
-                                onclick: move |_| {
+                                onclick: move |evt: Event<MouseData>| {
                                     if !is_sortable { return; }
-                                    let new_dir = match &*sort_state.read() {
-                                        Some(ss) if ss.column_id == col_id => {
-                                            match ss.direction {
-                                                SortDirection::None => SortDirection::Asc,
-                                                SortDirection::Asc => SortDirection::Desc,
-                                                SortDirection::Desc => SortDirection::None,
+                                    let shift = evt.modifiers().shift();
+
+                                    if shift {
+                                        // Shift+click: multi-sort — append or cycle within list.
+                                        let mut sorts = sort_state.write();
+                                        if let Some(pos) = sorts.iter().position(|ss| ss.column_id == col_id) {
+                                            // Column already in sort list — cycle it.
+                                            match sorts[pos].direction {
+                                                SortDirection::None => sorts[pos].direction = SortDirection::Asc,
+                                                SortDirection::Asc => sorts[pos].direction = SortDirection::Desc,
+                                                SortDirection::Desc => { sorts.remove(pos); }
                                             }
+                                        } else {
+                                            // New column — append as Asc.
+                                            sorts.push(SortState {
+                                                column_id: col_id,
+                                                direction: SortDirection::Asc,
+                                            });
                                         }
-                                        _ => SortDirection::Asc,
-                                    };
-                                    if new_dir == SortDirection::None {
-                                        sort_state.set(None);
                                     } else {
-                                        sort_state.set(Some(SortState {
-                                            column_id: col_id,
-                                            direction: new_dir,
-                                        }));
+                                        // Regular click: single-sort — replace entire sort state.
+                                        let current = sort_state.read()
+                                            .iter()
+                                            .find(|ss| ss.column_id == col_id)
+                                            .map(|ss| ss.direction)
+                                            .unwrap_or(SortDirection::None);
+
+                                        let new_dir = match current {
+                                            SortDirection::None => SortDirection::Asc,
+                                            SortDirection::Asc => SortDirection::Desc,
+                                            SortDirection::Desc => SortDirection::None,
+                                        };
+
+                                        if new_dir == SortDirection::None {
+                                            sort_state.set(Vec::new());
+                                        } else {
+                                            sort_state.set(vec![SortState {
+                                                column_id: col_id,
+                                                direction: new_dir,
+                                            }]);
+                                        }
                                     }
+
                                     current_page.set(0);
                                 },
 
@@ -95,7 +156,8 @@ pub(super) fn render_header<T: Clone + PartialEq + 'static>(
                                 div { class: "flex items-center",
                                     span { "{header_text}" }
                                     if is_sortable {
-                                        {sort_icon(current_sort_dir)}
+                                        {sort_icon(current_sort_dir, sort_priority)}
+                                        {sort_feedback(current_sort_dir)}
                                     }
                                 }
 
@@ -106,7 +168,6 @@ pub(super) fn render_header<T: Clone + PartialEq + 'static>(
                                         r#type: "text",
                                         placeholder: "Filter\u{2026}",
                                         value: "{filter_value}",
-                                        // Stop click propagation so typing doesn't trigger sort
                                         onclick: move |evt: Event<MouseData>| { evt.stop_propagation(); },
                                         oninput: move |evt: Event<FormData>| {
                                             let val = evt.value();

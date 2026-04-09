@@ -63,7 +63,7 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
 ) -> Element {
     // ── Internal state ──────────────────────────────────────────
 
-    let sort_state = use_signal(|| Option::<SortState>::None);
+    let sort_state = use_signal(|| Vec::<SortState>::new());
     let mut current_page = use_signal(|| 0usize);
     let selected_row = use_signal(|| Option::<usize>::None);
     let quick_filter_text = use_signal(|| String::new());
@@ -123,29 +123,41 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
     };
     drop(col_filters);
 
-    // Step 3: Sort the filtered indices.
+    // Step 3: Sort the filtered indices (supports multi-column chained sort).
     let sorted_indices: Vec<usize> = {
         let mut indices = filtered_indices;
+        let sorts = sort_state.read();
 
-        if let Some(ref sort) = *sort_state.read() {
-            if sort.direction != SortDirection::None {
-                if let Some(col) = columns.iter().find(|c| c.id == sort.column_id) {
-                    let getter = col.value_getter;
-                    let comparator = col.comparator;
-                    let ascending = sort.direction == SortDirection::Asc;
+        if !sorts.is_empty() {
+            indices.sort_by(|&a, &b| {
+                for sort in sorts.iter() {
+                    if sort.direction == SortDirection::None {
+                        continue;
+                    }
 
-                    indices.sort_by(|&a, &b| {
-                        let ord = if let Some(cmp) = comparator {
+                    if let Some(col) = columns.iter().find(|c| c.id == sort.column_id) {
+                        let ord = if let Some(cmp) = col.comparator {
                             cmp(&data[a], &data[b])
                         } else {
-                            let va = getter(&data[a]);
-                            let vb = getter(&data[b]);
+                            let va = (col.value_getter)(&data[a]);
+                            let vb = (col.value_getter)(&data[b]);
                             va.cmp(&vb)
                         };
-                        if ascending { ord } else { ord.reverse() }
-                    });
+
+                        let ord = if sort.direction == SortDirection::Asc {
+                            ord
+                        } else {
+                            ord.reverse()
+                        };
+
+                        if ord != std::cmp::Ordering::Equal {
+                            return ord;
+                        }
+                    }
                 }
-            }
+
+                std::cmp::Ordering::Equal
+            });
         }
 
         indices
