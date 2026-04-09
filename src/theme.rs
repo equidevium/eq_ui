@@ -24,7 +24,7 @@ pub fn merge_classes(defaults: &str, class_override: &str) -> String {
 
 // ── Layout ──────────────────────────────────────────────────────────
 pub const APP: &str =
-    "min-h-screen bg-[var(--color-primary-dark)] text-[var(--color-label-primary)]";
+    "min-h-screen bg-transparent text-[var(--color-label-primary)]";
 pub const CONTAINER_LAYOUT: &str = "mx-auto max-w-6xl px-4 md:px-6";
 pub const MAIN_CONTENT: &str = "flex-1";
 pub const MAIN_INNER: &str = "py-6 md:py-10";

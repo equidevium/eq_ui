@@ -3,7 +3,8 @@
 use super::column_def::EqColumnDef;
 use super::styles as s;
 use super::types::{ColumnAlign, RowSelection};
-use crate::atoms::{EqCheckbox, CheckboxState};
+use crate::atoms::eq_icon_paths;
+use crate::atoms::{EqCheckbox, CheckboxState, EqIcon, IconSize};
 use dioxus::prelude::*;
 use std::collections::{HashMap, HashSet};
 
@@ -32,6 +33,11 @@ pub(super) fn render_body<T: Clone + PartialEq + 'static>(
     row_measure: Option<Signal<f64>>,
     // When true, selected rows get `draggable="true"`.
     row_draggable: bool,
+    // Reorder grip handle support.
+    reorderable: bool,
+    mut reorder_from: Signal<Option<usize>>,
+    mut reorder_over: Signal<Option<usize>>,
+    on_reorder: &Option<EventHandler<(usize, usize)>>,
 ) -> Element {
     let border_cls = if column_borders {
         "border-r border-[var(--color-grid-border)] last:border-r-0"
@@ -46,8 +52,10 @@ pub(super) fn render_body<T: Clone + PartialEq + 'static>(
         String::new()
     };
 
-    // Total column count for spacer colspan (include checkbox column).
-    let col_count = columns.len() + if row_selection == RowSelection::Multi { 1 } else { 0 };
+    // Total column count for spacer colspan (include grip + checkbox columns).
+    let col_count = columns.len()
+        + if reorderable { 1 } else { 0 }
+        + if row_selection == RowSelection::Multi { 1 } else { 0 };
     let col_span = format!("{col_count}");
 
     rsx! {
@@ -87,6 +95,22 @@ pub(super) fn render_body<T: Clone + PartialEq + 'static>(
                             cls.push(' ');
                             cls.push_str(s::TR_SELECTED);
                         }
+                        // Reorder insertion indicator
+                        if reorderable {
+                            if let Some(over_idx) = reorder_over() {
+                                if over_idx == data_idx {
+                                    if let Some(from_idx) = reorder_from() {
+                                        if from_idx < data_idx {
+                                            cls.push(' ');
+                                            cls.push_str(s::REORDER_INSERT_BELOW);
+                                        } else if from_idx > data_idx {
+                                            cls.push(' ');
+                                            cls.push_str(s::REORDER_INSERT_ABOVE);
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         cls
                     };
 
@@ -96,12 +120,46 @@ pub(super) fn render_body<T: Clone + PartialEq + 'static>(
 
                     let is_draggable = row_draggable && is_selected;
 
+                    let on_reorder_handler = on_reorder.clone();
+
                     rsx! {
                         tr {
                             key: "{data_idx}",
                             class: "{row_cls}",
                             style: "{row_h_style}",
                             draggable: if is_draggable { "true" } else { "false" },
+                            ondragover: move |evt: Event<DragData>| {
+                                if reorderable && reorder_from().is_some() {
+                                    evt.prevent_default();
+                                    reorder_over.set(Some(data_idx));
+                                }
+                            },
+                            ondragleave: move |_| {
+                                if reorderable {
+                                    let current = reorder_over();
+                                    if current == Some(data_idx) {
+                                        reorder_over.set(None);
+                                    }
+                                }
+                            },
+                            ondrop: {
+                                let on_reorder_handler = on_reorder_handler.clone();
+                                move |evt: Event<DragData>| {
+                                    if reorderable {
+                                        evt.prevent_default();
+                                        evt.stop_propagation();
+                                        if let Some(from) = reorder_from() {
+                                            if from != data_idx {
+                                                if let Some(ref handler) = on_reorder_handler {
+                                                    handler.call((from, data_idx));
+                                                }
+                                            }
+                                        }
+                                        reorder_from.set(None);
+                                        reorder_over.set(None);
+                                    }
+                                }
+                            },
                             onmounted: move |evt: MountedEvent| {
                                 if measure_this {
                                     if let Some(mut sig) = row_measure {
@@ -149,12 +207,53 @@ pub(super) fn render_body<T: Clone + PartialEq + 'static>(
                                 }
                             },
 
+                            // Grip handle cell for row reordering
+                            if reorderable {
+                                td {
+                                    class: "{s::TD} {s::GRIP_CELL} {density_cls}",
+                                    draggable: "true",
+                                    ondragstart: move |evt: Event<DragData>| {
+                                        evt.stop_propagation();
+                                        reorder_from.set(Some(data_idx));
+                                    },
+                                    ondragend: move |_| {
+                                        reorder_from.set(None);
+                                        reorder_over.set(None);
+                                    },
+                                    EqIcon {
+                                        path: eq_icon_paths::DOTS_SIX_VERTICAL,
+                                        size: IconSize::Sm,
+                                        class: s::GRIP_ICON,
+                                    }
+                                }
+                            }
+
                             // Checkbox cell for Multi selection
                             if row_selection == RowSelection::Multi {
                                 td {
                                     class: "{s::TD} {s::CHECKBOX_CELL} {density_cls}",
                                     EqCheckbox {
                                         state: if is_selected { CheckboxState::Checked } else { CheckboxState::Unchecked },
+                                        on_change: {
+                                            let on_sel = on_sel.clone();
+                                            move |_new: CheckboxState| {
+                                                let mut set = selected_rows.write();
+                                                if set.contains(&data_idx) {
+                                                    set.remove(&data_idx);
+                                                } else {
+                                                    set.insert(data_idx);
+                                                }
+                                                let sorted: Vec<usize> = {
+                                                    let mut v: Vec<usize> = set.iter().copied().collect();
+                                                    v.sort();
+                                                    v
+                                                };
+                                                drop(set);
+                                                if let Some(ref handler) = on_sel {
+                                                    handler.call(sorted);
+                                                }
+                                            }
+                                        },
                                     }
                                 }
                             }

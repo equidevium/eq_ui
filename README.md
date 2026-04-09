@@ -8,11 +8,11 @@ https://github.com/user-attachments/assets/4ea4f561-4581-481d-bc27-c2f5a2879998
 
 The crate is organized into three layers, each building on the one below:
 
-**Atoms** — the smallest pieces. Text, labels, links, inputs, icons, and images - each with variant enums for size, kind, and appearance.
+**Atoms** — the smallest pieces. Text, labels, links, inputs, icons, images, checkboxes, scrollable containers, dividers, and video — each with variant enums for size, kind, and appearance.
 
-**Molecules** — small compositions. Cards with header/body/footer slots, image cards with caption modes (below or overlay), and a generic content carousel with arrow navigation and dot indicators.
+**Molecules** — small compositions. Cards with header/body/footer slots, image cards with caption modes (below or overlay), a generic content carousel, collapsible tree views, and accordion panels.
 
-**Organisms** — page-level structures. A sticky header with backdrop blur, footer with link groups, hero section with optional background images and overlay, page sections, the full app shell, and a navbar.
+**Organisms** — page-level structures. A sticky header with backdrop blur, footer with link groups, hero section with optional background images and overlay, page sections, the full app shell, a navbar, and a feature-rich data grid with sorting, filtering, pagination, virtualization, row selection, bulk actions, drag-and-drop, and export.
 
 **Theming** — 21 built-in color themes plus custom CSS support. Switch themes at runtime with a single function call or let users pick from a dropdown.
 
@@ -75,9 +75,9 @@ cargo update -p eq_ui
 ## Using the components
 
 ```rust
-use eq_ui::atoms::{EqText, TextVariant, EqInput, InputKind, EqLabel, EqLink, EqIcon, IconSize, EqImage, AtomImageSize, AspectRatio, ObjectFit};
-use eq_ui::molecules::{EqCard, EqCardHeader, EqCardBody, EqCardFooter, EqImageCard, CaptionMode, EqCarousel};
-use eq_ui::organisms::{EqAppShell, EqHeader, EqFooter, EqHeroShell, EqPageSection, EqNavbar};
+use eq_ui::atoms::{EqText, TextVariant, EqInput, InputKind, EqLabel, EqLink, EqIcon, IconSize, EqImage, AtomImageSize, AspectRatio, ObjectFit, EqCheckbox, CheckboxState, EqDivider, EqScrollableSpace, EqVideo};
+use eq_ui::molecules::{EqCard, EqCardHeader, EqCardBody, EqCardFooter, EqImageCard, CaptionMode, EqCarousel, EqTree, TreeNode, EqAccordion, AccordionItem, AccordionMode};
+use eq_ui::organisms::{EqAppShell, EqHeader, EqFooter, EqHeroShell, EqPageSection, EqNavbar, EqGrid, EqColumnDef, GridNavigation, GridDensity, RowSelection, ColumnAlign, ExportFormat, GridDragPayload};
 use eq_ui::theme;  // shared constants like CONTAINER_LAYOUT, BTN_PRIMARY, etc.
 ```
 
@@ -116,6 +116,23 @@ EqImage {
     object_fit: ObjectFit::Cover,
     rounded: true,
 }
+
+// Checkbox with three visual states
+EqCheckbox {
+    state: CheckboxState::Checked,
+    label: "I agree to the terms",
+    on_change: move |next| agreed.set(next),
+}
+
+// Divider with variants
+EqDivider { variant: DividerVariant::Dashed }
+
+// Scrollable container
+EqScrollableSpace {
+    div { class: "p-4",
+        for item in items { p { "{item}" } }
+    }
+}
 ```
 
 ### Molecules
@@ -147,6 +164,27 @@ EqCarousel {
         rsx! { EqImageCard { src: "...", alt: "Slide 2", /* ... */ } },
         rsx! { div { "Any content works as a slide" } },
     ],
+}
+
+// Collapsible tree view
+EqTree {
+    nodes: vec![
+        TreeNode::new("id-1", "Item One"),
+        TreeNode::new_with_children("id-2", "Parent", vec![
+            TreeNode::new("id-3", "Child"),
+        ]),
+    ],
+    selected: selected_id(),
+    on_select: move |id: String| selected_id.set(Some(id)),
+}
+
+// Accordion with single-expand or multi-expand modes
+EqAccordion {
+    items: vec![
+        AccordionItem::new("faq-1", "What is eq_ui?", rsx! { p { "A Dioxus component library." } }),
+        AccordionItem::new("faq-2", "How many themes?", rsx! { p { "21 built-in themes." } }),
+    ],
+    mode: AccordionMode::Single,
 }
 ```
 
@@ -200,6 +238,48 @@ EqHeader {
     },
 }
 ```
+
+### Data Grid
+
+EqGrid is a feature-rich, type-safe data grid organism. It handles sorting, filtering, pagination, row virtualization, row selection, bulk actions (delete, export, status change, clipboard), column resizing, drag-and-drop between grids, and full theme integration.
+
+```rust
+#[derive(Clone, PartialEq)]
+struct Employee {
+    name: String,
+    role: String,
+    salary: f64,
+}
+
+let columns = vec![
+    EqColumnDef::new("name", "Name", |e: &Employee| e.name.clone())
+        .filterable(true),
+    EqColumnDef::new("role", "Role", |e: &Employee| e.role.clone())
+        .filterable(true),
+    EqColumnDef::new("salary", "Salary", |e: &Employee| e.salary.to_string())
+        .with_formatter(|e: &Employee| format!("${:.0}", e.salary))
+        .align(ColumnAlign::Right)
+        .comparator(|a: &Employee, b: &Employee| {
+            a.salary.partial_cmp(&b.salary).unwrap_or(std::cmp::Ordering::Equal)
+        }),
+];
+
+EqGrid {
+    data: employees,
+    columns: columns,
+    navigation: GridNavigation::Paginate,  // or Standard, Virtualize
+    page_size: 10,
+    row_selection: RowSelection::Multi,
+    density: GridDensity::Normal,
+    quick_filter: true,
+    striped: true,
+    export: true,
+    on_selection_change: move |rows| { /* handle selection */ },
+    on_delete: move |rows| { /* handle delete */ },
+}
+```
+
+Virtualization mode renders only the visible rows plus a small buffer, supporting datasets of thousands of rows with measured row heights and a synced split-table layout. See the [EqGrid README](./src/organisms/eq_grid/README.md) for full documentation.
 
 ## Theming
 
@@ -272,12 +352,19 @@ src/
     eq_link.rs        - anchor link
     eq_input.rs       - input/textarea with kind variants
     eq_icon.rs        - icon wrapper with size variants
+    eq_icon_paths.rs  - SVG path data constants (Phosphor icons)
     eq_image.rs       - image with sizing, aspect ratio, object-fit
+    eq_checkbox.rs    - checkbox with checked/unchecked/indeterminate states
+    eq_scrollable_space.rs - scrollable container with themed scrollbar
+    eq_divider.rs     - separator with solid/dashed/dotted/spacer variants
+    eq_video.rs       - video with poster overlay, autoplay, controls
     *_styles.rs       - co-located style constants for each atom
   molecules/
     eq_card.rs        - card with header/body/footer slots
     eq_image_card.rs  - image card with caption modes (below/overlay)
     eq_carousel.rs    - generic content carousel with arrows and dots
+    eq_tree.rs        - collapsible tree view with select and expand
+    eq_accordion.rs   - collapsible panels with single/multi-expand modes
     *_styles.rs       - co-located style constants for each molecule
   organisms/
     eq_app_shell.rs   - full page layout (header + main + footer)
@@ -286,8 +373,20 @@ src/
     eq_hero_shell.rs  - hero banner with background image, overlay, custom colors
     eq_page_section.rs - titled content section
     eq_navbar.rs      - horizontal nav bar
+    eq_grid/          - feature-rich data grid organism
+      grid.rs         - main orchestration component
+      types.rs        - shared enums (GridNavigation, RowSelection, GridDensity, etc.)
+      column_def.rs   - column definition builder
+      header.rs       - sortable header with column filters and resize handles
+      body.rs         - row rendering with selection and drag support
+      pagination.rs   - page controls
+      quick_filter.rs - global search bar
+      bulk_actions.rs - selection toolbar (delete, export, status, clipboard)
+      export.rs       - CSV, JSON, TXT, ODS export
+      styles.rs       - co-located style constants
     *_styles.rs       - co-located style constants for each organism
 assets/
+  icons/              - Phosphor SVG icons (square, check-square, etc.)
   theme/              - base CSS + 21 theme color files
   styling/            - component-specific CSS (navbar)
   tailwind.css        - Tailwind entry point with @source directives

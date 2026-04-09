@@ -25,3 +25,4 @@ Only icons actively used by a component are included. See Rule 20 in the project
 | square.svg | EqCheckbox (unchecked state) | 2026-04-09 |
 | check-square.svg | EqCheckbox (checked state) | 2026-04-09 |
 | minus-square.svg | EqCheckbox (indeterminate state) | 2026-04-09 |
+| dots-six-vertical.svg | EqGrid (reorderable row grip handle) | 2026-04-09 |

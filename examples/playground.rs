@@ -114,6 +114,8 @@ fn build_component_tree() -> Vec<TreeNode> {
                 TreeNode::new("footer", "EqFooter"),
                 TreeNode::new("app-shell", "EqAppShell"),
                 TreeNode::new("grid", "EqGrid"),
+                TreeNode::new("grid-dnd", "EqGrid Drag & Drop"),
+                TreeNode::new("grid-reorder", "EqGrid Reorder"),
             ],
         ),
         TreeNode::new_with_children(
@@ -291,6 +293,12 @@ fn PreviewPanel(selected: Option<String>) -> Element {
         },
         Some("grid") => rsx! {
             DemoEqGrid {}
+        },
+        Some("grid-dnd") => rsx! {
+            DemoEqGridDragDrop {}
+        },
+        Some("grid-reorder") => rsx! {
+            DemoEqGridReorder {}
         },
 
         // Theming
@@ -2369,6 +2377,7 @@ fn DemoEqGrid() -> Element {
     let mut density_idx = use_signal(|| 1usize); // 0=Compact, 1=Normal, 2=Comfortable
     let mut selection_idx = use_signal(|| 1usize); // 0=None, 1=Single
     let mut page_size_idx = use_signal(|| 0usize); // 0=5, 1=10, 2=25
+    let mut reorderable = use_signal(|| false);
 
     let navigation = match nav_idx() {
         0 => GridNavigation::Standard,
@@ -2494,6 +2503,11 @@ fn DemoEqGrid() -> Element {
                         options: vec!["5", "10", "25"],
                         onchange: move |v: String| page_size_idx.set(match v.as_str() { "10" => 1, "25" => 2, _ => 0 }),
                     }
+                    PropToggle {
+                        label: "reorderable",
+                        value: reorderable(),
+                        onchange: move |v: bool| reorderable.set(v),
+                    }
                 }
             }
 
@@ -2520,6 +2534,15 @@ fn DemoEqGrid() -> Element {
                 striped: striped(),
                 column_borders: col_borders(),
                 quick_filter: quick_filter(),
+                reorderable: reorderable(),
+                on_reorder: move |(from, to): (usize, usize)| {
+                    let mut data = employees.write();
+                    let row = data.remove(from);
+                    data.insert(to, row);
+                    for (i, e) in data.iter_mut().enumerate() {
+                        e.index = i + 1;
+                    }
+                },
                 on_selection_change: move |rows: Vec<usize>| {
                     selection_count.set(rows.len());
                 },
@@ -2621,6 +2644,271 @@ fn DemoEqGrid() -> Element {
             }
 
             StyleInfo { file: "eq_grid/styles.rs", styles }
+            CodeBlock { code }
+        }
+    }
+}
+
+// ── EqGrid Drag & Drop Demo ───────────────────────────────────────
+
+#[derive(Clone, PartialEq)]
+struct DndPerson {
+    index: usize,
+    name: String,
+    role: String,
+}
+
+fn team_a_data() -> Vec<DndPerson> {
+    vec![
+        DndPerson { index: 1, name: "Ada Lovelace".into(), role: "Engineer".into() },
+        DndPerson { index: 2, name: "Grace Hopper".into(), role: "Architect".into() },
+        DndPerson { index: 3, name: "Alan Turing".into(), role: "Researcher".into() },
+        DndPerson { index: 4, name: "Linus Torvalds".into(), role: "Lead".into() },
+        DndPerson { index: 5, name: "Margaret Hamilton".into(), role: "Director".into() },
+    ]
+}
+
+fn team_b_data() -> Vec<DndPerson> {
+    vec![
+        DndPerson { index: 1, name: "Dennis Ritchie".into(), role: "Engineer".into() },
+        DndPerson { index: 2, name: "Barbara Liskov".into(), role: "Professor".into() },
+        DndPerson { index: 3, name: "Ken Thompson".into(), role: "Engineer".into() },
+    ]
+}
+
+fn dnd_columns() -> Vec<EqColumnDef<DndPerson>> {
+    vec![
+        EqColumnDef::new("idx", "#", |e: &DndPerson| e.index.to_string())
+            .sortable(false)
+            .resizable(false)
+            .align(ColumnAlign::Right)
+            .width(40)
+            .min_width(40),
+        EqColumnDef::new("name", "Name", |e: &DndPerson| e.name.clone())
+            .min_width(120),
+        EqColumnDef::new("role", "Role", |e: &DndPerson| e.role.clone())
+            .min_width(80),
+    ]
+}
+
+#[component]
+fn DemoEqGridDragDrop() -> Element {
+    // Shared drag context — both grids read/write through this signal.
+    let _drag_ctx: Signal<Option<GridDragPayload>> =
+        use_context_provider(|| Signal::new(Option::<GridDragPayload>::None));
+
+    let mut team_a = use_signal(|| team_a_data());
+    let mut team_b = use_signal(|| team_b_data());
+    let mut status = use_signal(|| String::new());
+
+    // Re-index helper: updates the `index` field to match position.
+    let reindex = |data: &mut Vec<DndPerson>| {
+        for (i, person) in data.iter_mut().enumerate() {
+            person.index = i + 1;
+        }
+    };
+
+    let code = "// Wrap both grids in a shared drag context provider:\n\
+        use_context_provider(|| Signal::new(Option::<GridDragPayload>::None));\n\
+        \n\
+        // Source grid — drag_id enables dragging selected rows\n\
+        EqGrid {\n\
+        \x20   data: team_a(),\n\
+        \x20   columns: columns(),\n\
+        \x20   row_selection: RowSelection::Multi,\n\
+        \x20   drag_id: \"team-a\",\n\
+        }\n\
+        \n\
+        // Target grid — drop_target + on_drop_receive\n\
+        EqGrid {\n\
+        \x20   data: team_b(),\n\
+        \x20   columns: columns(),\n\
+        \x20   row_selection: RowSelection::Multi,\n\
+        \x20   drop_target: true,\n\
+        \x20   on_drop_receive: move |payload: GridDragPayload| {\n\
+        \x20       // Move rows from source to target\n\
+        \x20   },\n\
+        }".to_string();
+
+    rsx! {
+        DemoSection { title: "EqGrid Drag & Drop",
+            EqText { variant: TextVariant::Muted,
+                "Select rows in Team A using the checkboxes, then drag any selected row to Team B. \
+                 The rows move between the two grids."
+            }
+
+            if !status.read().is_empty() {
+                div { class: "text-xs text-[var(--color-accent-primary)] bg-[var(--color-card)]/20 rounded px-3 py-1.5",
+                    "{status}"
+                }
+            }
+
+            div { class: "grid grid-cols-1 md:grid-cols-2 gap-4",
+                // Team A — drag source
+                div { class: "space-y-2",
+                    EqText { variant: TextVariant::Emphasis, "Team A (drag source)" }
+                    EqGrid {
+                        data: team_a(),
+                        columns: dnd_columns(),
+                        row_selection: RowSelection::Multi,
+                        density: GridDensity::Compact,
+                        striped: true,
+                        drag_id: "team-a",
+                        // Also accept drops so you can drag back
+                        drop_target: true,
+                        on_drop_receive: {
+                            let mut team_a = team_a;
+                            let mut team_b = team_b;
+                            let mut status = status;
+                            move |payload: GridDragPayload| {
+                                if payload.source_id == "team-b" {
+                                    let mut b = team_b.write();
+                                    let mut a = team_a.write();
+                                    let mut moved = Vec::new();
+                                    // Collect in reverse so indices stay valid.
+                                    for &idx in payload.indices.iter().rev() {
+                                        if idx < b.len() {
+                                            moved.push(b.remove(idx));
+                                        }
+                                    }
+                                    moved.reverse();
+                                    let count = moved.len();
+                                    a.extend(moved);
+                                    reindex(&mut a);
+                                    reindex(&mut b);
+                                    drop(a);
+                                    drop(b);
+                                    status.set(format!("Moved {} row(s) from Team B to Team A", count));
+                                }
+                            }
+                        },
+                    }
+                }
+
+                // Team B — drop target
+                div { class: "space-y-2",
+                    EqText { variant: TextVariant::Emphasis, "Team B (drop target)" }
+                    EqGrid {
+                        data: team_b(),
+                        columns: dnd_columns(),
+                        row_selection: RowSelection::Multi,
+                        density: GridDensity::Compact,
+                        striped: true,
+                        drag_id: "team-b",
+                        drop_target: true,
+                        on_drop_receive: {
+                            let mut team_a = team_a;
+                            let mut team_b = team_b;
+                            let mut status = status;
+                            move |payload: GridDragPayload| {
+                                if payload.source_id == "team-a" {
+                                    let mut a = team_a.write();
+                                    let mut b = team_b.write();
+                                    let mut moved = Vec::new();
+                                    for &idx in payload.indices.iter().rev() {
+                                        if idx < a.len() {
+                                            moved.push(a.remove(idx));
+                                        }
+                                    }
+                                    moved.reverse();
+                                    let count = moved.len();
+                                    b.extend(moved);
+                                    reindex(&mut a);
+                                    reindex(&mut b);
+                                    drop(a);
+                                    drop(b);
+                                    status.set(format!("Moved {} row(s) from Team A to Team B", count));
+                                }
+                            }
+                        },
+                    }
+                }
+            }
+
+            CodeBlock { code }
+        }
+    }
+}
+
+// ── Reorderable Grid Demo ──────────────────────────────────────────
+
+#[component]
+fn DemoEqGridReorder() -> Element {
+    let mut data = use_signal(|| {
+        vec![
+            DemoEmployee { index: 1, name: "Ada Lovelace".into(), role: "Engineer".into(), department: "R&D".into(), salary: 95000.0, status: "Active".into() },
+            DemoEmployee { index: 2, name: "Grace Hopper".into(), role: "Architect".into(), department: "R&D".into(), salary: 120000.0, status: "Active".into() },
+            DemoEmployee { index: 3, name: "Alan Turing".into(), role: "Researcher".into(), department: "Science".into(), salary: 105000.0, status: "Inactive".into() },
+            DemoEmployee { index: 4, name: "Linus Torvalds".into(), role: "Lead".into(), department: "Engineering".into(), salary: 150000.0, status: "Active".into() },
+            DemoEmployee { index: 5, name: "Margaret Hamilton".into(), role: "Director".into(), department: "Engineering".into(), salary: 140000.0, status: "Active".into() },
+            DemoEmployee { index: 6, name: "Dennis Ritchie".into(), role: "Engineer".into(), department: "Systems".into(), salary: 98000.0, status: "Inactive".into() },
+            DemoEmployee { index: 7, name: "Barbara Liskov".into(), role: "Professor".into(), department: "Science".into(), salary: 130000.0, status: "Active".into() },
+            DemoEmployee { index: 8, name: "Ken Thompson".into(), role: "Engineer".into(), department: "Systems".into(), salary: 102000.0, status: "Active".into() },
+        ]
+    });
+
+    let mut last_move = use_signal(|| String::new());
+
+    let columns = vec![
+        EqColumnDef::new("index", "#", |e: &DemoEmployee| e.index.to_string())
+            .width(60),
+        EqColumnDef::new("name", "Name", |e: &DemoEmployee| e.name.clone())
+            .sortable(true),
+        EqColumnDef::new("role", "Role", |e: &DemoEmployee| e.role.clone()),
+        EqColumnDef::new("dept", "Department", |e: &DemoEmployee| e.department.clone()),
+        EqColumnDef::new("salary", "Salary", |e: &DemoEmployee| format!("${}", e.salary as u64)),
+    ];
+
+    let code = r#"EqGrid {
+    data: items(),
+    columns: columns,
+    reorderable: true,
+    on_reorder: move |(from, to): (usize, usize)| {
+        let mut vec = items.write();
+        let row = vec.remove(from);
+        vec.insert(to, row);
+        // Re-index after move
+        for (i, e) in vec.iter_mut().enumerate() {
+            e.index = i + 1;
+        }
+    },
+}"#;
+
+    rsx! {
+        div { class: "space-y-6 p-4",
+            EqText { variant: TextVariant::H2, "EqGrid Reorder" }
+            EqText { variant: TextVariant::Body,
+                "Drag the grip handle (\u{2807}) on the left edge of any row to reorder. \
+                 Works with all navigation modes."
+            }
+
+            if !last_move.read().is_empty() {
+                div {
+                    class: "px-3 py-2 rounded-lg bg-[var(--color-card)] border border-[var(--color-card-border)] text-sm",
+                    EqText { variant: TextVariant::Caption, "{last_move}" }
+                }
+            }
+
+            EqGrid {
+                data: data(),
+                columns: columns,
+                reorderable: true,
+                striped: true,
+                density: GridDensity::Normal,
+                on_reorder: move |(from, to): (usize, usize)| {
+                    let mut vec = data.write();
+                    let row = vec.remove(from);
+                    vec.insert(to, row);
+                    for (i, e) in vec.iter_mut().enumerate() {
+                        e.index = i + 1;
+                    }
+                    drop(vec);
+                    let d = data.read();
+                    let name = &d[to].name;
+                    last_move.set(format!("Moved \"{}\" from position {} to {}", name, from + 1, to + 1));
+                },
+            }
+
             CodeBlock { code }
         }
     }

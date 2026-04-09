@@ -64,6 +64,7 @@ pub(super) fn render_header<T: Clone + PartialEq + 'static>(
     on_selection_change: &Option<EventHandler<Vec<usize>>>,
     column_widths: Signal<HashMap<&'static str, f64>>,
     mut resize_active: Signal<Option<ResizeState>>,
+    reorderable: bool,
 ) -> Element {
     let sort_count = sort_state.read().len();
 
@@ -82,6 +83,10 @@ pub(super) fn render_header<T: Clone + PartialEq + 'static>(
     rsx! {
         thead { class: s::THEAD,
             tr {
+                // Grip handle column (empty header cell)
+                if reorderable {
+                    th { class: "{s::TH} {s::GRIP_CELL} {density_cls}" }
+                }
                 // Select All checkbox column
                 if row_selection == RowSelection::Multi {
                     {

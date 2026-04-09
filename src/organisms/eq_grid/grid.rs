@@ -109,6 +109,16 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
     /// grid ID and the dragged row indices so the consumer can move data.
     #[props(default)]
     on_drop_receive: Option<EventHandler<GridDragPayload>>,
+    // ── Reorder props ────────────────────────────────────────────
+    /// Enable row reordering via drag handles. A grip column appears
+    /// as the leftmost column with drag-to-reorder support.
+    #[props(default = false)]
+    reorderable: bool,
+    /// Fired when a row is reordered. Provides `(from_index, to_index)`
+    /// as indices into the original data vec. The consumer is responsible
+    /// for reordering the data.
+    #[props(default)]
+    on_reorder: Option<EventHandler<(usize, usize)>>,
     /// Optional class override.
     #[props(into, default)]
     class: String,
@@ -117,8 +127,8 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
 
     let sort_state = use_signal(|| Vec::<SortState>::new());
     let mut current_page = use_signal(|| 0usize);
-    let selected_row = use_signal(|| Option::<usize>::None);
-    let selected_rows = use_signal(|| HashSet::<usize>::new());
+    let mut selected_row = use_signal(|| Option::<usize>::None);
+    let mut selected_rows = use_signal(|| HashSet::<usize>::new());
     let quick_filter_text = use_signal(|| String::new());
     let column_filters = use_signal(|| HashMap::<&'static str, String>::new());
     let column_widths = use_signal(|| HashMap::<&'static str, f64>::new());
@@ -135,6 +145,19 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
     //   use_context_provider(|| Signal::new(Option::<GridDragPayload>::None));
     let drag_ctx: Option<Signal<Option<GridDragPayload>>> = try_consume_context();
     let mut drop_hover = use_signal(|| false);
+    // Reorder state — grip handles and drag logic.
+    let reorder_from: Signal<Option<usize>> = use_signal(|| None);
+    let reorder_over: Signal<Option<usize>> = use_signal(|| None);
+
+    // Clear selection when data length changes (e.g. rows moved via
+    // drag-and-drop). Stale indices would point at wrong rows.
+    let data_len = data.len();
+    let mut prev_data_len = use_signal(|| data_len);
+    if data_len != prev_data_len() {
+        prev_data_len.set(data_len);
+        selected_rows.write().clear();
+        selected_row.set(None);
+    }
 
     // Re-measure container width whenever the mounted element changes.
     use_effect(move || {
@@ -310,11 +333,15 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
 
     let render_colgroup = |cols: &[EqColumnDef<T>],
                            widths: Signal<HashMap<&'static str, f64>>,
+                           has_grip: bool,
                            has_checkbox: bool|
      -> Element {
         let w = widths.read();
         rsx! {
             colgroup {
+                if has_grip {
+                    col { style: "width: 32px;" }
+                }
                 if has_checkbox {
                     col { style: "width: 40px;" }
                 }
@@ -470,8 +497,8 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
                         let has_cb = row_selection == RowSelection::Multi;
                         rsx! {
                             table { class: s::TABLE,
-                                {render_colgroup(&columns, column_widths, has_cb)}
-                                {render_header(&columns, sort_state, current_page, column_filters, density_cls, row_selection, selected_rows, &visible_indices, &on_selection_change, column_widths, resize_active)}
+                                {render_colgroup(&columns, column_widths, reorderable, has_cb)}
+                                {render_header(&columns, sort_state, current_page, column_filters, density_cls, row_selection, selected_rows, &visible_indices, &on_selection_change, column_widths, resize_active, reorderable)}
                             }
                             div {
                                 class: s::VIRTUAL_VIEWPORT,
@@ -489,7 +516,7 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
                                     }
                                 },
                                 table { class: s::TABLE,
-                                    {render_colgroup(&columns, column_widths, has_cb)}
+                                    {render_colgroup(&columns, column_widths, reorderable, has_cb)}
                                     {
                                         render_body(
                                             &data,
@@ -509,6 +536,10 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
                                             row_height,
                                             Some(measured_row_height),
                                             drag_id.is_some(),
+                                            reorderable,
+                                            reorder_from,
+                                            reorder_over,
+                                            &on_reorder,
                                         )
                                     }
                                 }
@@ -518,7 +549,7 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
                 } else {
                     // Standard non-virtualized table.
                     table { class: s::TABLE,
-                        {render_header(&columns, sort_state, current_page, column_filters, density_cls, row_selection, selected_rows, &visible_indices, &on_selection_change, column_widths, resize_active)}
+                        {render_header(&columns, sort_state, current_page, column_filters, density_cls, row_selection, selected_rows, &visible_indices, &on_selection_change, column_widths, resize_active, reorderable)}
                         {
                             render_body(
                                 &data,
@@ -538,6 +569,10 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
                                 0.0,
                                 None,
                                 drag_id.is_some(),
+                                reorderable,
+                                reorder_from,
+                                reorder_over,
+                                &on_reorder,
                             )
                         }
                     }

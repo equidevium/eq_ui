@@ -92,6 +92,21 @@ These props control the action bar that appears below the grid when rows are sel
 | `aggregation_columns` | `Vec<&'static str>` | `[]` | Column IDs to aggregate. Numeric columns show a sum; others show a count. |
 | `bulk_actions` | `Option<Element>` | `None` | Extensible slot for custom action buttons |
 
+### Drag-and-Drop (Between Grids)
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `drag_id` | `Option<&'static str>` | `None` | Enables dragging selected rows. Identifies this grid as the source. |
+| `drop_target` | `bool` | `false` | Accept drops from other grids |
+| `on_drop_receive` | `Option<EventHandler<GridDragPayload>>` | `None` | Fires when rows are dropped onto this grid. Provides source grid ID and dragged indices. |
+
+### Reorder (Within a Grid)
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `reorderable` | `bool` | `false` | Show grip handles for row reordering. Works with all navigation modes. |
+| `on_reorder` | `Option<EventHandler<(usize, usize)>>` | `None` | Fires when a row is moved. Provides `(from_index, to_index)` into the data vec. |
+
 ## EqColumnDef Builder
 
 ```rust
@@ -203,6 +218,42 @@ Virtualization requires uniform row heights. Custom cell renderers that vary row
 ### Pagination
 
 When `navigation: GridNavigation::Paginate`, the grid shows a navigation bar below the table with page numbers, prev/next buttons, and a "Showing X-Y of Z" label. The current page automatically clamps when data shrinks (e.g., after filtering or deleting rows).
+
+### Drag-and-Drop Between Grids
+
+Two grids can exchange rows via drag-and-drop. The consumer wraps both grids in a shared context provider and sets `drag_id` on the source grid and `drop_target: true` on the receiving grid. Selected rows become draggable — drag them over the target grid to move data. A ring highlight appears on the target during hover. The `on_drop_receive` callback provides a `GridDragPayload` with the source grid ID and the dragged row indices. The consumer is responsible for removing from the source and inserting into the target.
+
+```rust
+use_context_provider(|| Signal::new(Option::<GridDragPayload>::None));
+
+rsx! {
+    EqGrid { data: team_a(), columns: cols.clone(), drag_id: "a", drop_target: true,
+        on_drop_receive: move |p: GridDragPayload| { /* move rows from source to team_a */ },
+    }
+    EqGrid { data: team_b(), columns: cols.clone(), drag_id: "b", drop_target: true,
+        on_drop_receive: move |p: GridDragPayload| { /* move rows from source to team_b */ },
+    }
+}
+```
+
+### Row Reordering
+
+When `reorderable: true`, a grip handle column (six-dot icon) appears as the leftmost column. Drag the handle to reorder rows within the grid. A colored insertion line shows where the row will land. The `on_reorder` callback provides `(from_index, to_index)` as indices into the original data vec — the consumer removes the row from `from` and inserts at the adjusted position.
+
+Reordering works with all navigation modes. The `on_reorder` callback always provides indices into the original data vec, so the consumer can handle reordering regardless of the active view.
+
+```rust
+EqGrid {
+    data: items(),
+    columns: columns,
+    reorderable: true,
+    on_reorder: move |(from, to): (usize, usize)| {
+        let mut vec = items.write();
+        let row = vec.remove(from);
+        vec.insert(to, row);
+    },
+}
+```
 
 ### Density
 
