@@ -1,3 +1,20 @@
+/* --- Animatable gradient color properties --- */
+@property --btn-g1 {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: transparent;
+}
+@property --btn-g2 {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: transparent;
+}
+@property --btn-g3 {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: transparent;
+}
+
 @layer components {
 
     /* --- Base button reset --- */
@@ -9,7 +26,10 @@
         font-weight: 500;
         border-radius: 0.5rem;
         cursor: pointer;
-        transition: all var(--transition-normal, 0.25s) ease;
+        transition: all var(--transition-normal, 0.25s) ease,
+                    --btn-g1 var(--transition-normal, 0.4s) ease,
+                    --btn-g2 var(--transition-normal, 0.4s) ease,
+                    --btn-g3 var(--transition-normal, 0.4s) ease;
     }
     .btn:focus-visible {
         outline: none;
@@ -17,7 +37,10 @@
     }
     .btn:active {
         transform: scale(0.96);
-        transition: all var(--transition-fast, 0.15s) ease;
+        transition: all var(--transition-fast, 0.15s) ease,
+                    --btn-g1 var(--transition-fast, 0.15s) ease,
+                    --btn-g2 var(--transition-fast, 0.15s) ease,
+                    --btn-g3 var(--transition-fast, 0.15s) ease;
     }
     .btn:disabled {
         opacity: 0.5;
@@ -26,16 +49,48 @@
 
     /* --- Primary --- */
     .btn-primary {
-        background: var(--btn-primary-bg);
+        --btn-g1: var(--color-btn-default-start);
+        --btn-g2: var(--color-btn-default-mid);
+        --btn-g3: var(--color-btn-default-end);
+        background: linear-gradient(var(--btn-angle, 90deg), var(--btn-g1) 0%, var(--btn-g2) 50%, var(--btn-g3) 100%);
         color: var(--btn-primary-text);
-        border: none;
+        border: 1px solid var(--color-card-border-bright, rgba(255,255,255,0.15));
         padding: 0.5rem 1rem;
     }
     .btn-primary:hover {
-        background: var(--btn-primary-hover);
+        --btn-g1: var(--color-btn-hover-start);
+        --btn-g2: var(--color-btn-hover-mid);
+        --btn-g3: var(--color-btn-hover-end);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
     .btn-primary:active {
-        background: var(--btn-primary-hover);
+        --btn-g1: var(--color-btn-hover-start);
+        --btn-g2: var(--color-btn-hover-mid);
+        --btn-g3: var(--color-btn-hover-end);
+        transform: translateY(0) scale(0.96);
+        box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+        filter: brightness(0.80);
+    }
+
+    /* --- No color-change modifier — gradient stays in default on hover --- */
+    .btn-no-transition.btn-primary:hover,
+    .btn-no-transition.btn-primary:active {
+        --btn-g1: var(--color-btn-default-start);
+        --btn-g2: var(--color-btn-default-mid);
+        --btn-g3: var(--color-btn-default-end);
+    }
+
+    /* --- No-gradient modifier --- */
+    .btn-no-gradient {
+        background: var(--btn-primary-bg-solid, var(--color-accent-primary)) !important;
+    }
+    .btn-no-gradient:hover {
+        background: var(--btn-primary-bg-solid, var(--color-accent-primary)) !important;
+        filter: brightness(1.15);
+    }
+    .btn-no-gradient:active {
+        background: var(--btn-primary-bg-solid, var(--color-accent-primary)) !important;
         filter: brightness(0.85);
     }
 
@@ -115,7 +170,7 @@
         padding: 0.5rem 1rem;
     }
     .btn-danger:hover {
-        opacity: 0.85;
+        filter: brightness(1.15);
     }
     .btn-danger:active {
         filter: brightness(0.75);

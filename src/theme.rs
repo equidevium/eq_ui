@@ -78,17 +78,6 @@ pub const SHADOW_MD: &str = "shadow-md shadow-black/20";
 pub const SHADOW_LG: &str = "shadow-lg shadow-black/30";
 pub const SHADOW_FOCUS: &str = "focus:shadow-md focus:shadow-black/30";
 
-// ── Buttons (move to eq_button_styles.rs when EqButton is created) ─
-pub const BTN_BASE: &str = "btn";
-pub const BTN_PRIMARY: &str = "btn btn-primary";
-pub const BTN_GHOST: &str = "btn btn-ghost";
-pub const BTN_OUTLINE: &str = "btn btn-outline";
-pub const BTN_CARD: &str = "btn btn-card";
-pub const BTN_DANGER: &str = "btn btn-danger";
-pub const BTN_SM: &str = "btn-sm";
-pub const BTN_MD: &str = "btn-md";
-pub const BTN_LG: &str = "btn-lg";
-
 // ── CTAs (move to eq_cta_styles.rs when EqCta is created) ──────────
 pub const CTA: &str =
     "rounded-xl border border-[var(--color-card-border)] \

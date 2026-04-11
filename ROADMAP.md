@@ -18,6 +18,7 @@
 - `EqDivider` — Separator with variants (Solid, Dashed, Dotted, Spacer), weights, and spacing
 - `EqVideo` — Video atom with poster overlay (EqImage + play icon), autoplay, muted, loop, controls, aspect ratio
 - `EqCheckbox` — Themed checkbox with Checked, Unchecked, and Indeterminate states. Icon-based rendering using Phosphor square icons, optional label, disabled state, size variants
+- `EqButton` — Themed button atom with five variants (Primary, Ghost, Outline, Card, Danger) and three sizes (Sm, Md, Lg). Gradient variants animate via background-position shift on hover. Native `<button>` element for accessibility
 
 ### Molecules
 - `EqCard` — Card with header, body, footer slots
@@ -41,7 +42,8 @@
   - Row selection (None, Single, Multi) with EqCheckbox integration
   - Column resizing with drag handles and min/max constraints
   - Bulk actions toolbar: delete, export (CSV/JSON/TXT/ODS), change status, clipboard copy, aggregation summaries, custom action slots
-  - Drag-and-drop between grids via shared context
+  - Drag-and-drop between grids via shared context (bidirectional, with playground demo)
+  - Row reordering via drag handles (grip icon column, visual insertion indicator)
   - GridNavigation enum (Standard, Paginate, Virtualize)
   - Density presets (Compact, Normal, Comfortable)
   - Loading overlay and empty state
@@ -56,7 +58,7 @@
 ### Infrastructure
 - Co-located `_styles.rs` pattern for all components
 - `theme.rs` shared style tokens + `merge_classes()` utility
-- CSS variable system (`colors.css`, `buttons.css`, `index.css`) — 57+ variables per theme covering core darks, labels, gradients, accents, states, borders, inputs, surfaces, code, buttons, interactive states, transitions, scrollbar, and grid
+- CSS variable system (`buttons.css`, `index.css`) — 57+ variables per theme covering core darks, labels, gradients, accents, states, borders, inputs, surfaces, code, buttons, interactive states, transitions, scrollbar, and grid
 - Theme Showcase in EqPlayground — displays all CSS variables with color swatches, gradient previews, live button variants, and interactive card demos
 - Tailwind CSS v4 with `@source` directives scanning `.rs` files
 - `class` prop on every component for style overrides via `merge_classes()`
@@ -71,9 +73,7 @@
 These are the items currently being worked on or immediately planned.
 
 ### Components
-- [ ] **EqButton** (Atom) - Dedicated button component. Five variants: Primary (gradient), Ghost (transparent), Outline (bordered with gradient hover), Card (card-styled with glow hover), Danger. Three sizes (sm/md/lg). CSS classes already defined in `buttons.css`. Needs Dioxus component + `_styles.rs`.
 - [ ] **EqCTA** (Molecule) - Call-to-action section. A prominent banner with title, description, and action slot (typically an EqButton). Style tokens already exist in `theme.rs`. Needs its own component + `_styles.rs`.
-- [ ] **EqGrid drag-and-drop playground demo** — Dual-grid demo showing select-and-drag rows between two grids with shared context.
 
 ### Refactoring
 - [ ] **EqCard macro unification** - The four EqCard sub-components are structurally identical wrappers. Unify via a declarative macro to reduce duplication.

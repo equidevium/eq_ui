@@ -43,3 +43,8 @@ mod eq_checkbox;
 mod eq_checkbox_styles;
 
 pub use eq_checkbox::{EqCheckbox, CheckboxState};
+
+mod eq_button;
+mod eq_button_styles;
+
+pub use eq_button::{EqButton, ButtonVariant, ButtonSize};

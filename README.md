@@ -8,7 +8,7 @@ https://github.com/user-attachments/assets/4ea4f561-4581-481d-bc27-c2f5a2879998
 
 The crate is organized into three layers, each building on the one below:
 
-**Atoms** — the smallest pieces. Text, labels, links, inputs, icons, images, checkboxes, scrollable containers, dividers, and video — each with variant enums for size, kind, and appearance.
+**Atoms** — the smallest pieces. Text, labels, links, inputs, icons, images, checkboxes, buttons, scrollable containers, dividers, and video — each with variant enums for size, kind, and appearance.
 
 **Molecules** — small compositions. Cards with header/body/footer slots, image cards with caption modes (below or overlay), a generic content carousel, collapsible tree views, and accordion panels.
 
@@ -75,7 +75,7 @@ cargo update -p eq_ui
 ## Using the components
 
 ```rust
-use eq_ui::atoms::{EqText, TextVariant, EqInput, InputKind, EqLabel, EqLink, EqIcon, IconSize, EqImage, AtomImageSize, AspectRatio, ObjectFit, EqCheckbox, CheckboxState, EqDivider, EqScrollableSpace, EqVideo};
+use eq_ui::atoms::{EqText, TextVariant, EqInput, InputKind, EqLabel, EqLink, EqIcon, IconSize, EqImage, AtomImageSize, AspectRatio, ObjectFit, EqCheckbox, CheckboxState, EqButton, ButtonVariant, ButtonSize, EqDivider, EqScrollableSpace, EqVideo};
 use eq_ui::molecules::{EqCard, EqCardHeader, EqCardBody, EqCardFooter, EqImageCard, CaptionMode, EqCarousel, EqTree, TreeNode, EqAccordion, AccordionItem, AccordionMode};
 use eq_ui::organisms::{EqAppShell, EqHeader, EqFooter, EqHeroShell, EqPageSection, EqNavbar, EqGrid, EqColumnDef, GridNavigation, GridDensity, RowSelection, ColumnAlign, ExportFormat, GridDragPayload};
 use eq_ui::theme;  // shared constants like CONTAINER_LAYOUT, BTN_PRIMARY, etc.
@@ -123,6 +123,19 @@ EqCheckbox {
     label: "I agree to the terms",
     on_change: move |next| agreed.set(next),
 }
+
+// Button with five variants and three sizes
+EqButton {
+    variant: ButtonVariant::Primary,
+    size: ButtonSize::Lg,
+    on_click: move |_| save(),
+    "Save Changes"
+}
+EqButton { variant: ButtonVariant::Ghost, "Cancel" }
+EqButton { variant: ButtonVariant::Danger, disabled: true, "Delete" }
+
+// Solid (no gradient) with custom text color
+EqButton { gradient: false, color: "#fbbf24", "Solid Button" }
 
 // Divider with variants
 EqDivider { variant: DividerVariant::Dashed }

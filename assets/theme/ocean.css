@@ -26,12 +26,26 @@
     --color-gradient-default-start: #a0c4e8;
     --color-gradient-default-mid: #5ba8e0;
     --color-gradient-default-end: #c0e8ff;
+    --color-btn-hover-start: #48dbfb;
+    --color-btn-hover-mid: #d4a843;
+    --color-btn-hover-end: #050d1a;
+
+    --color-btn-default-start: #050d1a;
+    --color-btn-default-mid: #1a5276;
+    --color-btn-default-end: #48dbfb;
 
     --gradient-primary-tricolor: linear-gradient(
             135deg,
             var(--color-gradient-default-start) 0%,
             var(--color-gradient-default-mid) 50%,
             var(--color-gradient-default-end) 100%
+    );
+
+    --gradient-primary-tricolor-hover: linear-gradient(
+            135deg,
+            var(--color-btn-hover-start) 0%,
+            var(--color-btn-hover-mid) 50%,
+            var(--color-btn-hover-end) 100%
     );
 
     --gradient-background: linear-gradient(
@@ -82,6 +96,9 @@
 
     /* --- Buttons --- */
     --btn-primary-bg: var(--gradient-primary-tricolor);
+
+    --btn-primary-bg-hover: var(--gradient-primary-tricolor-hover);
+    --btn-primary-bg-solid: var(--color-accent-primary);
     --btn-primary-hover: #0a1420;
     --btn-primary-text: #ffffff;
     --btn-ghost-hover: #122840;
