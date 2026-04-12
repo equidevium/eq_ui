@@ -1,5 +1,12 @@
 @import "buttons.css";
 
+/* --- Shared keyframes (used by Tailwind-only components) --- */
+
+@keyframes progress-shimmer {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(350%); }
+}
+
 html, body {
     min-height: 100%;
 }

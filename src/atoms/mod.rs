@@ -48,3 +48,8 @@ mod eq_button;
 mod eq_button_styles;
 
 pub use eq_button::{EqButton, ButtonVariant, ButtonSize};
+
+mod eq_progress;
+mod eq_progress_styles;
+
+pub use eq_progress::{EqProgress, ProgressVariant, ProgressSize};
