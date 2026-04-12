@@ -15,9 +15,9 @@ pub struct EqColumnDef<T: Clone + PartialEq + 'static> {
     pub header: &'static str,
     /// Extract a string value from the row for display, sorting, and filtering.
     pub value_getter: fn(&T) -> String,
-    /// Optional display formatter — transforms the value for rendering.
+    /// Optional display formatter - transforms the value for rendering.
     pub value_formatter: Option<fn(&T) -> String>,
-    /// Optional custom cell renderer — returns an Element for full control.
+    /// Optional custom cell renderer - returns an Element for full control.
     pub cell_renderer: Option<fn(&T) -> Element>,
     /// Enable sorting on this column.
     pub sortable: bool,
@@ -29,7 +29,7 @@ pub struct EqColumnDef<T: Clone + PartialEq + 'static> {
     pub min_width: u32,
     /// Text alignment within cells.
     pub align: ColumnAlign,
-    /// Custom sort comparator — overrides default string comparison.
+    /// Custom sort comparator - overrides default string comparison.
     pub comparator: Option<fn(&T, &T) -> Ordering>,
     /// Custom class applied to all cells in this column.
     pub cell_class: &'static str,

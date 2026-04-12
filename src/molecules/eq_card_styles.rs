@@ -7,3 +7,13 @@ pub const CARD_HEADER: &str = "px-4 py-3 md:px-6 md:py-4 border-b border-[var(--
 pub const CARD_BODY: &str = "px-4 py-3 md:px-6 md:py-4";
 pub const CARD_FOOTER: &str =
     "px-4 py-3 md:px-6 md:py-4 border-t border-[var(--color-card-border)] flex justify-end gap-2";
+
+/// All style tokens for playground introspection.
+pub fn catalog() -> Vec<(&'static str, &'static str)> {
+    vec![
+        ("CARD", CARD),
+        ("CARD_HEADER", CARD_HEADER),
+        ("CARD_BODY", CARD_BODY),
+        ("CARD_FOOTER", CARD_FOOTER),
+    ]
+}

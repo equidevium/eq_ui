@@ -13,6 +13,10 @@ readme = "README.md"
 keywords = ["dioxus", "ui", "components", "theme", "tailwind"]
 categories = ["gui", "web-programming"]
 
+[features]
+default = []
+playground = []
+
 [dependencies]
 dioxus = "=0.7.3"
 
@@ -27,3 +31,4 @@ wasm-bindgen-futures = "0.4"
 [[example]]
 name = "playground"
 path = "examples/playground.rs"
+required-features = ["playground"]

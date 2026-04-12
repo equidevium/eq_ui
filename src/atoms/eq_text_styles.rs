@@ -24,3 +24,17 @@ pub const EMPHASIS: &str =
 /// Monospace (ids, code-like snippets)
 pub const MONO: &str =
     "font-mono text-sm text-[var(--color-label-secondary)]";
+
+/// All style tokens for playground introspection.
+pub fn catalog() -> Vec<(&'static str, &'static str)> {
+    vec![
+        ("H1", H1),
+        ("H2", H2),
+        ("H3", H3),
+        ("BODY", BODY),
+        ("MUTED", MUTED),
+        ("CAPTION", CAPTION),
+        ("EMPHASIS", EMPHASIS),
+        ("MONO", MONO),
+    ]
+}

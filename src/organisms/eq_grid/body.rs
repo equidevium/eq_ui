@@ -45,7 +45,7 @@ pub(super) fn render_body<T: Clone + PartialEq + 'static>(
         ""
     };
 
-    // Row height style — only applied when virtualized (row_height > 0).
+    // Row height style - only applied when virtualized (row_height > 0).
     let row_h_style = if row_height > 0.0 {
         format!("height: {:.0}px; max-height: {:.0}px; overflow: hidden;", row_height, row_height)
     } else {
@@ -60,7 +60,7 @@ pub(super) fn render_body<T: Clone + PartialEq + 'static>(
 
     rsx! {
         tbody {
-            // Top spacer — pushes visible rows into their correct scroll position.
+            // Top spacer - pushes visible rows into their correct scroll position.
             // Height is set on the <td> (not <tr>) because browsers ignore height on <tr>.
             if top_spacer_height > 0.0 {
                 tr {
@@ -300,7 +300,7 @@ pub(super) fn render_body<T: Clone + PartialEq + 'static>(
                     }
                 }
             }
-            // Bottom spacer — fills remaining scroll height below visible rows.
+            // Bottom spacer - fills remaining scroll height below visible rows.
             if bottom_spacer_height > 0.0 {
                 tr {
                     td {

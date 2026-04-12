@@ -8,33 +8,33 @@
 ## What We Have Today
 
 ### Atoms
-- `EqText` — Text rendering with variants (H1, H2, H3, Body, Muted, Caption, Emphasis, Mono)
-- `EqLabel` — Form labels
-- `EqLink` — Styled anchor links
-- `EqInput` — Text, email, password, textarea inputs
-- `EqIcon` — Icon wrapper with size variants (Sm, Md, Lg)
-- `EqImage` — Full-featured image atom (sizing, aspect ratios, object-fit, rounded corners)
-- `EqScrollableSpace` — Scrollable container with themed scrollbar
-- `EqDivider` — Separator with variants (Solid, Dashed, Dotted, Spacer), weights, and spacing
-- `EqVideo` — Video atom with poster overlay (EqImage + play icon), autoplay, muted, loop, controls, aspect ratio
-- `EqCheckbox` — Themed checkbox with Checked, Unchecked, and Indeterminate states. Icon-based rendering using Phosphor square icons, optional label, disabled state, size variants
-- `EqButton` — Themed button atom with five variants (Primary, Ghost, Outline, Card, Danger) and three sizes (Sm, Md, Lg). Gradient variants animate via background-position shift on hover. Native `<button>` element for accessibility
+- `EqText` - Text rendering with variants (H1, H2, H3, Body, Muted, Caption, Emphasis, Mono)
+- `EqLabel` - Form labels
+- `EqLink` - Styled anchor links
+- `EqInput` - Text, email, password, textarea inputs
+- `EqIcon` - Icon wrapper with size variants (Sm, Md, Lg)
+- `EqImage` - Full-featured image atom (sizing, aspect ratios, object-fit, rounded corners)
+- `EqScrollableSpace` - Scrollable container with themed scrollbar
+- `EqDivider` - Separator with variants (Solid, Dashed, Dotted, Spacer), weights, and spacing
+- `EqVideo` - Video atom with poster overlay (EqImage + play icon), autoplay, muted, loop, controls, aspect ratio
+- `EqCheckbox` - Themed checkbox with Checked, Unchecked, and Indeterminate states. Icon-based rendering using Phosphor square icons, optional label, disabled state, size variants
+- `EqButton` - Themed button atom with five variants (Primary, Ghost, Outline, Card, Danger) and three sizes (Sm, Md, Lg). Gradient variants animate via background-position shift on hover. Native `<button>` element for accessibility
 
 ### Molecules
-- `EqCard` — Card with header, body, footer slots
-- `EqImageCard` — Image card with caption modes (Below, Overlay)
-- `EqCarousel` — Generic content carousel with Default and Peek modes
-- `EqTree` — Collapsible tree view with select, expand/collapse, and child count
-- `EqAccordion` — Collapsible panels with single-expand and multi-expand modes, smooth CSS grid animation, element headers
+- `EqCard` - Card with header, body, footer slots
+- `EqImageCard` - Image card with caption modes (Below, Overlay)
+- `EqCarousel` - Generic content carousel with Default and Peek modes
+- `EqTree` - Collapsible tree view with select, expand/collapse, and child count
+- `EqAccordion` - Collapsible panels with single-expand and multi-expand modes, smooth CSS grid animation, element headers
 
 ### Organisms
-- `EqAppShell` — Full-page layout (header + main + footer)
-- `EqHeader` — Sticky header with nav slot and backdrop blur
-- `EqFooter` — Footer with link groups
-- `EqNavbar` — Navigation bar
-- `EqHeroShell` — Hero section with optional background image, overlay, and custom title/subtitle colors
-- `EqPageSection` — Content section with title and description
-- `EqGrid` — Feature-rich, type-safe data grid organism with:
+- `EqAppShell` - Full-page layout (header + main + footer)
+- `EqHeader` - Sticky header with nav slot and backdrop blur
+- `EqFooter` - Footer with link groups
+- `EqNavbar` - Navigation bar
+- `EqHeroShell` - Hero section with optional background image, overlay, and custom title/subtitle colors
+- `EqPageSection` - Content section with title and description
+- `EqGrid` - Feature-rich, type-safe data grid organism with:
   - Sorting (multi-column, custom comparators)
   - Column filters (per-column text) and global quick filter
   - Pagination with configurable page size
@@ -50,19 +50,19 @@
   - Full theme integration via CSS variables
 
 ### Theming
-- `EqTheme` — Theme enum with custom CSS support
-- `EqThemeRenderer` — Runtime theme switcher using `document::Style`
+- `EqTheme` - Theme enum with custom CSS support
+- `EqThemeRenderer` - Runtime theme switcher using `document::Style`
 - Theme context via `use_theme_provider()` / `use_theme()` / `set_theme()`
 - Built-in themes (21): Unghosty, Burgundy, Gold, PurplePink, Monochrome, Watermelon, Sunset, Ocean, Spacetime, Gruvbox, Monokai, Hellas, Egypt, Dometrain, Catppuccin, Dracula, Nord, OneDark, RosePine, SolarizedDark, TokyoNight
 
 ### Infrastructure
 - Co-located `_styles.rs` pattern for all components
 - `theme.rs` shared style tokens + `merge_classes()` utility
-- CSS variable system (`buttons.css`, `index.css`) — 57+ variables per theme covering core darks, labels, gradients, accents, states, borders, inputs, surfaces, code, buttons, interactive states, transitions, scrollbar, and grid
-- Theme Showcase in EqPlayground — displays all CSS variables with color swatches, gradient previews, live button variants, and interactive card demos
+- CSS variable system (`buttons.css`, `index.css`) - 57+ variables per theme covering core darks, labels, gradients, accents, states, borders, inputs, surfaces, code, buttons, interactive states, transitions, scrollbar, and grid
+- Theme Showcase in EqPlayground - displays all CSS variables with color swatches, gradient previews, live button variants, and interactive card demos
 - Tailwind CSS v4 with `@source` directives scanning `.rs` files
 - `class` prop on every component for style overrides via `merge_classes()`
-- EqPlayground — interactive component playground with prop controls, variant galleries, CSS documentation, and usage examples for every component
+- EqPlayground - interactive component playground with prop controls, variant galleries, CSS documentation, and usage examples for every component
 - Published on crates.io: `eq_ui` v0.2.0, `eq_ui_build` v0.1.0
 - Phosphor icon system with SVG path data constants and copy-on-demand workflow (ICON_REGISTRY.md)
 
@@ -92,7 +92,7 @@ Items to tackle once the "Now" batch stabilizes.
 - [ ] **EqToast / EqNotification** (Molecule) - Toast notifications with auto-dismiss, severity levels (info, success, warning, error).
 - [ ] **EqTabs** (Molecule) - Tabbed content panels.
 - [ ] **EqBadge** (Atom) - Small status indicator/label.
-- [ ] **EqAvatar** (Atom) - User avatar with image, initials fallback, and size variants. Note: EqImage currently forces aspect ratios that don't work well for a circular profile crop — EqAvatar will need either a dedicated circular image mode or a raw `img` element with `rounded-full` + `object-cover` instead of going through EqImage.
+- [ ] **EqAvatar** (Atom) - User avatar with image, initials fallback, and size variants. Note: EqImage currently forces aspect ratios that don't work well for a circular profile crop - EqAvatar will need either a dedicated circular image mode or a raw `img` element with `rounded-full` + `object-cover` instead of going through EqImage.
 - [ ] **EqTooltip** (Atom/Molecule) - Hover tooltip.
 - [ ] **EqDropdown** (Molecule) - Dropdown menu with selectable items.
 

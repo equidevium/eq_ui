@@ -8,13 +8,13 @@ https://github.com/user-attachments/assets/4ea4f561-4581-481d-bc27-c2f5a2879998
 
 The crate is organized into three layers, each building on the one below:
 
-**Atoms** — the smallest pieces. Text, labels, links, inputs, icons, images, checkboxes, buttons, scrollable containers, dividers, and video — each with variant enums for size, kind, and appearance.
+**Atoms** - the smallest pieces. Text, labels, links, inputs, icons, images, checkboxes, buttons, scrollable containers, dividers, video, progress bars, and tab bars - each with variant enums for size, kind, and appearance.
 
-**Molecules** — small compositions. Cards with header/body/footer slots, image cards with caption modes (below or overlay), a generic content carousel, collapsible tree views, and accordion panels.
+**Molecules** - small compositions. Cards with header/body/footer slots, image cards with caption modes (below or overlay), a generic content carousel, collapsible tree views, and accordion panels.
 
-**Organisms** — page-level structures. A sticky header with backdrop blur, footer with link groups, hero section with optional background images and overlay, page sections, the full app shell, a navbar, and a feature-rich data grid with sorting, filtering, pagination, virtualization, row selection, bulk actions, drag-and-drop, and export.
+**Organisms** - page-level structures. A sticky header with backdrop blur, footer with link groups, hero section with optional background images and overlay, page sections, the full app shell, a navbar, and a feature-rich data grid with sorting, filtering, pagination, virtualization, row selection, bulk actions, drag-and-drop, and export.
 
-**Theming** — 21 built-in color themes plus custom CSS support. Switch themes at runtime with a single function call or let users pick from a dropdown.
+**Theming** - 21 built-in color themes plus custom CSS support. Switch themes at runtime with a single function call or let users pick from a dropdown.
 
 The **theme** module provides shared Tailwind utility constants for spacing, borders, surfaces, shadows, buttons, and more. Components pull from the theme internally, but the constants are also available for use in your own layouts.
 
@@ -24,7 +24,10 @@ Add the crate to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-# From GitHub:
+# From crates.io:
+eq_ui = "0.3.0"
+
+# Or from GitHub:
 eq_ui = { git = "https://github.com/equidevium/eq_ui", branch = "main" }
 
 # Or from a local path:
@@ -75,7 +78,7 @@ cargo update -p eq_ui
 ## Using the components
 
 ```rust
-use eq_ui::atoms::{EqText, TextVariant, EqInput, InputKind, EqLabel, EqLink, EqIcon, IconSize, EqImage, AtomImageSize, AspectRatio, ObjectFit, EqCheckbox, CheckboxState, EqButton, ButtonVariant, ButtonSize, EqDivider, EqScrollableSpace, EqVideo};
+use eq_ui::atoms::{EqText, TextVariant, EqInput, InputKind, EqLabel, EqLink, EqIcon, IconSize, EqImage, AtomImageSize, AspectRatio, ObjectFit, EqCheckbox, CheckboxState, EqButton, ButtonVariant, ButtonSize, EqDivider, EqScrollableSpace, EqVideo, EqProgress, ProgressVariant, ProgressSize, EqTab, TabItem, TabVariant, TabSize};
 use eq_ui::molecules::{EqCard, EqCardHeader, EqCardBody, EqCardFooter, EqImageCard, CaptionMode, EqCarousel, EqTree, TreeNode, EqAccordion, AccordionItem, AccordionMode};
 use eq_ui::organisms::{EqAppShell, EqHeader, EqFooter, EqHeroShell, EqPageSection, EqNavbar, EqGrid, EqColumnDef, GridNavigation, GridDensity, RowSelection, ColumnAlign, ExportFormat, GridDragPayload};
 use eq_ui::theme;  // shared constants like CONTAINER_LAYOUT, BTN_PRIMARY, etc.
@@ -145,6 +148,27 @@ EqScrollableSpace {
     div { class: "p-4",
         for item in items { p { "{item}" } }
     }
+}
+
+// Progress bar - determinate, indeterminate, variants
+EqProgress { value: 0.65 }
+EqProgress { value: 0.3, variant: ProgressVariant::Warning, label: true }
+EqProgress { indeterminate: true, size: ProgressSize::Lg }
+
+// Tab bar - three visual variants, badges, disabled tabs
+let mut active = use_signal(|| 0usize);
+
+EqTab {
+    tabs: vec![
+        TabItem::new("Overview"),
+        TabItem::new("Inbox").badge(12),
+        TabItem::new("Settings"),
+        TabItem::new("Archived").disabled(true),
+    ],
+    variant: TabVariant::Underline,  // or Pill, Card
+    size: TabSize::Md,
+    active: active(),
+    on_change: move |idx| active.set(idx),
 }
 ```
 
@@ -359,6 +383,12 @@ src/
   lib.rs              - crate root, CSS asset exports
   theme.rs            - shared Tailwind class constants
   eq_theme.rs         - theme enum, context, and runtime switching
+  playground/         - feature-gated interactive component showcase
+    eq_playground.rs  - EqPlayground organism (self-contained with CSS/theme)
+    playground_types.rs - ComponentDescriptor, ComponentCategory, UsageExample
+    playground_helpers.rs - DemoSection, CodeBlock, StyleInfo, prop controls
+    playground_guide.rs - Getting Started in-app guide
+    theme_showcase.rs - theme color/gradient swatch viewer
   atoms/
     eq_text.rs        - text with semantic variants (h1-h3, body, muted, etc.)
     eq_label.rs       - form label
@@ -371,6 +401,8 @@ src/
     eq_scrollable_space.rs - scrollable container with themed scrollbar
     eq_divider.rs     - separator with solid/dashed/dotted/spacer variants
     eq_video.rs       - video with poster overlay, autoplay, controls
+    eq_progress.rs    - progress bar with determinate/indeterminate modes
+    eq_tab.rs         - tab bar with underline, pill, and card variants
     *_styles.rs       - co-located style constants for each atom
   molecules/
     eq_card.rs        - card with header/body/footer slots
@@ -417,18 +449,95 @@ Components that benefit from per-instance customization accept optional override
 
 Just one: `dioxus = "0.7.3"`. That's it. No other crates needed.
 
+## Platform Compatibility
+
+Dioxus desktop uses a webview (Wry) for rendering, but the Rust code compiles to a **native binary** - not WebAssembly. This means `web_sys` and `wasm-bindgen`, which provide direct browser API access, are only available when targeting `wasm32` (web).
+
+For components that need browser APIs (element measurement, focus management, scroll position), we use `document::eval()` instead of `web_sys`. This injects JavaScript into the webview and works identically on web and desktop, making those components fully cross-platform without waiting for `wasm-bindgen-wry`.
+
+Components that require heavy, continuous canvas rendering (drawing, charting, 3D) cannot practically use the eval bridge and remain web-only until `wasm-bindgen-wry` lands. These are marked ⚠️ below.
+
+| Component | Web | Desktop | Mobile | Notes |
+|---|---|---|---|---|
+| **Atoms** | | | | |
+| EqText | ✅ | ✅ | ✅ | |
+| EqLabel | ✅ | ✅ | ✅ | |
+| EqLink | ✅ | ✅ | ✅ | |
+| EqInput | ✅ | ✅ | ✅ | |
+| EqIcon | ✅ | ✅ | ✅ | |
+| EqImage | ✅ | ✅ | ✅ | |
+| EqCheckbox | ✅ | ✅ | ✅ | |
+| EqButton | ✅ | ✅ | ✅ | CSS @property gradient transitions |
+| EqDivider | ✅ | ✅ | ✅ | |
+| EqScrollableSpace | ✅ | ✅ | ✅ | |
+| EqVideo | ✅ | ✅ | ✅ | |
+| EqProgress | ✅ | ✅ | ✅ | Determinate/indeterminate, 4 variants, gradient fill |
+| EqTab | ✅ | ✅ | ✅ | 3 variants (Underline, Pill, Card), badges, disabled |
+| **Molecules** | | | | |
+| EqCard | ✅ | ✅ | ✅ | |
+| EqImageCard | ✅ | ✅ | ✅ | |
+| EqCarousel | ✅ | ✅ | ✅ | |
+| EqTree | ✅ | ✅ | ✅ | |
+| EqAccordion | ✅ | ✅ | ✅ | |
+| **Organisms** | | | | |
+| EqAppShell | ✅ | ✅ | ✅ | |
+| EqHeader | ✅ | ✅ | ✅ | |
+| EqFooter | ✅ | ✅ | ✅ | |
+| EqNavbar | ✅ | ✅ | ✅ | |
+| EqHeroShell | ✅ | ✅ | ✅ | |
+| EqPageSection | ✅ | ✅ | ✅ | |
+| EqGrid | ✅ | ✅ | ✅ | CSS-only virtualization |
+| **Theming** | | | | |
+| 21 Built-in Themes | ✅ | ✅ | ✅ | |
+| Custom CSS Themes | ✅ | ✅ | ✅ | |
+| Runtime Theme Switching | ✅ | ✅ | ✅ | |
+| **Planned - Full Platform** | | | | |
+| RadioGroup | ✅ | ✅ | ✅ | |
+| Switch | ✅ | ✅ | ✅ | CSS transition |
+| Skeleton | ✅ | ✅ | ✅ | CSS keyframes |
+| Slider | ✅ | ✅ | ✅ | Dioxus mouse events |
+| Calendar | ✅ | ✅ | ✅ | Pure date grid |
+| Pagination | ✅ | ✅ | ✅ | |
+| ToastList | ✅ | ✅ | ✅ | |
+| Dialog | ✅ | ✅ | ✅ | |
+| Sheet / Drawer | ✅ | ✅ | ✅ | |
+| **Planned - Full Platform via document::eval()** | | | | |
+| Select | ✅ | ✅ | ✅ | Positioning via eval |
+| ToolTip | ✅ | ✅ | ✅ | Positioning via eval |
+| DropDownMenu | ✅ | ✅ | ✅ | Positioning via eval |
+| ContextMenu | ✅ | ✅ | ✅ | Positioning via eval |
+| HoverCard | ✅ | ✅ | ✅ | Positioning via eval |
+| DatePicker | ✅ | ✅ | ✅ | Positioning via eval |
+| VirtualList | ✅ | ✅ | ✅ | Scroll position via eval |
+| RichTextEditor | ✅ | ✅ | ✅ | JS editor init via eval |
+| Signature | ✅ | ✅ | ✅ | Canvas drawing via eval |
+| Babylon.js | ✅ | ✅ | ✅ | JS engine init via eval |
+
 ## Running the Playground
 
-The crate includes an interactive component playground for browsing and testing all components:
+The crate includes an interactive component playground for browsing and testing all 28 built-in components. Enable it with the `playground` feature:
 
 ```bash
-dx serve --example playground --platform web
+dx serve --example playground --features playground --platform web
 
-#in the rare case that deno interferes with dx command
-~/.cargo/bin/dx serve --example playground --platform web --port 3030
+# if deno interferes with dx command
+~/.cargo/bin/dx serve --example playground --features playground --platform web --port 3030
 ```
 
-This opens a two-panel environment with a collapsible component tree on the left and an isolated preview panel on the right. Switch between all 21 built-in themes from the header dropdown.
+This opens a two-panel environment with a collapsible component tree on the left and a live demo panel on the right. Each component has interactive prop controls, style token introspection, and usage code examples. Switch between all 21 built-in themes from the header dropdown.
+
+The playground is self-contained - it bundles its own CSS, theme provider, and theme renderer. External users can inject their own custom components by pushing additional `ComponentDescriptor` entries:
+
+```rust
+use eq_ui::{all_component_descriptors, EqPlayground};
+
+let mut descs = all_component_descriptors();
+descs.push(my_component::descriptor());
+
+rsx! { EqPlayground { descriptors: descs } }
+```
+
+See [playground.md](./playground.md) for the full architecture specification.
 
 ## Roadmap
 

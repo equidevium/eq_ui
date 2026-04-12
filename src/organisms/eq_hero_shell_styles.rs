@@ -21,3 +21,17 @@ pub const HERO_OVERLAY: &str =
     "absolute inset-0 bg-black/50";
 pub const HERO_CONTENT: &str =
     "relative z-10";
+
+/// All style tokens for playground introspection.
+pub fn catalog() -> Vec<(&'static str, &'static str)> {
+    vec![
+        ("HERO_SHELL", HERO_SHELL),
+        ("HERO_TITLE", HERO_TITLE),
+        ("HERO_SUBTITLE", HERO_SUBTITLE),
+        ("HERO_ACTIONS", HERO_ACTIONS),
+        ("HERO_SHELL_RELATIVE", HERO_SHELL_RELATIVE),
+        ("HERO_BG", HERO_BG),
+        ("HERO_OVERLAY", HERO_OVERLAY),
+        ("HERO_CONTENT", HERO_CONTENT),
+    ]
+}

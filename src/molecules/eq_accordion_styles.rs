@@ -21,7 +21,7 @@ pub const CHEVRON: &str =
 /// Chevron rotated when panel is open.
 pub const CHEVRON_OPEN: &str = "rotate-180";
 
-/// Content body wrapper — uses grid for smooth height animation.
+/// Content body wrapper - uses grid for smooth height animation.
 pub const BODY: &str =
     "grid transition-[grid-template-rows] duration-[var(--transition-fast)] ease-in-out";
 
@@ -31,8 +31,25 @@ pub const BODY_CLOSED: &str = "grid-rows-[0fr]";
 /// Grid row sizing when expanded.
 pub const BODY_OPEN: &str = "grid-rows-[1fr]";
 
-/// Inner content wrapper — overflow hidden for the grid animation.
+/// Inner content wrapper - overflow hidden for the grid animation.
 pub const BODY_INNER: &str = "overflow-hidden px-4";
 
 /// Padding for the visible content inside the panel.
 pub const CONTENT: &str = "pb-4 text-sm text-[var(--color-label-secondary)]";
+
+/// All style tokens for playground introspection.
+pub fn catalog() -> Vec<(&'static str, &'static str)> {
+    vec![
+        ("ACCORDION", ACCORDION),
+        ("PANEL", PANEL),
+        ("HEADER", HEADER),
+        ("HEADER_TEXT", HEADER_TEXT),
+        ("CHEVRON", CHEVRON),
+        ("CHEVRON_OPEN", CHEVRON_OPEN),
+        ("BODY", BODY),
+        ("BODY_CLOSED", BODY_CLOSED),
+        ("BODY_OPEN", BODY_OPEN),
+        ("BODY_INNER", BODY_INNER),
+        ("CONTENT", CONTENT),
+    ]
+}

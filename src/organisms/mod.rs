@@ -1,14 +1,14 @@
-mod eq_app_shell;
-mod eq_footer;
+pub mod eq_app_shell;
+pub mod eq_footer;
 pub mod eq_footer_styles;
-mod eq_grid;
-mod eq_header;
+pub mod eq_grid;
+pub mod eq_header;
 pub mod eq_header_styles;
-mod eq_hero_shell;
-mod eq_hero_shell_styles;
-mod eq_navbar;
-mod eq_page_section;
-mod eq_page_section_styles;
+pub mod eq_hero_shell;
+pub mod eq_hero_shell_styles;
+pub mod eq_navbar;
+pub mod eq_page_section;
+pub mod eq_page_section_styles;
 
 pub use eq_app_shell::EqAppShell;
 pub use eq_footer::{EqFooter, FooterLink, FooterLinkGroup};

@@ -213,7 +213,7 @@ The header is rendered as a separate table above the scroll viewport so it remai
 
 An info bar below the viewport displays the currently visible row range ("Showing 1–15 of 500 entries") and the number of DOM rows rendered (including the buffer). The range updates in real time as the user scrolls.
 
-Virtualization requires uniform row heights. Custom cell renderers that vary row height will cause visual misalignment. Only one navigation mode is active at a time — set via the `GridNavigation` enum on the `navigation` prop.
+Virtualization requires uniform row heights. Custom cell renderers that vary row height will cause visual misalignment. Only one navigation mode is active at a time - set via the `GridNavigation` enum on the `navigation` prop.
 
 ### Pagination
 
@@ -221,7 +221,7 @@ When `navigation: GridNavigation::Paginate`, the grid shows a navigation bar bel
 
 ### Drag-and-Drop Between Grids
 
-Two grids can exchange rows via drag-and-drop. The consumer wraps both grids in a shared context provider and sets `drag_id` on the source grid and `drop_target: true` on the receiving grid. Selected rows become draggable — drag them over the target grid to move data. A ring highlight appears on the target during hover. The `on_drop_receive` callback provides a `GridDragPayload` with the source grid ID and the dragged row indices. The consumer is responsible for removing from the source and inserting into the target.
+Two grids can exchange rows via drag-and-drop. The consumer wraps both grids in a shared context provider and sets `drag_id` on the source grid and `drop_target: true` on the receiving grid. Selected rows become draggable - drag them over the target grid to move data. A ring highlight appears on the target during hover. The `on_drop_receive` callback provides a `GridDragPayload` with the source grid ID and the dragged row indices. The consumer is responsible for removing from the source and inserting into the target.
 
 ```rust
 use_context_provider(|| Signal::new(Option::<GridDragPayload>::None));
@@ -238,7 +238,7 @@ rsx! {
 
 ### Row Reordering
 
-When `reorderable: true`, a grip handle column (six-dot icon) appears as the leftmost column. Drag the handle to reorder rows within the grid. A colored insertion line shows where the row will land. The `on_reorder` callback provides `(from_index, to_index)` as indices into the original data vec — the consumer removes the row from `from` and inserts at the adjusted position.
+When `reorderable: true`, a grip handle column (six-dot icon) appears as the leftmost column. Drag the handle to reorder rows within the grid. A colored insertion line shows where the row will land. The `on_reorder` callback provides `(from_index, to_index)` as indices into the original data vec - the consumer removes the row from `from` and inserts at the adjusted position.
 
 Reordering works with all navigation modes. The `on_reorder` callback always provides indices into the original data vec, so the consumer can handle reordering regardless of the active view.
 

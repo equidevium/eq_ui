@@ -2,6 +2,15 @@ use super::eq_tree_styles as s;
 use crate::theme::merge_classes;
 use dioxus::prelude::*;
 
+#[cfg(feature = "playground")]
+use crate::playground::playground_helpers::{
+    CodeBlock, DemoSection, PropToggle, StyleInfo, format_catalog,
+};
+#[cfg(feature = "playground")]
+use crate::atoms::{EqText, TextVariant, EqScrollableSpace};
+#[cfg(feature = "playground")]
+use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+
 // ---------------------------------------------------------------------------
 // TreeNode data model
 // ---------------------------------------------------------------------------
@@ -230,7 +239,7 @@ pub fn EqTree(
     /// When `true`, branch nodes show their direct child count, e.g. "Atoms (8)".
     #[props(default)]
     show_count: bool,
-    /// Optional class override — extend or replace default wrapper styles.
+    /// Optional class override - extend or replace default wrapper styles.
     #[props(into, default)]
     class: String,
 ) -> Element {
@@ -320,6 +329,162 @@ fn TreeBranch(
                             on_select: on_select,
                             selected: selected.clone(),
                             show_count: show_count,
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// ── Playground descriptor ──────────────────────────────────────────
+
+#[cfg(feature = "playground")]
+pub fn descriptor() -> ComponentDescriptor {
+    ComponentDescriptor {
+        id: "eq-tree",
+        name: "EqTree",
+        category: ComponentCategory::Molecule,
+        description: "Collapsible tree view for hierarchical data. Branches expand to show children, \
+                      leaves trigger selection events. Optional child count display.",
+        style_tokens: || s::catalog(),
+        usage_examples: || vec![
+            UsageExample {
+                label: "Basic",
+                code: "let nodes = vec![\n    TreeNode::new_with_children(\"branch\", \"Branch\", vec![\n        TreeNode::new(\"leaf-1\", \"Leaf 1\"),\n        TreeNode::new(\"leaf-2\", \"Leaf 2\"),\n    ]),\n];\n\nEqTree {\n    nodes: nodes,\n    on_select: move |id: String| { /* handle */ },\n}".into(),
+            },
+            UsageExample {
+                label: "With counts",
+                code: "EqTree {\n    nodes,\n    selected: selected(),\n    on_select: move |id: String| selected.set(Some(id)),\n    show_count: true,\n}".into(),
+            },
+        ],
+        render_demo: || rsx! { DemoEqTree {} },
+        render_gallery: || rsx! { GalleryEqTree {} },
+    }
+}
+
+// ── Interactive demo ───────────────────────────────────────────────
+
+#[cfg(feature = "playground")]
+#[component]
+fn DemoEqTree() -> Element {
+    let mut selected = use_signal(|| Option::<String>::None);
+    let mut show_count = use_signal(|| true);
+
+    let tree = vec![
+        TreeNode::new_with_children(
+            "demo-branch-a",
+            "Branch A",
+            vec![
+                TreeNode::new("leaf-1", "Leaf 1"),
+                TreeNode::new("leaf-2", "Leaf 2"),
+                TreeNode::new_with_children(
+                    "nested-branch",
+                    "Nested Branch",
+                    vec![TreeNode::new("deep-leaf", "Deep Leaf")],
+                ),
+            ],
+        ),
+        TreeNode::new_with_children(
+            "demo-branch-b",
+            "Branch B",
+            vec![
+                TreeNode::new("leaf-3", "Leaf 3"),
+                TreeNode::new("leaf-4", "Leaf 4"),
+            ],
+        ),
+    ];
+
+    let code = "let nodes = vec![\n    TreeNode::new_with_children(\"branch\", \"Branch\", vec![\n        TreeNode::new(\"leaf-1\", \"Leaf 1\"),\n        TreeNode::new(\"leaf-2\", \"Leaf 2\"),\n    ]),\n];\n\nEqTree {\n    nodes: nodes,\n    selected: selected(),\n    on_select: move |id: String| selected.set(Some(id)),\n    show_count: true,\n}".to_string();
+
+    rsx! {
+        DemoSection { title: "EqTree",
+            div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-3",
+                EqText {
+                    variant: TextVariant::Caption,
+                    class: "font-semibold uppercase tracking-wider",
+                    "Props"
+                }
+                PropToggle {
+                    label: "show_count",
+                    value: show_count(),
+                    onchange: move |v: bool| show_count.set(v),
+                }
+            }
+            div { class: "flex gap-6",
+                div { class: "w-64 h-64 flex flex-col border border-[var(--color-card-border)] rounded-lg p-3",
+                    EqScrollableSpace {
+                        EqTree {
+                            nodes: tree,
+                            selected: selected(),
+                            on_select: move |id: String| selected.set(Some(id)),
+                            show_count: show_count(),
+                        }
+                    }
+                }
+                div { class: "flex-1 flex items-center justify-center rounded-lg border border-[var(--color-card-border)] p-6 min-h-[16rem]",
+                    if let Some(id) = selected() {
+                        EqText { variant: TextVariant::H3, "Selected: {id}" }
+                    } else {
+                        EqText { variant: TextVariant::Muted, "Click a leaf node" }
+                    }
+                }
+            }
+            StyleInfo { file: "eq_tree_styles.rs", styles: format_catalog(&s::catalog()) }
+            CodeBlock { code }
+        }
+    }
+}
+
+// ── Gallery (compact showcase) ─────────────────────────────────────
+
+#[cfg(feature = "playground")]
+#[component]
+fn GalleryEqTree() -> Element {
+    let mut selected = use_signal(|| Option::<String>::None);
+
+    let tree = vec![
+        TreeNode::new_with_children(
+            "section-a",
+            "Section A",
+            vec![
+                TreeNode::new("item-a1", "Item A1"),
+                TreeNode::new("item-a2", "Item A2"),
+            ],
+        ),
+        TreeNode::new_with_children(
+            "section-b",
+            "Section B",
+            vec![
+                TreeNode::new("item-b1", "Item B1"),
+                TreeNode::new_with_children(
+                    "subsection",
+                    "Subsection",
+                    vec![TreeNode::new("item-b2", "Item B2")],
+                ),
+            ],
+        ),
+    ];
+
+    rsx! {
+        div { class: "space-y-4",
+            div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-4",
+                EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Tree with Count" }
+
+                div { class: "flex gap-4",
+                    div { class: "w-48 h-40 border border-[var(--color-card-border)] rounded-lg p-3 overflow-auto",
+                        EqTree {
+                            nodes: tree.clone(),
+                            selected: selected(),
+                            on_select: move |id: String| selected.set(Some(id)),
+                            show_count: true,
+                        }
+                    }
+                    div { class: "flex-1 flex items-center justify-center text-sm text-[var(--color-label-secondary)]",
+                        if selected().is_some() {
+                            "Selected: {selected().unwrap_or_default()}"
+                        } else {
+                            "Select a node"
                         }
                     }
                 }

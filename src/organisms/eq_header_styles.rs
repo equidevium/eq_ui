@@ -13,3 +13,14 @@ pub const NAV_UL: &str = "flex gap-3 md:gap-4 items-center list-none m-0 p-0";
 
 pub const NAV_A: &str =
     "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] active:text-[var(--color-label-primary)] transition";
+
+/// All style tokens for playground introspection.
+pub fn catalog() -> Vec<(&'static str, &'static str)> {
+    vec![
+        ("HEADER", HEADER),
+        ("HEADER_INNER", HEADER_INNER),
+        ("BRAND", BRAND),
+        ("NAV_UL", NAV_UL),
+        ("NAV_A", NAV_A),
+    ]
+}
