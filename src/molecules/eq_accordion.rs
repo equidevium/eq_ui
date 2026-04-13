@@ -12,7 +12,7 @@ use crate::atoms::{EqText, TextVariant};
 use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
 
 /// Controls whether multiple panels can be open simultaneously.
-#[derive(Clone, PartialEq, Default)]
+#[derive(Clone, Copy, PartialEq, Default)]
 pub enum AccordionMode {
     /// Only one panel open at a time - opening a panel closes the others.
     #[default]
@@ -77,7 +77,7 @@ pub fn EqAccordion(
                     let is_open = open_ids().contains(&id);
 
                     let toggle_id = id.clone();
-                    let toggle_mode = mode.clone();
+                    let toggle_mode = mode;
                     let onclick = move |_| {
                         let mut current = open_ids();
                         if current.contains(&toggle_id) {

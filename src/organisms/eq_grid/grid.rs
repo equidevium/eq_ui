@@ -333,7 +333,7 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
             (visible_indices[win_start..win_end].to_vec(), top_h, bottom_h, vp_h, first + 1, last)
         }
     } else {
-        (visible_indices.clone(), 0.0, 0.0, 0.0, 0, 0)
+        (visible_indices.to_vec(), 0.0, 0.0, 0.0, 0, 0)
     };
 
     // ── Colgroup - shared column widths for split-table virtualisation ──
