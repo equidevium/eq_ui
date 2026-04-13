@@ -8,7 +8,7 @@
 
 // ── Base ───────────────────────────────────────────────────────────
 
-/// Shared button reset — layout, focus ring, active feedback, disabled state.
+/// Shared button reset - layout, focus ring, active feedback, disabled state.
 pub const BASE: &str = "btn";
 
 // ── Variants ───────────────────────────────────────────────────────
@@ -25,7 +25,7 @@ pub const OUTLINE: &str = "btn-outline";
 /// Card-styled with glow shadow and lift on hover.
 pub const CARD: &str = "btn-card";
 
-/// Destructive action — red background with brightness shift on hover.
+/// Destructive action - red background with brightness shift on hover.
 pub const DANGER: &str = "btn-danger";
 
 // ── Modifiers ─────────────────────────────────────────────────────
@@ -33,7 +33,7 @@ pub const DANGER: &str = "btn-danger";
 /// Disables the gradient and uses a flat solid background instead.
 pub const NO_GRADIENT: &str = "btn-no-gradient";
 
-/// Disables the gradient color transition — hover snaps instantly.
+/// Disables the gradient color transition - hover snaps instantly.
 pub const NO_TRANSITION: &str = "btn-no-transition";
 
 // ── Sizes ──────────────────────────────────────────────────────────
@@ -41,3 +41,20 @@ pub const NO_TRANSITION: &str = "btn-no-transition";
 pub const SM: &str = "btn-sm";
 pub const MD: &str = "btn-md";
 pub const LG: &str = "btn-lg";
+
+/// All style tokens for playground introspection.
+pub fn catalog() -> Vec<(&'static str, &'static str)> {
+    vec![
+        ("BASE", BASE),
+        ("PRIMARY", PRIMARY),
+        ("GHOST", GHOST),
+        ("OUTLINE", OUTLINE),
+        ("CARD", CARD),
+        ("DANGER", DANGER),
+        ("NO_GRADIENT", NO_GRADIENT),
+        ("NO_TRANSITION", NO_TRANSITION),
+        ("SM", SM),
+        ("MD", MD),
+        ("LG", LG),
+    ]
+}

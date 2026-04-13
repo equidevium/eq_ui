@@ -28,3 +28,18 @@ pub const COUNT: &str = "ml-1 text-[var(--color-label-secondary)] opacity-60";
 
 /// Children container with left indentation.
 pub const CHILDREN: &str = "ml-3";
+
+/// All style tokens for playground introspection.
+pub fn catalog() -> Vec<(&'static str, &'static str)> {
+    vec![
+        ("TREE", TREE),
+        ("NODE_ROW", NODE_ROW),
+        ("NODE_ACTIVE", NODE_ACTIVE),
+        ("CHEVRON", CHEVRON),
+        ("CHEVRON_EXPANDED", CHEVRON_EXPANDED),
+        ("LEAF_SPACER", LEAF_SPACER),
+        ("LABEL", LABEL),
+        ("COUNT", COUNT),
+        ("CHILDREN", CHILDREN),
+    ]
+}

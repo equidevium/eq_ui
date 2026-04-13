@@ -73,7 +73,7 @@
         filter: brightness(0.80);
     }
 
-    /* --- No color-change modifier — gradient stays in default on hover --- */
+    /* --- No color-change modifier - gradient stays in default on hover --- */
     .btn-no-transition.btn-primary:hover,
     .btn-no-transition.btn-primary:active {
         --btn-g1: var(--color-btn-default-start);

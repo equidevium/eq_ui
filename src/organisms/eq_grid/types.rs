@@ -18,7 +18,7 @@ pub enum SortDirection {
     Desc,
 }
 
-/// Active sort state — which column and in which direction.
+/// Active sort state - which column and in which direction.
 #[derive(Clone, Copy, PartialEq)]
 pub struct SortState {
     pub column_id: &'static str,

@@ -1,6 +1,6 @@
 //! Style constants for EqCheckbox.
 
-/// Outer wrapper — inline-flex for alignment with labels.
+/// Outer wrapper - inline-flex for alignment with labels.
 pub const WRAPPER: &str =
     "inline-flex items-center gap-2 cursor-pointer select-none";
 
@@ -21,3 +21,14 @@ pub const ICON_ACTIVE: &str =
 /// Optional label text beside the checkbox.
 pub const LABEL: &str =
     "text-sm text-[var(--color-label-primary)]";
+
+/// All style tokens for playground introspection.
+pub fn catalog() -> Vec<(&'static str, &'static str)> {
+    vec![
+        ("WRAPPER", WRAPPER),
+        ("WRAPPER_DISABLED", WRAPPER_DISABLED),
+        ("ICON", ICON),
+        ("ICON_ACTIVE", ICON_ACTIVE),
+        ("LABEL", LABEL),
+    ]
+}

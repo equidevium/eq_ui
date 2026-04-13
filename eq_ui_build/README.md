@@ -2,7 +2,7 @@
 
 Build-time utility for [eq_ui](https://crates.io/crates/eq_ui). Scans a folder of SVG files and generates a Rust source file with `pub const` path data entries, ready for use with `EqIcon`.
 
-Zero dependencies — only uses `std`.
+Zero dependencies - only uses `std`.
 
 ## Setup
 

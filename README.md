@@ -1,22 +1,20 @@
 # eq_ui
 
-A portable component library for [Dioxus](https://dioxuslabs.com/) 0.7, built around atomic design. Drop it into any Dioxus project - web, desktop, or mobile - and get a consistent set of styled building blocks out of the box.
+Dioxus 0.7 component library. Atomic design, pure Tailwind, 21 themes.
 
 https://github.com/user-attachments/assets/4ea4f561-4581-481d-bc27-c2f5a2879998
 
-## What's in the box
+## Components
 
-The crate is organized into three layers, each building on the one below:
+Organized in three layers:
 
-**Atoms** — the smallest pieces. Text, labels, links, inputs, icons, images, checkboxes, buttons, scrollable containers, dividers, and video — each with variant enums for size, kind, and appearance.
+**Atoms** - Text, Label, Link, Input, Icon, Image, Checkbox, Button, Divider, ScrollableSpace, Video, Progress, Tab.
 
-**Molecules** — small compositions. Cards with header/body/footer slots, image cards with caption modes (below or overlay), a generic content carousel, collapsible tree views, and accordion panels.
+**Molecules** - Card (header/body/footer slots), ImageCard (caption below or overlay), Carousel, Tree, Accordion.
 
-**Organisms** — page-level structures. A sticky header with backdrop blur, footer with link groups, hero section with optional background images and overlay, page sections, the full app shell, a navbar, and a feature-rich data grid with sorting, filtering, pagination, virtualization, row selection, bulk actions, drag-and-drop, and export.
+**Organisms** - AppShell, Header, Footer, HeroShell, PageSection, Navbar, Grid (sorting, filtering, pagination, virtualization, row selection, bulk actions, drag-and-drop, export).
 
-**Theming** — 21 built-in color themes plus custom CSS support. Switch themes at runtime with a single function call or let users pick from a dropdown.
-
-The **theme** module provides shared Tailwind utility constants for spacing, borders, surfaces, shadows, buttons, and more. Components pull from the theme internally, but the constants are also available for use in your own layouts.
+**Theming** - 21 built-in themes, custom CSS, runtime switching. The `theme` module also exports shared Tailwind constants you can use in your own layouts.
 
 ## Quick start
 
@@ -24,14 +22,17 @@ Add the crate to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-# From GitHub:
+# From crates.io:
+eq_ui = "0.3.0"
+
+# Or from GitHub:
 eq_ui = { git = "https://github.com/equidevium/eq_ui", branch = "main" }
 
 # Or from a local path:
 eq_ui = { path = "../eq_ui" }
 ```
 
-Then wire up the CSS assets and theming in your root component:
+Wire up CSS and theming in your root component:
 
 ```rust
 use eq_ui::{UI_TAILWIND_CSS, UI_INDEX_CSS, UI_BUTTONS_CSS};
@@ -55,7 +56,7 @@ fn App() -> Element {
 }
 ```
 
-If you're using Tailwind, add a `@source` directive so it picks up the classes used inside eq_ui:
+If you're using Tailwind in your own project, add a `@source` so it picks up eq_ui's classes:
 
 ```css
 @import "tailwindcss";
@@ -75,7 +76,7 @@ cargo update -p eq_ui
 ## Using the components
 
 ```rust
-use eq_ui::atoms::{EqText, TextVariant, EqInput, InputKind, EqLabel, EqLink, EqIcon, IconSize, EqImage, AtomImageSize, AspectRatio, ObjectFit, EqCheckbox, CheckboxState, EqButton, ButtonVariant, ButtonSize, EqDivider, EqScrollableSpace, EqVideo};
+use eq_ui::atoms::{EqText, TextVariant, EqInput, InputKind, EqLabel, EqLink, EqIcon, IconSize, EqImage, AtomImageSize, AspectRatio, ObjectFit, EqCheckbox, CheckboxState, EqButton, ButtonVariant, ButtonSize, EqDivider, EqScrollableSpace, EqVideo, EqProgress, ProgressVariant, ProgressSize, EqTab, TabItem, TabVariant, TabSize};
 use eq_ui::molecules::{EqCard, EqCardHeader, EqCardBody, EqCardFooter, EqImageCard, CaptionMode, EqCarousel, EqTree, TreeNode, EqAccordion, AccordionItem, AccordionMode};
 use eq_ui::organisms::{EqAppShell, EqHeader, EqFooter, EqHeroShell, EqPageSection, EqNavbar, EqGrid, EqColumnDef, GridNavigation, GridDensity, RowSelection, ColumnAlign, ExportFormat, GridDragPayload};
 use eq_ui::theme;  // shared constants like CONTAINER_LAYOUT, BTN_PRIMARY, etc.
@@ -146,6 +147,27 @@ EqScrollableSpace {
         for item in items { p { "{item}" } }
     }
 }
+
+// Progress bar - determinate, indeterminate, variants
+EqProgress { value: 0.65 }
+EqProgress { value: 0.3, variant: ProgressVariant::Warning, label: true }
+EqProgress { indeterminate: true, size: ProgressSize::Lg }
+
+// Tab bar - three visual variants, badges, disabled tabs
+let mut active = use_signal(|| 0usize);
+
+EqTab {
+    tabs: vec![
+        TabItem::new("Overview"),
+        TabItem::new("Inbox").badge(12),
+        TabItem::new("Settings"),
+        TabItem::new("Archived").disabled(true),
+    ],
+    variant: TabVariant::Underline,  // or Pill, Card
+    size: TabSize::Md,
+    active: active(),
+    on_change: move |idx| active.set(idx),
+}
 ```
 
 ### Molecules
@@ -203,7 +225,7 @@ EqAccordion {
 
 ### Organisms
 
-The organisms are designed to be **platform-agnostic**. They accept `Element` props instead of depending on any specific router, so you can use the same components across web, desktop, and mobile targets.
+Organisms take `Element` props instead of depending on a specific router, so they work across web, desktop, and mobile.
 
 ```rust
 // App shell - pass your own header, footer, and page content
@@ -254,7 +276,7 @@ EqHeader {
 
 ### Data Grid
 
-EqGrid is a feature-rich, type-safe data grid organism. It handles sorting, filtering, pagination, row virtualization, row selection, bulk actions (delete, export, status change, clipboard), column resizing, drag-and-drop between grids, and full theme integration.
+EqGrid handles sorting, filtering, pagination, virtualization, row selection, bulk actions, column resizing, drag-and-drop, and export.
 
 ```rust
 #[derive(Clone, PartialEq)]
@@ -292,13 +314,13 @@ EqGrid {
 }
 ```
 
-Virtualization mode renders only the visible rows plus a small buffer, supporting datasets of thousands of rows with measured row heights and a synced split-table layout. See the [EqGrid README](./src/organisms/eq_grid/README.md) for full documentation.
+Virtualization renders only visible rows plus a small buffer (split-table layout with measured row heights). See the [EqGrid README](./src/organisms/eq_grid/README.md) for details.
 
 ## Theming
 
-eq_ui ships with 21 built-in themes and supports custom CSS themes at runtime.
+21 built-in themes, custom CSS themes at runtime.
 
-**Built-in themes:** Unghosty (default), Burgundy, Gold, PurplePink, Monochrome, Watermelon, Sunset, Ocean, Spacetime, Gruvbox, Monokai, Hellas, Egypt, Dometrain, Catppuccin, Dracula, Nord, OneDark, RosePine, SolarizedDark, TokyoNight.
+**Built-in:** Unghosty (default), Burgundy, Gold, PurplePink, Monochrome, Watermelon, Sunset, Ocean, Spacetime, Gruvbox, Monokai, Hellas, Egypt, Dometrain, Catppuccin, Dracula, Nord, OneDark, RosePine, SolarizedDark, TokyoNight.
 
 ### Setting up theming
 
@@ -359,6 +381,12 @@ src/
   lib.rs              - crate root, CSS asset exports
   theme.rs            - shared Tailwind class constants
   eq_theme.rs         - theme enum, context, and runtime switching
+  playground/         - feature-gated interactive component showcase
+    eq_playground.rs  - EqPlayground organism (self-contained with CSS/theme)
+    playground_types.rs - ComponentDescriptor, ComponentCategory, UsageExample
+    playground_helpers.rs - DemoSection, CodeBlock, StyleInfo, prop controls
+    playground_guide.rs - Getting Started in-app guide
+    theme_showcase.rs - theme color/gradient swatch viewer
   atoms/
     eq_text.rs        - text with semantic variants (h1-h3, body, muted, etc.)
     eq_label.rs       - form label
@@ -371,6 +399,8 @@ src/
     eq_scrollable_space.rs - scrollable container with themed scrollbar
     eq_divider.rs     - separator with solid/dashed/dotted/spacer variants
     eq_video.rs       - video with poster overlay, autoplay, controls
+    eq_progress.rs    - progress bar with determinate/indeterminate modes
+    eq_tab.rs         - tab bar with underline, pill, and card variants
     *_styles.rs       - co-located style constants for each atom
   molecules/
     eq_card.rs        - card with header/body/footer slots
@@ -407,29 +437,74 @@ assets/
 
 ## Style architecture
 
-Each component keeps its Tailwind classes in a sibling `_styles.rs` file (e.g. `eq_text.rs` + `eq_text_styles.rs`). Constants that are shared across multiple components - spacing, borders, surfaces, button variants - live in `theme.rs`.
+Each component keeps its Tailwind classes in a sibling `_styles.rs` file (e.g. `eq_text.rs` + `eq_text_styles.rs`). Shared constants (spacing, borders, surfaces, button variants) live in `theme.rs`.
 
-The theme uses CSS custom properties for colors (`--color-primary-dark`, `--color-label-primary`, etc.), defined in theme CSS files under `assets/theme/`. This means you can swap the entire color palette by switching themes at runtime or by providing your own CSS variables.
-
-Components that benefit from per-instance customization accept optional override props (like `title_color` on `EqHeroShell`) that take any CSS color value - hex, `rgb()`, or `var(--your-variable)`.
+Colors use CSS custom properties (`--color-primary-dark`, `--color-label-primary`, etc.) defined in `assets/theme/`. Swap the palette by switching themes or providing your own CSS variables. Some components also accept per-instance color overrides (e.g. `title_color` on `EqHeroShell`) - any CSS color value works.
 
 ## Dependencies
 
-Just one: `dioxus = "0.7.3"`. That's it. No other crates needed.
+`dioxus = "0.7.3"`. Nothing else.
+
+## Platform Compatibility
+
+Dioxus desktop uses Wry (webview) for rendering, but compiles to a native binary - not WASM. `web_sys`/`wasm-bindgen` are only available on `wasm32`.
+
+Where browser APIs are needed (element measurement, focus, scroll position), we use `document::eval()` instead of `web_sys`. This works on both web and desktop via Wry's webview, no `wasm-bindgen` required.
+
+### Platform support
+
+Everything ships cross-platform: web, desktop (Wry), mobile. All existing components work on all three targets.
+
+**Planned** (not yet built):
+
+| Component | Notes |
+|---|---|
+| RadioGroup | |
+| Switch | CSS transition |
+| Skeleton | CSS keyframes |
+| Slider | Dioxus mouse events |
+| Calendar | Pure date grid |
+| Pagination | |
+| ToastList | |
+| Dialog | |
+| Sheet / Drawer | |
+| Select | Positioning via eval |
+| ToolTip | Positioning via eval |
+| DropDownMenu | Positioning via eval |
+| ContextMenu | Positioning via eval |
+| HoverCard | Positioning via eval |
+| DatePicker | Positioning via eval |
+| VirtualList | Scroll position via eval |
+| RichTextEditor | JS editor init via eval |
+| Signature | Canvas drawing via eval |
+| Babylon.js | JS engine init via eval |
 
 ## Running the Playground
 
-The crate includes an interactive component playground for browsing and testing all components:
+Interactive playground for browsing and testing all 28 components. Enable with the `playground` feature:
 
 ```bash
-dx serve --example playground --platform web
+dx serve --example playground --features playground --platform web
 
-#in the rare case that deno interferes with dx command
-~/.cargo/bin/dx serve --example playground --platform web --port 3030
+# if deno interferes with dx command
+~/.cargo/bin/dx serve --example playground --features playground --platform web --port 3030
 ```
 
-This opens a two-panel environment with a collapsible component tree on the left and an isolated preview panel on the right. Switch between all 21 built-in themes from the header dropdown.
+Two-panel layout: component tree on the left, live demo on the right. Prop controls, style tokens, code examples, and a theme switcher in the header.
+
+The playground is self-contained (bundles its own CSS/theme). You can inject your own components by pushing `ComponentDescriptor` entries:
+
+```rust
+use eq_ui::{all_component_descriptors, EqPlayground};
+
+let mut descs = all_component_descriptors();
+descs.push(my_component::descriptor());
+
+rsx! { EqPlayground { descriptors: descs } }
+```
+
+See [playground.md](./playground.md) for the full architecture specification.
 
 ## Roadmap
 
-See [ROADMAP.md](./ROADMAP.md) for the full prioritized development roadmap, organized into Now, Next, and Later priorities.
+See [ROADMAP.md](./ROADMAP.md) for what's coming next.

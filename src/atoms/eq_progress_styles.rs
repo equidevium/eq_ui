@@ -1,4 +1,4 @@
-//! Style constants for EqProgress — pure Tailwind utility classes.
+//! Style constants for EqProgress - pure Tailwind utility classes.
 //!
 //! No external CSS file needed. The only exception is the
 //! `@keyframes progress-shimmer` defined in `index.css` for
@@ -6,7 +6,7 @@
 
 // ── Track (outer container) ────────────────────────────────────────
 
-/// Base track — rounded pill, themed background, overflow hidden.
+/// Base track - rounded pill, themed background, overflow hidden.
 pub const TRACK: &str = "relative w-full rounded-full overflow-hidden bg-[var(--color-surface-elevated)]";
 
 // ── Fill bar ───────────────────────────────────────────────────────
@@ -23,17 +23,17 @@ pub const FILL_SOLID: &str =
 
 // ── Variant fills ──────────────────────────────────────────────────
 
-/// Success — green fill.
+/// Success - green fill.
 pub const FILL_SUCCESS: &str =
     "h-full rounded-full transition-[width] duration-[var(--transition-normal,0.25s)] ease-out \
      bg-[var(--color-success)]";
 
-/// Warning — amber fill.
+/// Warning - amber fill.
 pub const FILL_WARNING: &str =
     "h-full rounded-full transition-[width] duration-[var(--transition-normal,0.25s)] ease-out \
      bg-[var(--color-warning)]";
 
-/// Danger — red fill.
+/// Danger - red fill.
 pub const FILL_DANGER: &str =
     "h-full rounded-full transition-[width] duration-[var(--transition-normal,0.25s)] ease-out \
      bg-[var(--color-error)]";
@@ -62,3 +62,21 @@ pub const WRAPPER: &str = "flex items-center gap-3 w-full";
 
 /// Percentage text to the right of the track.
 pub const LABEL: &str = "text-xs font-medium text-[var(--color-label-secondary)] whitespace-nowrap min-w-[2.5rem] text-right";
+
+/// All style tokens for playground introspection.
+pub fn catalog() -> Vec<(&'static str, &'static str)> {
+    vec![
+        ("TRACK", TRACK),
+        ("FILL_GRADIENT", FILL_GRADIENT),
+        ("FILL_SOLID", FILL_SOLID),
+        ("FILL_SUCCESS", FILL_SUCCESS),
+        ("FILL_WARNING", FILL_WARNING),
+        ("FILL_DANGER", FILL_DANGER),
+        ("SM", SM),
+        ("MD", MD),
+        ("LG", LG),
+        ("INDETERMINATE_FILL", INDETERMINATE_FILL),
+        ("WRAPPER", WRAPPER),
+        ("LABEL", LABEL),
+    ]
+}

@@ -4,7 +4,7 @@ Icons sourced from [Phosphor Icons](https://phosphoricons.com/) (regular weight)
 Licensed under MIT. Copyright (c) 2023 Phosphor Icons.
 
 These icons are bundled as a simple integration reference within the library.
-Consumers are free to use any icon set of their choice — Phosphor, Heroicons,
+Consumers are free to use any icon set of their choice - Phosphor, Heroicons,
 Lucide, or custom SVGs. The icons listed below are only used internally by
 eq_ui components to provide sensible defaults out of the box.
 

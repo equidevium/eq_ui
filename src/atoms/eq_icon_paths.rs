@@ -9,7 +9,7 @@
 //! To add a new icon to the library:
 //! 1. Copy the SVG file into `assets/icons/`
 //! 2. Register it in `assets/icons/ICON_REGISTRY.md`
-//! 3. Rebuild — the constant appears automatically
+//! 3. Rebuild - the constant appears automatically
 //!    (e.g. `my-icon.svg` → `MY_ICON`)
 //!
 //! Source: Phosphor Icons (regular weight, MIT licensed).

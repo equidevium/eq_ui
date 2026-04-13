@@ -15,7 +15,7 @@ pub const CAPTION_DESCRIPTION: &str =
 pub const CAPTION_ATTRIBUTION: &str =
     "text-xs text-[var(--color-label-secondary)] italic pt-1 border-t border-[var(--color-card-border)]";
 
-/// Overlay container — positions children relatively
+/// Overlay container - positions children relatively
 pub const OVERLAY_CONTAINER: &str = "relative";
 /// Dark gradient from bottom for text legibility
 pub const OVERLAY_GRADIENT: &str =
@@ -23,9 +23,26 @@ pub const OVERLAY_GRADIENT: &str =
 /// Text wrapper pinned to bottom of overlay
 pub const OVERLAY_TEXT_WRAPPER: &str =
     "absolute inset-0 flex flex-col justify-end p-4";
-/// Overlay title — white for contrast
+/// Overlay title - white for contrast
 pub const OVERLAY_TITLE: &str = "text-lg font-semibold text-white";
 /// Overlay description
 pub const OVERLAY_DESCRIPTION: &str = "text-sm text-white/90 leading-relaxed mt-1";
 /// Overlay attribution
 pub const OVERLAY_ATTRIBUTION: &str = "text-xs text-white/70 italic mt-2";
+
+/// All style tokens for playground introspection.
+pub fn catalog() -> Vec<(&'static str, &'static str)> {
+    vec![
+        ("CARD_WRAPPER", CARD_WRAPPER),
+        ("FIGCAPTION", FIGCAPTION),
+        ("CAPTION_TITLE", CAPTION_TITLE),
+        ("CAPTION_DESCRIPTION", CAPTION_DESCRIPTION),
+        ("CAPTION_ATTRIBUTION", CAPTION_ATTRIBUTION),
+        ("OVERLAY_CONTAINER", OVERLAY_CONTAINER),
+        ("OVERLAY_GRADIENT", OVERLAY_GRADIENT),
+        ("OVERLAY_TEXT_WRAPPER", OVERLAY_TEXT_WRAPPER),
+        ("OVERLAY_TITLE", OVERLAY_TITLE),
+        ("OVERLAY_DESCRIPTION", OVERLAY_DESCRIPTION),
+        ("OVERLAY_ATTRIBUTION", OVERLAY_ATTRIBUTION),
+    ]
+}

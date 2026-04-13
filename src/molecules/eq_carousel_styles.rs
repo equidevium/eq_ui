@@ -8,15 +8,15 @@ pub const CAROUSEL: &str = "relative w-full overflow-hidden";
 pub const SLIDE_STRIP: &str =
     "flex transition-transform duration-[var(--transition-normal)] ease-in-out";
 
-/// A single slide within the strip — full width of the carousel.
+/// A single slide within the strip - full width of the carousel.
 pub const SLIDE: &str = "w-full shrink-0";
 
 // ── Peek mode ────────────────────────────────────────────────────
 
-/// Peek carousel wrapper — shows edges of neighbouring slides.
+/// Peek carousel wrapper - shows edges of neighbouring slides.
 pub const CAROUSEL_PEEK: &str = "relative w-full overflow-hidden";
 
-/// Peek strip — like SLIDE_STRIP but slides are narrower (80%).
+/// Peek strip - like SLIDE_STRIP but slides are narrower (80%).
 pub const SLIDE_STRIP_PEEK: &str =
     "flex transition-transform duration-[var(--transition-normal)] ease-in-out";
 
@@ -66,3 +66,24 @@ pub const DOT: &str =
 pub const DOT_ACTIVE: &str =
     "size-3 md:size-2.5 rounded-full bg-[var(--color-label-bold)] \
      cursor-pointer";
+
+/// All style tokens for playground introspection.
+pub fn catalog() -> Vec<(&'static str, &'static str)> {
+    vec![
+        ("CAROUSEL", CAROUSEL),
+        ("SLIDE_STRIP", SLIDE_STRIP),
+        ("SLIDE", SLIDE),
+        ("CAROUSEL_PEEK", CAROUSEL_PEEK),
+        ("SLIDE_STRIP_PEEK", SLIDE_STRIP_PEEK),
+        ("SLIDE_PEEK", SLIDE_PEEK),
+        ("PEEK_FADE_LEFT", PEEK_FADE_LEFT),
+        ("PEEK_FADE_RIGHT", PEEK_FADE_RIGHT),
+        ("ARROW_BASE", ARROW_BASE),
+        ("ARROW_LEFT", ARROW_LEFT),
+        ("ARROW_RIGHT", ARROW_RIGHT),
+        ("ARROW_ICON", ARROW_ICON),
+        ("DOTS", DOTS),
+        ("DOT", DOT),
+        ("DOT_ACTIVE", DOT_ACTIVE),
+    ]
+}

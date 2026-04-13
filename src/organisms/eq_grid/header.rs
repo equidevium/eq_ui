@@ -186,24 +186,24 @@ pub(super) fn render_header<T: Clone + PartialEq + 'static>(
                                     let shift = evt.modifiers().shift();
 
                                     if shift {
-                                        // Shift+click: multi-sort — append or cycle within list.
+                                        // Shift+click: multi-sort - append or cycle within list.
                                         let mut sorts = sort_state.write();
                                         if let Some(pos) = sorts.iter().position(|ss| ss.column_id == col_id) {
-                                            // Column already in sort list — cycle it.
+                                            // Column already in sort list - cycle it.
                                             match sorts[pos].direction {
                                                 SortDirection::None => sorts[pos].direction = SortDirection::Asc,
                                                 SortDirection::Asc => sorts[pos].direction = SortDirection::Desc,
                                                 SortDirection::Desc => { sorts.remove(pos); }
                                             }
                                         } else {
-                                            // New column — append as Asc.
+                                            // New column - append as Asc.
                                             sorts.push(SortState {
                                                 column_id: col_id,
                                                 direction: SortDirection::Asc,
                                             });
                                         }
                                     } else {
-                                        // Regular click: single-sort — replace entire sort state.
+                                        // Regular click: single-sort - replace entire sort state.
                                         let current = sort_state.read()
                                             .iter()
                                             .find(|ss| ss.column_id == col_id)

@@ -2,7 +2,7 @@
 name = "eq_ui_build"
 version = "0.1.0"
 edition = "2024"
-description = "Build-time utilities for eq_ui — generates SVG icon path constants from a folder of SVG files"
+description = "Build-time utilities for eq_ui - generates SVG icon path constants from a folder of SVG files"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/equidevium/eq_ui"
 homepage = "https://github.com/equidevium/eq_ui"

@@ -2,7 +2,7 @@
 
 // ── Wrapper ─────────────────────────────────────────────────────────
 
-/// Outermost grid container — border, rounding, overflow clip.
+/// Outermost grid container - border, rounding, overflow clip.
 pub const GRID_WRAPPER: &str = "rounded-xl border border-[var(--color-grid-border)] overflow-hidden bg-[var(--color-primary-dark)]";
 
 /// Scrollable area that holds the table. Allows horizontal scroll on mobile.
@@ -15,7 +15,7 @@ pub const TABLE: &str = "w-full border-collapse table-fixed text-sm";
 
 // ── Header ──────────────────────────────────────────────────────────
 
-/// `<thead>` — sticky at top during vertical scroll.
+/// `<thead>` - sticky at top during vertical scroll.
 pub const THEAD: &str = "bg-[var(--color-grid-header-bg)] sticky top-0 z-10";
 
 /// Default `<th>` cell.
@@ -63,28 +63,28 @@ pub const DENSITY_COMFORTABLE: &str = "px-4 py-3 md:px-5 md:py-4 text-sm";
 
 // ── Sort indicators ─────────────────────────────────────────────────
 
-/// Sort icon wrapper — inline next to header text.
+/// Sort icon wrapper - inline next to header text.
 pub const SORT_ICON: &str = "ml-1 align-middle text-[var(--color-label-secondary)]";
 
 /// Sort icon when actively sorting this column.
 pub const SORT_ICON_ACTIVE: &str = "ml-1 align-middle text-[var(--color-accent-primary)]";
 
-/// Sort feedback indicator — green up arrow for ascending.
+/// Sort feedback indicator - green up arrow for ascending.
 pub const SORT_FEEDBACK_ASC: &str = "ml-0.5 align-middle text-green-500";
 
-/// Sort feedback indicator — red down arrow for descending.
+/// Sort feedback indicator - red down arrow for descending.
 pub const SORT_FEEDBACK_DESC: &str = "ml-0.5 align-middle text-red-500";
 
-/// Sort feedback indicator — blue dash for columns not participating in sort.
+/// Sort feedback indicator - blue dash for columns not participating in sort.
 pub const SORT_FEEDBACK_NONE: &str = "ml-0.5 align-middle text-blue-400";
 
-/// Sort priority badge — small number shown during multi-column sort.
+/// Sort priority badge - small number shown during multi-column sort.
 pub const SORT_PRIORITY: &str =
     "text-[10px] leading-none font-semibold text-[var(--color-accent-primary)]";
 
 // ── Pagination ──────────────────────────────────────────────────────
 
-/// Pagination bar container — below the table.
+/// Pagination bar container - below the table.
 pub const PAGINATION_BAR: &str = "flex flex-col gap-2 md:flex-row md:items-center md:justify-between \
      px-3 py-2 md:px-4 md:py-3 border-t border-[var(--color-grid-border)] \
      text-sm text-[var(--color-label-secondary)]";
@@ -213,10 +213,10 @@ pub const AGGREGATION_VALUE: &str = "text-[var(--color-accent-primary)] font-sem
 
 // ── Reorder grip handle ───────────────────────────────────────────
 
-/// Narrow grip handle cell — first column when reorderable is on.
+/// Narrow grip handle cell - first column when reorderable is on.
 pub const GRIP_CELL: &str = "w-8 text-center cursor-grab active:cursor-grabbing select-none";
 
-/// Grip icon — subtle by default, full opacity on hover.
+/// Grip icon - subtle by default, full opacity on hover.
 pub const GRIP_ICON: &str = "size-4 mx-auto text-[var(--color-label-secondary)] \
      opacity-40 hover:opacity-100 transition-opacity";
 
@@ -237,7 +237,7 @@ pub const DROP_TARGET_ACTIVE: &str = "ring-2 ring-[var(--color-accent-primary)]/
 
 // ── Virtual scroll info bar ────────────────────────────────────────
 
-/// Info bar shown below the virtualized viewport — displays the
+/// Info bar shown below the virtualized viewport - displays the
 /// currently visible row range and total entry count.
 pub const VIRTUAL_INFO_BAR: &str = "flex items-center justify-between \
      px-3 py-2 md:px-4 md:py-2 border-t border-[var(--color-grid-border)] \
@@ -251,7 +251,7 @@ pub const VIRTUAL_VIEWPORT: &str = "overflow-y-auto relative";
 
 // ── Column resize ──────────────────────────────────────────────────
 
-/// Header cell wrapper — relative positioning so the resize handle can
+/// Header cell wrapper - relative positioning so the resize handle can
 /// be placed at the right edge.
 pub const TH_RESIZABLE: &str = "relative";
 
@@ -264,3 +264,35 @@ pub const RESIZE_HANDLE: &str = "absolute top-0 right-0 w-1 h-full cursor-col-re
 /// Transparent full-viewport overlay shown during a resize drag
 /// to capture mouse events regardless of cursor position.
 pub const RESIZE_OVERLAY: &str = "fixed inset-0 z-50 cursor-col-resize";
+
+/// All style tokens for playground introspection.
+pub fn catalog() -> Vec<(&'static str, &'static str)> {
+    vec![
+        ("GRID_WRAPPER", GRID_WRAPPER),
+        ("GRID_CONTAINER", GRID_CONTAINER),
+        ("TABLE", TABLE),
+        ("THEAD", THEAD),
+        ("TH", TH),
+        ("TH_SORTABLE", TH_SORTABLE),
+        ("TR", TR),
+        ("TR_HOVER", TR_HOVER),
+        ("TR_STRIPED", TR_STRIPED),
+        ("TR_SELECTED", TR_SELECTED),
+        ("TD", TD),
+        ("DENSITY_COMPACT", DENSITY_COMPACT),
+        ("DENSITY_NORMAL", DENSITY_NORMAL),
+        ("DENSITY_COMFORTABLE", DENSITY_COMFORTABLE),
+        ("QUICK_FILTER", QUICK_FILTER),
+        ("QUICK_FILTER_INPUT", QUICK_FILTER_INPUT),
+        ("COLUMN_FILTER_INPUT", COLUMN_FILTER_INPUT),
+        ("PAGINATION_BAR", PAGINATION_BAR),
+        ("PAGE_BTN", PAGE_BTN),
+        ("PAGE_BTN_ACTIVE", PAGE_BTN_ACTIVE),
+        ("CHECKBOX_CELL", CHECKBOX_CELL),
+        ("BULK_BAR", BULK_BAR),
+        ("BULK_BTN", BULK_BTN),
+        ("BULK_BTN_DANGER", BULK_BTN_DANGER),
+        ("GRIP_CELL", GRIP_CELL),
+        ("GRIP_ICON", GRIP_ICON),
+    ]
+}

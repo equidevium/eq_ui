@@ -2,6 +2,13 @@ use dioxus::prelude::*;
 use super::eq_footer_styles as s;
 use crate::theme::merge_classes;
 
+#[cfg(feature = "playground")]
+use crate::playground::playground_helpers::{CodeBlock, DemoSection, PropInput, PropSelect, StyleInfo, format_catalog};
+#[cfg(feature = "playground")]
+use crate::atoms::{EqText, TextVariant};
+#[cfg(feature = "playground")]
+use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+
 /// Footer link representation
 #[derive(Clone, PartialEq)]
 pub struct FooterLink {
@@ -53,7 +60,7 @@ pub fn EqFooter(
     #[props(default = 2026)] year: u16,
     #[props(default = default_link_groups())] link_groups: Vec<FooterLinkGroup>,
     #[props(default = "Building the future, one line at a time.")] tagline: &'static str,
-    /// Optional class override — extend or replace default wrapper styles.
+    /// Optional class override - extend or replace default wrapper styles.
     #[props(into, default)]
     class: String,
 ) -> Element {
@@ -82,6 +89,112 @@ pub fn EqFooter(
                 div { class: s::FOOTER_BOTTOM,
                     p { class: s::FOOTER_TAGLINE, "{tagline}" }
                     p { "© {year} {copyright_holder}. All rights reserved." }
+                }
+            }
+        }
+    }
+}
+
+// ── Playground descriptor ──────────────────────────────────────────
+
+#[cfg(feature = "playground")]
+pub fn descriptor() -> ComponentDescriptor {
+    ComponentDescriptor {
+        id: "eq-footer",
+        name: "EqFooter",
+        category: ComponentCategory::Organism,
+        description: "Site-wide footer with link groups, copyright info, and customizable year/holder/tagline.",
+        style_tokens: || s::catalog(),
+        usage_examples: || vec![
+            UsageExample {
+                label: "Basic",
+                code: "EqFooter {}".into(),
+            },
+            UsageExample {
+                label: "Custom",
+                code: "EqFooter {\n    copyright_holder: \"Acme Corp\",\n    year: 2026,\n    tagline: \"Innovate. Build. Ship.\",\n}".into(),
+            },
+        ],
+        render_demo: || rsx! { DemoEqFooter {} },
+        render_gallery: || rsx! { GalleryEqFooter {} },
+    }
+}
+
+// ── Interactive demo ───────────────────────────────────────────────
+
+#[cfg(feature = "playground")]
+#[component]
+fn DemoEqFooter() -> Element {
+    let mut holder_str = use_signal(|| "Equidevium".to_string());
+    let mut tagline_str = use_signal(|| "Building the future, one line at a time.".to_string());
+    let mut year_str = use_signal(|| "2026".to_string());
+
+    let copyright_holder: &'static str = match holder_str().as_str() {
+        "Acme Corp" => "Acme Corp",
+        "My Company" => "My Company",
+        _ => "Equidevium",
+    };
+    let tagline: &'static str = match tagline_str().as_str() {
+        "Innovate. Build. Ship." => "Innovate. Build. Ship.",
+        "Making the web beautiful." => "Making the web beautiful.",
+        _ => "Building the future, one line at a time.",
+    };
+    let year: u16 = year_str().parse().unwrap_or(2026);
+
+    let code = "EqFooter {}\n\nEqFooter {\n    copyright_holder: \"Acme Corp\",\n    year: 2026,\n    tagline: \"Innovate. Build. Ship.\",\n}".to_string();
+
+    rsx! {
+        DemoSection { title: "EqFooter",
+            div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-3",
+                EqText {
+                    variant: TextVariant::Caption,
+                    class: "font-semibold uppercase tracking-wider",
+                    "Props"
+                }
+                PropSelect {
+                    label: "holder",
+                    value: holder_str(),
+                    options: vec!["Equidevium", "Acme Corp", "My Company"],
+                    onchange: move |v: String| holder_str.set(v),
+                }
+                PropSelect {
+                    label: "tagline",
+                    value: tagline_str(),
+                    options: vec![
+                        "Building the future, one line at a time.",
+                        "Innovate. Build. Ship.",
+                        "Making the web beautiful.",
+                    ],
+                    onchange: move |v: String| tagline_str.set(v),
+                }
+                PropInput {
+                    label: "year",
+                    value: year_str(),
+                    placeholder: "2026",
+                    onchange: move |v: String| year_str.set(v),
+                }
+            }
+            div { class: "rounded-lg border border-dashed border-[var(--color-card-border)] overflow-hidden",
+                EqFooter { copyright_holder, year, tagline }
+            }
+            StyleInfo { file: "eq_footer_styles.rs", styles: format_catalog(&s::catalog()) }
+            CodeBlock { code }
+        }
+    }
+}
+
+// ── Gallery (compact showcase) ─────────────────────────────────────
+
+#[cfg(feature = "playground")]
+#[component]
+fn GalleryEqFooter() -> Element {
+    rsx! {
+        div { class: "space-y-4",
+            div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-4",
+                EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Footer Gallery" }
+
+                div { class: "space-y-3",
+                    EqFooter {}
                 }
             }
         }

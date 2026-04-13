@@ -1,6 +1,6 @@
 //! Style constants for EqInput.
 
-/// Form field wrapper — adds vertical spacing between label and input
+/// Form field wrapper - adds vertical spacing between label and input
 pub const FIELD: &str = "space-y-2";
 
 /// Helper / hint text below an input
@@ -24,3 +24,15 @@ pub const TEXTAREA: &str = "min-h-[120px] resize-y";
 
 /// Disabled state overlay
 pub const DISABLED: &str = "opacity-60 cursor-not-allowed";
+
+/// All style tokens for playground introspection.
+pub fn catalog() -> Vec<(&'static str, &'static str)> {
+    vec![
+        ("FIELD", FIELD),
+        ("HELP", HELP),
+        ("ERROR", ERROR),
+        ("CONTROL", CONTROL),
+        ("TEXTAREA", TEXTAREA),
+        ("DISABLED", DISABLED),
+    ]
+}

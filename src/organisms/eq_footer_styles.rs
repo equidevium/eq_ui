@@ -20,3 +20,17 @@ pub const FOOTER_BOTTOM: &str =
      text-[var(--color-label-secondary)] md:flex-row md:items-center md:justify-between";
 
 pub const FOOTER_TAGLINE: &str = "text-[var(--color-label-primary)]";
+
+/// All style tokens for playground introspection.
+pub fn catalog() -> Vec<(&'static str, &'static str)> {
+    vec![
+        ("FOOTER", FOOTER),
+        ("FOOTER_INNER", FOOTER_INNER),
+        ("FOOTER_GRID", FOOTER_GRID),
+        ("FOOTER_GROUP_TITLE", FOOTER_GROUP_TITLE),
+        ("FOOTER_LIST", FOOTER_LIST),
+        ("FOOTER_LINK", FOOTER_LINK),
+        ("FOOTER_BOTTOM", FOOTER_BOTTOM),
+        ("FOOTER_TAGLINE", FOOTER_TAGLINE),
+    ]
+}
