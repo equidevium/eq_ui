@@ -6,13 +6,75 @@ https://github.com/user-attachments/assets/4ea4f561-4581-481d-bc27-c2f5a2879998
 
 ## Components
 
+<!-- COMPONENTS_START -->
+
 Organized in three layers:
 
-**Atoms** - Text, Label, Link, Input, Icon, Image, Checkbox, Button, Divider, ScrollableSpace, Video, Progress, Tab.
+**Atoms** - EqText, EqLabel, EqLink, EqInput, EqIcon, EqImage, EqCheckbox, EqButton, EqDivider, EqScrollableSpace, EqVideo, EqProgress, EqTab, EqRadioGroup.
 
-**Molecules** - Card (header/body/footer slots), ImageCard (caption below or overlay), Carousel, Tree, Accordion.
+**Molecules** - EqCard, EqImageCard, EqCarousel, EqTree, EqAccordion.
 
-**Organisms** - AppShell, Header, Footer, HeroShell, PageSection, Navbar, Grid (sorting, filtering, pagination, virtualization, row selection, bulk actions, drag-and-drop, export).
+**Organisms** - EqHeader, EqFooter, EqHeroShell, EqPageSection, EqAppShell, EqNavbar, EqGrid.
+
+**Planned** (not yet built):
+
+| Component | Category | Notes |
+|---|---|---|
+| Switch | Atom | CSS transition |
+| Skeleton | Atom | CSS keyframes |
+| Slider | Atom | Dioxus mouse events |
+| Calendar | Molecule | Pure date grid |
+| Pagination | Molecule |  |
+| ToastList | Molecule | Needs animation for enter/exit |
+| Dialog | Molecule |  |
+| Sheet / Drawer | Molecule | Needs slide transition |
+| Select | Atom | Positioning via eval |
+| ToolTip | Atom | Positioning via eval |
+| DropDownMenu | Molecule | Positioning via eval |
+| ContextMenu | Molecule | Positioning via eval |
+| HoverCard | Molecule | Positioning via eval |
+| DatePicker | Molecule | Positioning via eval |
+| VirtualList | Organism | Scroll position via eval |
+| RichTextEditor | Organism | JS editor init via eval |
+| Signature | Atom | Canvas drawing via eval |
+| Babylon.js | Organism | JS engine init via eval |
+
+### Blitz (native) readiness
+
+Tier 1 = works as-is, Tier 2 = needs small fix, Tier 3 = needs significant work.
+
+| Component | Tier | Needs eval | Notes |
+|---|---|---|---|
+| Getting Started Guide | 1 | no | Playground-only, feature-gated |
+| EqText | 1 | no |  |
+| EqLabel | 1 | no |  |
+| EqLink | 1 | no |  |
+| EqInput | 1 | no |  |
+| EqIcon | 1 | no |  |
+| EqImage | 1 | no | object-fit support on Blitz needs verification |
+| EqCheckbox | 1 | no |  |
+| EqButton | 2 | no | @property gradient transition needs Blitz fallback |
+| EqDivider | 1 | no |  |
+| EqScrollableSpace | 2 | no | Custom scrollbar CSS cosmetic-only on Blitz |
+| EqVideo | 1 | no | Video playback on Blitz depends on media support |
+| EqProgress | 1 | no | Indeterminate animation needs Blitz fallback |
+| EqTab | 1 | no |  |
+| EqCard | 1 | no |  |
+| EqImageCard | 1 | no |  |
+| EqCarousel | 2 | no | Slide transition needs Blitz fallback |
+| EqTree | 1 | no |  |
+| EqAccordion | 1 | no |  |
+| EqHeader | 2 | no | backdrop-filter needs Blitz fallback |
+| EqFooter | 1 | no |  |
+| EqHeroShell | 2 | no | Overlay blend mode may need Blitz fallback |
+| EqPageSection | 1 | no |  |
+| EqAppShell | 1 | no |  |
+| EqNavbar | 1 | no |  |
+| EqGrid | 3 | yes | Clipboard via document::eval(), DnD and scroll measurement need Blitz testing |
+| Theme Showcase | 1 | no | Playground-only, feature-gated |
+| EqRadioGroup | 1 | no |  |
+
+<!-- COMPONENTS_END -->
 
 **Theming** - 21 built-in themes, custom CSS, runtime switching. The `theme` module also exports shared Tailwind constants you can use in your own layouts.
 
@@ -451,33 +513,7 @@ Dioxus desktop uses Wry (webview) for rendering, but compiles to a native binary
 
 Where browser APIs are needed (element measurement, focus, scroll position), we use `document::eval()` instead of `web_sys`. This works on both web and desktop via Wry's webview, no `wasm-bindgen` required.
 
-### Platform support
-
-Everything ships cross-platform: web, desktop (Wry), mobile. All existing components work on all three targets.
-
-**Planned** (not yet built):
-
-| Component | Notes |
-|---|---|
-| RadioGroup | |
-| Switch | CSS transition |
-| Skeleton | CSS keyframes |
-| Slider | Dioxus mouse events |
-| Calendar | Pure date grid |
-| Pagination | |
-| ToastList | |
-| Dialog | |
-| Sheet / Drawer | |
-| Select | Positioning via eval |
-| ToolTip | Positioning via eval |
-| DropDownMenu | Positioning via eval |
-| ContextMenu | Positioning via eval |
-| HoverCard | Positioning via eval |
-| DatePicker | Positioning via eval |
-| VirtualList | Scroll position via eval |
-| RichTextEditor | JS editor init via eval |
-| Signature | Canvas drawing via eval |
-| Babylon.js | JS engine init via eval |
+All existing components work cross-platform: web, desktop (Wry), mobile. See the Blitz readiness table in the Components section for native renderer status. See the Planned table for components not yet built.
 
 ## Running the Playground
 

@@ -47,6 +47,7 @@ pub fn all_component_descriptors() -> Vec<ComponentDescriptor> {
         atoms::eq_video::descriptor(),
         atoms::eq_progress::descriptor(),
         atoms::eq_tab::descriptor(),
+        atoms::eq_radio_group::descriptor(),
         // Molecules
         molecules::eq_card::descriptor(),
         molecules::eq_image_card::descriptor(),
