@@ -10,7 +10,7 @@ https://github.com/user-attachments/assets/4ea4f561-4581-481d-bc27-c2f5a2879998
 
 Organized in three layers:
 
-**Atoms** - EqText, EqLabel, EqLink, EqInput, EqIcon, EqImage, EqCheckbox, EqButton, EqDivider, EqScrollableSpace, EqVideo, EqProgress, EqTab, EqRadioGroup.
+**Atoms** - EqText, EqLabel, EqLink, EqInput, EqIcon, EqImage, EqCheckbox, EqButton, EqDivider, EqScrollableSpace, EqVideo, EqProgress, EqTab, EqRadioGroup, EqSwitch.
 
 **Molecules** - EqCard, EqImageCard, EqCarousel, EqTree, EqAccordion.
 
@@ -20,7 +20,6 @@ Organized in three layers:
 
 | Component | Category | Notes |
 |---|---|---|
-| Switch | Atom | CSS transition |
 | Skeleton | Atom | CSS keyframes |
 | Slider | Atom | Dioxus mouse events |
 | Calendar | Molecule | Pure date grid |
@@ -73,6 +72,7 @@ Tier 1 = works as-is, Tier 2 = needs small fix, Tier 3 = needs significant work.
 | EqGrid | 3 | yes | Clipboard via document::eval(), DnD and scroll measurement need Blitz testing |
 | Theme Showcase | 1 | no | Playground-only, feature-gated |
 | EqRadioGroup | 1 | no |  |
+| EqSwitch | 2 | no | CSS transition degrades to instant toggle on Blitz |
 
 <!-- COMPONENTS_END -->
 

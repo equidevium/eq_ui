@@ -146,7 +146,7 @@ pub fn EqRadioGroup(
                     let description = item.description.clone().unwrap_or_default();
 
                     rsx! {
-                        label {
+                        span {
                             class: "{item_cls}",
                             role: "radio",
                             "aria-checked": "{is_selected}",
@@ -159,15 +159,6 @@ pub fn EqRadioGroup(
                                     }
                                 }
                             },
-                            // Hidden native radio for form/accessibility
-                            input {
-                                r#type: "radio",
-                                name: "{name}",
-                                value: "{item.value}",
-                                checked: is_selected,
-                                disabled: is_disabled,
-                                class: "sr-only",
-                            }
                             // Visual circle
                             span { class: "{circle_border}",
                                 if is_selected {
