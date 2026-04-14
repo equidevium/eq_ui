@@ -29,7 +29,7 @@ https://github.com/user-attachments/assets/4ea4f561-4581-481d-bc27-c2f5a2879998
 | EqImageCard | Molecule | full | Image card with caption modes (below/overlay) |
 | EqCarousel | Molecule | full | Generic content carousel with arrows and dots |
 | EqTree | Molecule | full | Collapsible tree view with select and expand |
-| EqAccordion | Molecule | pending | Collapsible panels with single/multi-expand modes |
+| EqAccordion | Molecule | full | Collapsible panels with single/multi-expand modes |
 | EqHeader | Organism | native | Sticky header with brand, nav, and backdrop blur |
 | EqFooter | Organism | native | Footer with link groups and copyright |
 | EqHeroShell | Organism | - | Hero banner with background image, overlay, custom colors |
@@ -88,7 +88,7 @@ Tier 1 = works as-is, Tier 2 = needs small fix, Tier 3 = needs significant work.
 | EqImageCard | 1 | no |  |
 | EqCarousel | 2 | no | Slide transition needs Blitz fallback |
 | EqTree | 1 | no | Full WAI-ARIA tree pattern: role tree/treeitem/group, aria-expanded/selected/level/setsize/posinset, roving tabindex, keyboard nav (arrows/Home/End/Enter/Space) |
-| EqAccordion | 1 | no | ARIA planned via dioxus-primitives Phase 2 |
+| EqAccordion | 1 | no | Full WAI-ARIA accordion pattern: aria-expanded, aria-controls/aria-labelledby linking, role region on panels, keyboard nav (Up/Down/Home/End) |
 | EqHeader | 2 | no | backdrop-filter needs Blitz fallback |
 | EqFooter | 1 | no |  |
 | EqHeroShell | 2 | no | Overlay blend mode may need Blitz fallback |
