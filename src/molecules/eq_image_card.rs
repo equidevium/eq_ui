@@ -115,11 +115,12 @@ pub fn EqImageCard(
         }},
         CaptionMode::Overlay => {
             let cls = merge_classes(s::OVERLAY_CONTAINER, &class);
+            let effective_label = if has_aria_label { aria_label.clone() } else { alt.clone() };
             rsx! {
             div {
                 class: "{cls}",
                 role: "figure",
-                "aria-label": if has_aria_label { "{aria_label}" } else { "{alt}" },
+                "aria-label": "{effective_label}",
                 EqImage { src, alt, size, aspect_ratio, object_fit, rounded }
                 if has_caption {
                     div { class: s::OVERLAY_GRADIENT,
