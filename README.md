@@ -32,7 +32,7 @@ https://github.com/user-attachments/assets/4ea4f561-4581-481d-bc27-c2f5a2879998
 | EqAccordion | Molecule | full | Collapsible panels with single/multi-expand modes |
 | EqHeader | Organism | native | Sticky header with brand, nav, and backdrop blur |
 | EqFooter | Organism | native | Footer with link groups and copyright |
-| EqHeroShell | Organism | - | Hero banner with background image, overlay, custom colors |
+| EqHeroShell | Organism | full | Hero banner with background image, overlay, custom colors |
 | EqPageSection | Organism | native | Titled content section |
 | EqAppShell | Organism | native | Full page layout (header + main + footer) |
 | EqNavbar | Organism | native | Horizontal nav bar |
@@ -91,7 +91,7 @@ Tier 1 = works as-is, Tier 2 = needs small fix, Tier 3 = needs significant work.
 | EqAccordion | 1 | no | Full WAI-ARIA accordion pattern: aria-expanded, aria-controls/aria-labelledby linking, role region on panels, keyboard nav (Up/Down/Home/End) |
 | EqHeader | 2 | no | backdrop-filter needs Blitz fallback |
 | EqFooter | 1 | no |  |
-| EqHeroShell | 2 | no | Overlay blend mode may need Blitz fallback |
+| EqHeroShell | 2 | no | aria-labelledby auto-links to h1 title, aria-hidden on decorative bg/overlay, optional role prop (banner) |
 | EqPageSection | 1 | no |  |
 | EqAppShell | 1 | no |  |
 | EqNavbar | 1 | no |  |
