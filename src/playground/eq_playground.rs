@@ -45,30 +45,12 @@ fn ThemeSwitcher() -> Element {
             class: s::THEME_SELECT,
             value: format!("{:?}", *theme.read()),
             onchange: move |evt: Event<FormData>| {
-                let new_theme = match evt.value().as_str() {
-                    "Unghosty" => EqTheme::Unghosty,
-                    "Burgundy" => EqTheme::Burgundy,
-                    "Gold" => EqTheme::Gold,
-                    "PurplePink" => EqTheme::PurplePink,
-                    "Monochrome" => EqTheme::Monochrome,
-                    "Watermelon" => EqTheme::Watermelon,
-                    "Sunset" => EqTheme::Sunset,
-                    "Ocean" => EqTheme::Ocean,
-                    "Spacetime" => EqTheme::Spacetime,
-                    "Gruvbox" => EqTheme::Gruvbox,
-                    "Monokai" => EqTheme::Monokai,
-                    "Hellas" => EqTheme::Hellas,
-                    "Egypt" => EqTheme::Egypt,
-                    "Dometrain" => EqTheme::Dometrain,
-                    "Catppuccin" => EqTheme::Catppuccin,
-                    "Dracula" => EqTheme::Dracula,
-                    "Nord" => EqTheme::Nord,
-                    "OneDark" => EqTheme::OneDark,
-                    "RosePine" => EqTheme::RosePine,
-                    "SolarizedDark" => EqTheme::SolarizedDark,
-                    "TokyoNight" => EqTheme::TokyoNight,
-                    _ => EqTheme::Unghosty,
-                };
+                let val = evt.value();
+                let new_theme = EqTheme::build_in_variants()
+                    .into_iter()
+                    .find(|(name, _)| *name == val.as_str())
+                    .map(|(_, t)| t)
+                    .unwrap_or_default();
                 theme.set(new_theme);
             },
 

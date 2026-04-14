@@ -25,6 +25,8 @@ pub enum EqTheme {
     RosePine,
     SolarizedDark,
     TokyoNight,
+    Warcraft,
+    SweetRush,
     /// User-provided CSS injected at runtime.
     Custom(String),
 }
@@ -53,6 +55,8 @@ impl EqTheme {
             EqTheme::RosePine   => Some(include_str!("../assets/theme/rose_pine.css")),
             EqTheme::SolarizedDark => Some(include_str!("../assets/theme/solarized_dark.css")),
             EqTheme::TokyoNight => Some(include_str!("../assets/theme/tokyo_night.css")),
+            EqTheme::Warcraft   => Some(include_str!("../assets/theme/warcraft.css")),
+            EqTheme::SweetRush  => Some(include_str!("../assets/theme/sweet_rush.css")),
             EqTheme::Custom(_)  => None,
         }
     }
@@ -87,6 +91,8 @@ impl EqTheme {
             ("RosePine", EqTheme::RosePine),
             ("SolarizedDark", EqTheme::SolarizedDark),
             ("TokyoNight", EqTheme::TokyoNight),
+            ("Warcraft", EqTheme::Warcraft),
+            ("SweetRush", EqTheme::SweetRush),
         ]
     }
 

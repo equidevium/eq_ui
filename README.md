@@ -1,6 +1,6 @@
 # eq_ui
 
-Dioxus 0.7 component library. Atomic design, pure Tailwind, 21 themes.
+Dioxus 0.7 component library. Atomic design, pure Tailwind, 23 themes.
 
 https://github.com/user-attachments/assets/4ea4f561-4581-481d-bc27-c2f5a2879998
 
@@ -76,7 +76,7 @@ Tier 1 = works as-is, Tier 2 = needs small fix, Tier 3 = needs significant work.
 
 <!-- COMPONENTS_END -->
 
-**Theming** - 21 built-in themes, custom CSS, runtime switching. The `theme` module also exports shared Tailwind constants you can use in your own layouts.
+**Theming** - 23 built-in themes, custom CSS, runtime switching. The `theme` module also exports shared Tailwind constants you can use in your own layouts.
 
 ## Quick start
 
@@ -279,7 +279,7 @@ EqTree {
 EqAccordion {
     items: vec![
         AccordionItem::new("faq-1", "What is eq_ui?", rsx! { p { "A Dioxus component library." } }),
-        AccordionItem::new("faq-2", "How many themes?", rsx! { p { "21 built-in themes." } }),
+        AccordionItem::new("faq-2", "How many themes?", rsx! { p { "23 built-in themes." } }),
     ],
     mode: AccordionMode::Single,
 }
@@ -380,9 +380,9 @@ Virtualization renders only visible rows plus a small buffer (split-table layout
 
 ## Theming
 
-21 built-in themes, custom CSS themes at runtime.
+23 built-in themes, custom CSS themes at runtime.
 
-**Built-in:** Unghosty (default), Burgundy, Gold, PurplePink, Monochrome, Watermelon, Sunset, Ocean, Spacetime, Gruvbox, Monokai, Hellas, Egypt, Dometrain, Catppuccin, Dracula, Nord, OneDark, RosePine, SolarizedDark, TokyoNight.
+**Built-in:** Unghosty (default), Burgundy, Gold, PurplePink, Monochrome, Watermelon, Sunset, Ocean, Spacetime, Gruvbox, Monokai, Hellas, Egypt, Dometrain, Catppuccin, Dracula, Nord, OneDark, RosePine, SolarizedDark, TokyoNight, Warcraft, SweetRush.
 
 ### Setting up theming
 
