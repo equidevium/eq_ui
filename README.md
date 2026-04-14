@@ -1,20 +1,108 @@
 # eq_ui
 
-Dioxus 0.7 component library. Atomic design, pure Tailwind, 21 themes.
+Dioxus 0.7 component library. Atomic design, pure Tailwind, 23 themes.
 
 https://github.com/user-attachments/assets/4ea4f561-4581-481d-bc27-c2f5a2879998
 
 ## Components
 
-Organized in three layers:
+<!-- COMPONENTS_START -->
 
-**Atoms** - Text, Label, Link, Input, Icon, Image, Checkbox, Button, Divider, ScrollableSpace, Video, Progress, Tab.
+| Component | Category | ARIA | Description |
+|---|---|---|---|
+| EqText | Atom | native | Semantic text with variant-based tag selection (h1-h3, body, caption, muted) |
+| EqLabel | Atom | native | Form label with for_id binding |
+| EqLink | Atom | native | Anchor link with color theming |
+| EqInput | Atom | native | Input/textarea with kind variants (text, email, password, number, textarea) |
+| EqIcon | Atom | full | Icon wrapper with size variants |
+| EqImage | Atom | full | Image with sizing, aspect ratio, and object-fit control |
+| EqCheckbox | Atom | full | Checkbox with checked/unchecked/indeterminate states |
+| EqButton | Atom | native | Button with 5 variants, 3 sizes, gradient transitions |
+| EqDivider | Atom | full | Separator with solid/dashed/dotted/spacer variants |
+| EqScrollableSpace | Atom | full | Scrollable container with themed scrollbar |
+| EqVideo | Atom | full | Video with poster overlay, autoplay, controls |
+| EqProgress | Atom | full | Progress bar with determinate/indeterminate, 4 variants, gradient fill |
+| EqTab | Atom | full | Tab bar with underline, pill, and card variants; badges; disabled state |
+| EqRadioGroup | Atom | full | Radio button group with mutually exclusive selection, three sizes, vertical/horizontal layout |
+| EqSwitch | Atom | full | Toggle switch with pill track and sliding thumb, three sizes |
+| EqCard | Molecule | full | Card with header/body/footer slots |
+| EqImageCard | Molecule | full | Image card with caption modes (below/overlay) |
+| EqCarousel | Molecule | full | Generic content carousel with arrows and dots |
+| EqTree | Molecule | full | Collapsible tree view with select and expand |
+| EqAccordion | Molecule | full | Collapsible panels with single/multi-expand modes |
+| EqHeader | Organism | native | Sticky header with brand, nav, and backdrop blur |
+| EqFooter | Organism | native | Footer with link groups and copyright |
+| EqHeroShell | Organism | full | Hero banner with background image, overlay, custom colors |
+| EqPageSection | Organism | native | Titled content section |
+| EqAppShell | Organism | native | Full page layout (header + main + footer) |
+| EqNavbar | Organism | native | Horizontal nav bar |
+| EqGrid | Organism | full | Data grid with sorting, filtering, pagination, virtualization, DnD, export |
+| Getting Started Guide | Guide | - | In-app developer guide for the playground |
+| Theme Showcase | Theming | - | Theme color and gradient swatch viewer |
 
-**Molecules** - Card (header/body/footer slots), ImageCard (caption below or overlay), Carousel, Tree, Accordion.
+ARIA legend: **full** = roles + attributes + keyboard, **native** = semantic HTML, **pending** = planned, **-** = non-interactive.
 
-**Organisms** - AppShell, Header, Footer, HeroShell, PageSection, Navbar, Grid (sorting, filtering, pagination, virtualization, row selection, bulk actions, drag-and-drop, export).
+**Planned** (not yet built):
 
-**Theming** - 21 built-in themes, custom CSS, runtime switching. The `theme` module also exports shared Tailwind constants you can use in your own layouts.
+| Component | Category | ARIA | Notes |
+|---|---|---|---|
+| Skeleton | Atom | - | CSS keyframes |
+| Slider | Atom | planned | Via dioxus-primitives |
+| Calendar | Molecule | planned | Via dioxus-primitives |
+| Pagination | Molecule | planned |  |
+| ToastList | Molecule | planned | Via dioxus-primitives |
+| Dialog | Molecule | planned | Via dioxus-primitives |
+| Sheet / Drawer | Molecule | planned | Needs slide transition |
+| Select | Atom | planned | Via dioxus-primitives, positioning via eval |
+| ToolTip | Atom | planned | Via dioxus-primitives, positioning via eval |
+| DropDownMenu | Molecule | planned | Via dioxus-primitives, positioning via eval |
+| ContextMenu | Molecule | planned | Via dioxus-primitives, positioning via eval |
+| HoverCard | Molecule | planned | Via dioxus-primitives, positioning via eval |
+| DatePicker | Molecule | planned | Via dioxus-primitives, positioning via eval |
+| VirtualList | Organism | - | Scroll position via eval |
+| RichTextEditor | Organism | - | JS editor init via eval |
+| Signature | Atom | - | Canvas drawing via eval |
+| Babylon.js | Organism | - | JS engine init via eval |
+
+### Blitz (native) readiness
+
+Tier 1 = works as-is, Tier 2 = needs small fix, Tier 3 = needs significant work.
+
+| Component | Tier | Needs eval | Notes |
+|---|---|---|---|
+| Getting Started Guide | 1 | no | Playground-only, feature-gated |
+| EqText | 1 | no |  |
+| EqLabel | 1 | no |  |
+| EqLink | 1 | no |  |
+| EqInput | 1 | no |  |
+| EqIcon | 1 | no |  |
+| EqImage | 1 | no | object-fit support on Blitz needs verification |
+| EqCheckbox | 1 | no |  |
+| EqButton | 2 | no | @property gradient transition needs Blitz fallback |
+| EqDivider | 1 | no |  |
+| EqScrollableSpace | 2 | no | Custom scrollbar CSS cosmetic-only on Blitz |
+| EqVideo | 1 | no | Video playback on Blitz depends on media support |
+| EqProgress | 1 | no | Indeterminate animation needs Blitz fallback |
+| EqTab | 1 | no |  |
+| EqCard | 1 | no |  |
+| EqImageCard | 1 | no |  |
+| EqCarousel | 2 | no | Slide transition needs Blitz fallback |
+| EqTree | 1 | no | Full WAI-ARIA tree pattern: role tree/treeitem/group, aria-expanded/selected/level/setsize/posinset, roving tabindex, keyboard nav (arrows/Home/End/Enter/Space) |
+| EqAccordion | 1 | no | Full WAI-ARIA accordion pattern: aria-expanded, aria-controls/aria-labelledby linking, role region on panels, keyboard nav (Up/Down/Home/End) |
+| EqHeader | 2 | no | backdrop-filter needs Blitz fallback |
+| EqFooter | 1 | no |  |
+| EqHeroShell | 2 | no | aria-labelledby auto-links to h1 title, aria-hidden on decorative bg/overlay, optional role prop (banner) |
+| EqPageSection | 1 | no |  |
+| EqAppShell | 1 | no |  |
+| EqNavbar | 1 | no |  |
+| EqGrid | 3 | yes | Full ARIA: aria-sort on headers, scope=col, aria-selected on rows, aria-rowcount/colcount, aria-busy, aria-live pagination, aria-label on filters/nav, aria-hidden spacers |
+| Theme Showcase | 1 | no | Playground-only, feature-gated |
+| EqRadioGroup | 1 | no |  |
+| EqSwitch | 2 | no | CSS transition degrades to instant toggle on Blitz |
+
+<!-- COMPONENTS_END -->
+
+**Theming** - 23 built-in themes, custom CSS, runtime switching. The `theme` module also exports shared Tailwind constants you can use in your own layouts.
 
 ## Quick start
 
@@ -217,7 +305,7 @@ EqTree {
 EqAccordion {
     items: vec![
         AccordionItem::new("faq-1", "What is eq_ui?", rsx! { p { "A Dioxus component library." } }),
-        AccordionItem::new("faq-2", "How many themes?", rsx! { p { "21 built-in themes." } }),
+        AccordionItem::new("faq-2", "How many themes?", rsx! { p { "23 built-in themes." } }),
     ],
     mode: AccordionMode::Single,
 }
@@ -318,9 +406,9 @@ Virtualization renders only visible rows plus a small buffer (split-table layout
 
 ## Theming
 
-21 built-in themes, custom CSS themes at runtime.
+23 built-in themes, custom CSS themes at runtime.
 
-**Built-in:** Unghosty (default), Burgundy, Gold, PurplePink, Monochrome, Watermelon, Sunset, Ocean, Spacetime, Gruvbox, Monokai, Hellas, Egypt, Dometrain, Catppuccin, Dracula, Nord, OneDark, RosePine, SolarizedDark, TokyoNight.
+**Built-in:** Unghosty (default), Burgundy, Gold, PurplePink, Monochrome, Watermelon, Sunset, Ocean, Spacetime, Gruvbox, Monokai, Hellas, Egypt, Dometrain, Catppuccin, Dracula, Nord, OneDark, RosePine, SolarizedDark, TokyoNight, Warcraft, SweetRush.
 
 ### Setting up theming
 
@@ -451,33 +539,7 @@ Dioxus desktop uses Wry (webview) for rendering, but compiles to a native binary
 
 Where browser APIs are needed (element measurement, focus, scroll position), we use `document::eval()` instead of `web_sys`. This works on both web and desktop via Wry's webview, no `wasm-bindgen` required.
 
-### Platform support
-
-Everything ships cross-platform: web, desktop (Wry), mobile. All existing components work on all three targets.
-
-**Planned** (not yet built):
-
-| Component | Notes |
-|---|---|
-| RadioGroup | |
-| Switch | CSS transition |
-| Skeleton | CSS keyframes |
-| Slider | Dioxus mouse events |
-| Calendar | Pure date grid |
-| Pagination | |
-| ToastList | |
-| Dialog | |
-| Sheet / Drawer | |
-| Select | Positioning via eval |
-| ToolTip | Positioning via eval |
-| DropDownMenu | Positioning via eval |
-| ContextMenu | Positioning via eval |
-| HoverCard | Positioning via eval |
-| DatePicker | Positioning via eval |
-| VirtualList | Scroll position via eval |
-| RichTextEditor | JS editor init via eval |
-| Signature | Canvas drawing via eval |
-| Babylon.js | JS engine init via eval |
+All existing components work cross-platform: web, desktop (Wry), mobile. See the Blitz readiness table in the Components section for native renderer status. See the Planned table for components not yet built.
 
 ## Running the Playground
 

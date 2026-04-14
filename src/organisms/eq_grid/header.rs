@@ -85,7 +85,7 @@ pub(super) fn render_header<T: Clone + PartialEq + 'static>(
             tr {
                 // Grip handle column (empty header cell)
                 if reorderable {
-                    th { class: "{s::TH} {s::GRIP_CELL} {density_cls}" }
+                    th { class: "{s::TH} {s::GRIP_CELL} {density_cls}", scope: "col", "aria-label": "Reorder" }
                 }
                 // Select All checkbox column
                 if row_selection == RowSelection::Multi {
@@ -100,6 +100,8 @@ pub(super) fn render_header<T: Clone + PartialEq + 'static>(
                         rsx! {
                             th {
                                 class: "{s::TH} {s::CHECKBOX_CELL} {density_cls}",
+                                scope: "col",
+                                "aria-label": "Select all",
                                 EqCheckbox {
                                     state: cb_state,
                                     on_change: move |_new: CheckboxState| {
@@ -176,11 +178,23 @@ pub(super) fn render_header<T: Clone + PartialEq + 'static>(
                             .cloned()
                             .unwrap_or_default();
 
+                        let aria_sort_val = if is_sortable {
+                            match current_sort_dir {
+                                SortDirection::Asc => "ascending",
+                                SortDirection::Desc => "descending",
+                                SortDirection::None => "none",
+                            }
+                        } else {
+                            ""
+                        };
+
                         rsx! {
                             th {
                                 key: "{col_id}",
                                 class: "{s::TH} {density_cls} {align_cls} {sort_cls} {resize_cls} {header_class}",
                                 style: "{width_style}",
+                                scope: "col",
+                                "aria-sort": if !aria_sort_val.is_empty() { "{aria_sort_val}" } else { "" },
                                 onclick: move |evt: Event<MouseData>| {
                                     if !is_sortable { return; }
                                     let shift = evt.modifiers().shift();
@@ -244,6 +258,7 @@ pub(super) fn render_header<T: Clone + PartialEq + 'static>(
                                         class: s::COLUMN_FILTER_INPUT,
                                         r#type: "text",
                                         placeholder: "Filter\u{2026}",
+                                        "aria-label": "Filter {header_text}",
                                         value: "{filter_value}",
                                         onclick: move |evt: Event<MouseData>| { evt.stop_propagation(); },
                                         oninput: move |evt: Event<FormData>| {
@@ -264,6 +279,7 @@ pub(super) fn render_header<T: Clone + PartialEq + 'static>(
                                 if is_resizable {
                                     div {
                                         class: s::RESIZE_HANDLE,
+                                        "aria-hidden": "true",
                                         // Prevent sort click from firing when starting a resize.
                                         onclick: move |evt: Event<MouseData>| { evt.stop_propagation(); },
                                         onmousedown: {

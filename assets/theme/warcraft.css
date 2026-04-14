@@ -1,0 +1,129 @@
+:root {
+
+    /* ============================================
+       THEME: Warcraft
+       Inspired by the classic World of Warcraft
+       box art and UI - midnight blues, aged gold
+       filigree, Night Elf purples, fel green
+       ============================================ */
+
+    /* --- Core darks --- */
+    --color-primary-dark: #080a14;
+    --color-secondary-dark: #2b1f4e;
+    --color-tertiary-dark: #111328;
+    --color-hover-button: #1c1a3a;
+    --color-card: #0d0f1e;
+    --color-card-border: #2e2557;
+    --color-card-shadow: #0a0b16;
+    --color-background: #040510;
+
+    /* --- Labels / text --- */
+    --color-label-primary: #d4c6a1;
+    --color-label-secondary: #8b7ec0;
+    --color-label-bold: #ffd100;
+    --color-label-muted: #5c5188;
+    --color-label-disabled: #2e2557;
+
+    /* --- Gradients --- */
+    --color-gradient-default-start: #c79c2e;
+    --color-gradient-default-mid: #ffd100;
+    --color-gradient-default-end: #a07818;
+    --color-btn-hover-start: #6e45a8;
+    --color-btn-hover-mid: #9b6dd7;
+    --color-btn-hover-end: #080a14;
+
+    --color-btn-default-start: #080a14;
+    --color-btn-default-mid: #8a6d1f;
+    --color-btn-default-end: #ffd100;
+
+    --gradient-primary-tricolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-start) 0%,
+            var(--color-gradient-default-mid) 50%,
+            var(--color-gradient-default-end) 100%
+    );
+
+    --gradient-primary-tricolor-hover: linear-gradient(
+            135deg,
+            var(--color-btn-hover-start) 0%,
+            var(--color-btn-hover-mid) 50%,
+            var(--color-btn-hover-end) 100%
+    );
+
+    --gradient-background: linear-gradient(
+            90deg,
+            var(--color-primary-dark) 0%,
+            var(--color-tertiary-dark) 100%
+    );
+
+    --gradient-primary-duocolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-end) 0%,
+            var(--color-gradient-default-start) 100%
+    );
+
+    /* --- Accent & interaction --- */
+    --color-accent-primary: #ffd100;
+    --color-accent-secondary: #9b6dd7;
+    --color-accent-muted: #6e45a8;
+
+    /* --- State / feedback --- */
+    --color-success: #1eff00;
+    --color-warning: #ff8000;
+    --color-error: #c41e3a;
+    --color-info: #69ccf0;
+
+    /* --- Borders & dividers --- */
+    --color-border-default: #1e1940;
+    --color-border-subtle: #111328;
+    --color-border-active: #ffd100;
+
+    /* --- Input / form elements --- */
+    --color-input-bg: #0a0c1a;
+    --color-input-border: #2e2557;
+    --color-input-focus: #ffd100;
+    --color-input-placeholder: #5c5188;
+
+    /* --- Overlay & surface --- */
+    --color-surface-elevated: #151733;
+    --color-surface-overlay: rgba(4, 5, 16, 0.85);
+    --color-surface-tooltip: #1c1a3a;
+
+    /* --- Code / terminal feel --- */
+    --color-code-bg: #080a14;
+    --color-code-text: #d4c6a1;
+    --color-code-comment: #5c5188;
+    --color-code-keyword: #c41e3a;
+    --color-code-string: #1eff00;
+
+    /* --- Buttons --- */
+    --btn-primary-bg: var(--gradient-primary-tricolor);
+    --btn-primary-bg-hover: var(--gradient-primary-tricolor-hover);
+    --btn-primary-bg-solid: var(--color-accent-primary);
+    --btn-primary-hover: #080a14;
+    --btn-primary-text: #d4c6a1;
+    --btn-ghost-hover: #151733;
+    --btn-outline-border: var(--color-card-border);
+    --btn-outline-hover-border: #6e45a8;
+    --btn-outline-hover-bg: var(--gradient-primary-duocolor);
+    --btn-danger-bg: #c41e3a;
+
+    /* --- Interactive states --- */
+    --color-card-border-bright: #6e45a8;
+    --color-focus-ring: #ffd100;
+    --color-shadow-glow: rgba(255, 209, 0, 0.25);
+    --color-primary: #ffd100;
+
+    /* --- Transitions --- */
+    --transition-fast: 0.15s;
+    --transition-normal: 0.25s;
+
+    /* --- Scrollbar --- */
+    --color-scrollbar-thumb: rgba(139, 126, 192, 0.25);
+    --color-scrollbar-track: transparent;
+
+    /* --- Grid --- */
+    --color-grid-header-bg: var(--color-primary-dark);
+    --color-grid-header-text: var(--color-label-primary);
+    --color-grid-border: var(--color-card-border);
+}

@@ -20,9 +20,11 @@ pub(super) fn render_pagination(
     let (window_start, window_end) = page_window(page, total_pages, 5);
 
     rsx! {
-        div { class: s::PAGINATION_BAR,
+        nav {
+            class: s::PAGINATION_BAR,
+            "aria-label": "Table pagination",
             // Row info
-            span { class: s::PAGINATION_INFO,
+            span { class: s::PAGINATION_INFO, "aria-live": "polite", "aria-atomic": "true",
                 "Showing {row_start}\u{2013}{row_end} of {total_rows}"
             }
 
@@ -32,6 +34,7 @@ pub(super) fn render_pagination(
                 button {
                     class: if page == 0 { s::PAGE_BTN_DISABLED } else { s::PAGE_BTN },
                     disabled: page == 0,
+                    "aria-label": "Previous page",
                     onclick: move |_| {
                         if page > 0 { current_page.set(page - 1); }
                     },
@@ -43,6 +46,8 @@ pub(super) fn render_pagination(
                     button {
                         key: "{p}",
                         class: if p == page { s::PAGE_BTN_ACTIVE } else { s::PAGE_BTN },
+                        "aria-label": "Page {p + 1}",
+                        "aria-current": if p == page { "page" } else { "" },
                         onclick: move |_| { current_page.set(p); },
                         "{p + 1}"
                     }
@@ -52,6 +57,7 @@ pub(super) fn render_pagination(
                 button {
                     class: if page + 1 >= total_pages { s::PAGE_BTN_DISABLED } else { s::PAGE_BTN },
                     disabled: page + 1 >= total_pages,
+                    "aria-label": "Next page",
                     onclick: move |_| {
                         if page + 1 < total_pages { current_page.set(page + 1); }
                     },

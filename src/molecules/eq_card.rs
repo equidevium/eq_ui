@@ -19,12 +19,35 @@ pub fn EqCard(
     /// Optional class override - extend or replace default styles.
     #[props(into, default)]
     class: String,
+    /// Accessible label for screen readers. When set, the card becomes
+    /// a named region so assistive technology can announce it
+    /// (e.g. "User profile, region").
+    #[props(into, default)]
+    aria_label: String,
+    /// Semantic role override. Common values:
+    /// - `"article"` for cards in a feed
+    /// - `"group"` for a related set of controls
+    /// - empty (default) for a plain container
+    /// When `aria_label` is set and `role` is empty, defaults to `"region"`.
+    #[props(into, default)]
+    role: String,
     children: Element,
 ) -> Element {
     let cls = merge_classes(s::CARD, &class);
+    let has_label = !aria_label.is_empty();
+    let effective_role = if !role.is_empty() {
+        role.as_str()
+    } else if has_label {
+        "region"
+    } else {
+        ""
+    };
+
     rsx! {
         div {
             class: "{cls}",
+            role: if !effective_role.is_empty() { "{effective_role}" } else { "" },
+            "aria-label": if has_label { "{aria_label}" } else { "" },
             {children}
         }
     }

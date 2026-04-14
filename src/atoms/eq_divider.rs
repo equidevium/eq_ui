@@ -78,7 +78,11 @@ pub fn EqDivider(
         let base = format!("{} {}", s::SPACER, spacing_class);
         let cls = merge_classes(&base, &class);
         return rsx! {
-            hr { class: "{cls}" }
+            hr {
+                class: "{cls}",
+                role: "separator",
+                "aria-orientation": "horizontal",
+            }
         };
     }
 
@@ -99,7 +103,11 @@ pub fn EqDivider(
     let cls = merge_classes(&base, &class);
 
     rsx! {
-        hr { class: "{cls}" }
+        hr {
+            class: "{cls}",
+            role: "separator",
+            "aria-orientation": "horizontal",
+        }
     }
 }
 

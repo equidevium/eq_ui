@@ -46,6 +46,10 @@ pub fn EqVideo(
     /// Apply rounded corners.
     #[props(default = false)]
     rounded: bool,
+    /// Accessible label for screen readers. Describes the video content
+    /// for users who cannot see it.
+    #[props(into, default)]
+    aria_label: String,
     /// Optional class override - extend or replace default wrapper styles.
     #[props(into, default)]
     class: String,
@@ -83,6 +87,7 @@ pub fn EqVideo(
                 muted,
                 r#loop: loop_video,
                 controls,
+                "aria-label": if !aria_label.is_empty() { "{aria_label}" } else { "" },
             }
         }
     }

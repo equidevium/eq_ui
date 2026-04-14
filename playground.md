@@ -257,7 +257,7 @@ pub fn EqPlayground(
 
 EqPlayground renders these internal components:
 
-- `ThemeSwitcher` - dropdown to switch between all 21 built-in themes
+- `ThemeSwitcher` - dropdown to switch between all 23 built-in themes
 - `EqThemeRenderer` - injects the active theme's CSS as an inline `<style>` element
 - `build_tree_from_descriptors()` - groups descriptors by category into sidebar `TreeNode` vec
 - `PreviewPanel` - routes the selected tree node ID to the matching descriptor's `render_demo`
@@ -377,7 +377,7 @@ eq_ui/
   src/
     lib.rs                            - re-exports, all_component_descriptors()
     theme.rs                          - merge_classes(), shared layout constants
-    eq_theme.rs                       - EqTheme enum, 21 themes, CSS content
+    eq_theme.rs                       - EqTheme enum, 23 themes, CSS content
     playground/
       mod.rs                          - module root
       playground_types.rs             - ComponentDescriptor, ComponentCategory, UsageExample
@@ -494,7 +494,7 @@ The EqGrid demo uses the EqTab component to offer three sub-demos under one side
 
 ### Theme Switcher
 
-- `<select>` dropdown in the header, lists all 21 built-in themes
+- `<select>` dropdown in the header, lists all 23 built-in themes
 - Changing the theme updates the global context, all components re-render with new CSS variables
 
 ---

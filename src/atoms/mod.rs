@@ -58,3 +58,13 @@ pub mod eq_tab;
 pub mod eq_tab_styles;
 
 pub use eq_tab::{EqTab, TabItem, TabVariant, TabSize};
+
+pub mod eq_radio_group;
+pub mod eq_radio_group_styles;
+
+pub use eq_radio_group::{EqRadioGroup, RadioItem, RadioSize, RadioLayout};
+
+pub mod eq_switch;
+pub mod eq_switch_styles;
+
+pub use eq_switch::{EqSwitch, SwitchSize};

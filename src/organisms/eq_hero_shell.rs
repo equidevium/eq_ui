@@ -10,6 +10,12 @@ use crate::atoms::{EqText, TextVariant};
 #[cfg(feature = "playground")]
 use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
 
+/// Full-width hero section organism.
+///
+/// **Accessibility** – renders a `<section>` landmark with an auto-generated
+/// `aria-labelledby` pointing at the `<h1>` title, so screen readers announce
+/// it as a named region (e.g. "Welcome, region"). Decorative background and
+/// overlay elements are hidden from the accessibility tree.
 #[component]
 pub fn EqHeroShell(
     #[props(into)]
@@ -22,22 +28,48 @@ pub fn EqHeroShell(
     subtitle_color: Option<String>,
     actions: Option<Element>,
     background: Option<Element>,
+    /// Accessible label for screen readers. When empty (default), the
+    /// section is labelled by its `<h1>` title via `aria-labelledby`.
+    #[props(into, default)]
+    aria_label: String,
+    /// Semantic role override. Common values:
+    /// - `"banner"` for the primary hero of the page
+    /// - empty (default) — the `<section>` landmark is used as-is
+    #[props(into, default)]
+    role: String,
     /// Optional class override - extend or replace default wrapper styles.
     #[props(into, default)]
     class: String,
 ) -> Element {
+    // Stable unique ID for aria-labelledby linking.
+    let hero_id = use_hook(|| {
+        static COUNTER: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+        let id = COUNTER.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        format!("eq-hero-{id}")
+    });
+
+    let title_id = format!("{}-title", hero_id);
+    let has_label = !aria_label.is_empty();
+    let has_role = !role.is_empty();
+
     let base = format!("{HERO_SHELL} {HERO_SHELL_RELATIVE}");
     let cls = merge_classes(&base, &class);
     rsx! {
-        section { class: "{cls}",
+        section {
+            class: "{cls}",
+            role: if has_role { "{role}" } else { "" },
+            "aria-label": if has_label { "{aria_label}" } else { "" },
+            "aria-labelledby": if !has_label { "{title_id}" } else { "" },
+
             if let Some(bg) = background {
-                div { class: HERO_BG,
+                div { class: HERO_BG, "aria-hidden": "true",
                     {bg}
                 }
-                div { class: HERO_OVERLAY }
+                div { class: HERO_OVERLAY, "aria-hidden": "true" }
             }
             div { class: "{CONTAINER_LAYOUT} {HERO_CONTENT}",
                 h1 {
+                    id: "{title_id}",
                     class: HERO_TITLE,
                     style: if let Some(ref c) = title_color { format!("color: {c}") } else { String::new() },
                     "{title}"
