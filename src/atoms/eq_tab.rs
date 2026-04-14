@@ -21,6 +21,7 @@
 
 use super::eq_tab_styles as s;
 use crate::theme::merge_classes;
+use dioxus::document;
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
@@ -133,11 +134,80 @@ pub fn EqTab(
     let container_base = format!("{} {}", s::CONTAINER, container_extra);
     let container_cls = merge_classes(&container_base, &class);
 
+    // Stable unique ID prefix for this tab bar instance
+    let tab_id_prefix = use_hook(|| {
+        static COUNTER: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+        let id = COUNTER.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        format!("eq-tab-{id}")
+    });
+
+    // Collect enabled tab indices for keyboard navigation
+    let enabled_indices: Vec<usize> = tabs
+        .iter()
+        .enumerate()
+        .filter(|(_, tab)| !tab.disabled)
+        .map(|(i, _)| i)
+        .collect();
+
+    let enabled_for_keydown = enabled_indices.clone();
+    let prefix_for_keydown = tab_id_prefix.clone();
+
     rsx! {
         div {
             class: "{container_cls}",
             role: "tablist",
-            for (idx, tab) in tabs.iter().enumerate() {
+            "aria-orientation": "horizontal",
+            onkeydown: move |evt: Event<KeyboardData>| {
+                if enabled_for_keydown.is_empty() { return; }
+                let key = evt.key();
+
+                // Find current position in enabled list
+                let current_pos = enabled_for_keydown.iter().position(|&i| i == active);
+
+                let next_idx = match key {
+                    Key::ArrowRight => {
+                        evt.prevent_default();
+                        match current_pos {
+                            Some(pos) => {
+                                let next = (pos + 1) % enabled_for_keydown.len();
+                                Some(enabled_for_keydown[next])
+                            }
+                            None => Some(enabled_for_keydown[0]),
+                        }
+                    }
+                    Key::ArrowLeft => {
+                        evt.prevent_default();
+                        match current_pos {
+                            Some(pos) => {
+                                let next = if pos == 0 { enabled_for_keydown.len() - 1 } else { pos - 1 };
+                                Some(enabled_for_keydown[next])
+                            }
+                            None => Some(*enabled_for_keydown.last().unwrap()),
+                        }
+                    }
+                    Key::Home => {
+                        evt.prevent_default();
+                        Some(enabled_for_keydown[0])
+                    }
+                    Key::End => {
+                        evt.prevent_default();
+                        Some(*enabled_for_keydown.last().unwrap())
+                    }
+                    _ => None,
+                };
+
+                if let Some(idx) = next_idx {
+                    if let Some(ref handler) = on_change {
+                        handler.call(idx);
+                    }
+                    // Move browser focus to the newly active tab button
+                    let focus_id = format!("{}-{idx}", prefix_for_keydown);
+                    document::eval(&format!(
+                        "document.getElementById('{focus_id}')?.focus()"
+                    ));
+                }
+            },
+            for (idx , tab) in tabs.iter().enumerate() {
                 {
                     let is_active = idx == active;
                     let is_disabled = tab.disabled;
@@ -159,13 +229,19 @@ pub fn EqTab(
                     let label = tab.label.clone();
                     let on_change = on_change.clone();
 
+                    // Roving tabindex: only the active tab is in the tab order
+                    let tab_idx = if is_active { "0" } else { "-1" };
+                    let btn_id = format!("{tab_id_prefix}-{idx}");
+
                     rsx! {
                         button {
                             key: "{idx}",
+                            id: "{btn_id}",
                             class: "{btn_cls}",
                             role: "tab",
                             "aria-selected": "{is_active}",
                             "aria-disabled": "{is_disabled}",
+                            tabindex: "{tab_idx}",
                             disabled: is_disabled,
                             onclick: move |_| {
                                 if !is_active && !is_disabled {

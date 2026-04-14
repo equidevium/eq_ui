@@ -22,7 +22,7 @@ https://github.com/user-attachments/assets/4ea4f561-4581-481d-bc27-c2f5a2879998
 | EqScrollableSpace | Atom | full | Scrollable container with themed scrollbar |
 | EqVideo | Atom | full | Video with poster overlay, autoplay, controls |
 | EqProgress | Atom | full | Progress bar with determinate/indeterminate, 4 variants, gradient fill |
-| EqTab | Atom | pending | Tab bar with underline, pill, and card variants; badges; disabled state |
+| EqTab | Atom | full | Tab bar with underline, pill, and card variants; badges; disabled state |
 | EqRadioGroup | Atom | full | Radio button group with mutually exclusive selection, three sizes, vertical/horizontal layout |
 | EqSwitch | Atom | full | Toggle switch with pill track and sliding thumb, three sizes |
 | EqCard | Molecule | - | Card with header/body/footer slots |
@@ -83,7 +83,7 @@ Tier 1 = works as-is, Tier 2 = needs small fix, Tier 3 = needs significant work.
 | EqScrollableSpace | 2 | no | Custom scrollbar CSS cosmetic-only on Blitz |
 | EqVideo | 1 | no | Video playback on Blitz depends on media support |
 | EqProgress | 1 | no | Indeterminate animation needs Blitz fallback |
-| EqTab | 1 | no | ARIA planned via dioxus-primitives Phase 2 |
+| EqTab | 1 | no |  |
 | EqCard | 1 | no |  |
 | EqImageCard | 1 | no |  |
 | EqCarousel | 2 | no | Slide transition needs Blitz fallback |

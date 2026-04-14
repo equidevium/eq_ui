@@ -6,6 +6,7 @@
 
 use super::eq_radio_group_styles as s;
 use crate::theme::merge_classes;
+use dioxus::document;
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
@@ -111,6 +112,13 @@ pub fn EqRadioGroup(
     };
     let group_cls = merge_classes(group_base, &class);
 
+    // Stable unique ID prefix for this radio group instance
+    let radio_id_prefix = use_hook(|| {
+        static COUNTER: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+        let id = COUNTER.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        format!("eq-radio-{id}")
+    });
+
     // Collect enabled indices for keyboard navigation
     let enabled_indices: Vec<usize> = items
         .iter()
@@ -121,6 +129,7 @@ pub fn EqRadioGroup(
 
     let items_for_keydown = items.clone();
     let enabled_for_keydown = enabled_indices.clone();
+    let prefix_for_keydown = radio_id_prefix.clone();
 
     rsx! {
         div {
@@ -172,6 +181,11 @@ pub fn EqRadioGroup(
                     if let Some(ref handler) = on_change {
                         handler.call(items_for_keydown[idx].value.clone());
                     }
+                    // Move browser focus to the newly selected radio item
+                    let focus_id = format!("{}-{idx}", prefix_for_keydown);
+                    document::eval(&format!(
+                        "document.getElementById('{focus_id}')?.focus()"
+                    ));
                 }
             },
             for (idx , item) in items.iter().enumerate() {
@@ -214,9 +228,11 @@ pub fn EqRadioGroup(
                         selected.is_empty() && enabled_indices.first() == Some(&idx)
                     };
                     let tab_idx = if is_tabbable { "0" } else { "-1" };
+                    let item_id = format!("{radio_id_prefix}-{idx}");
 
                     rsx! {
                         span {
+                            id: "{item_id}",
                             class: "{item_cls}",
                             role: "radio",
                             "aria-checked": "{is_selected}",
