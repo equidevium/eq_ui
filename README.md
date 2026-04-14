@@ -36,7 +36,7 @@ https://github.com/user-attachments/assets/4ea4f561-4581-481d-bc27-c2f5a2879998
 | EqPageSection | Organism | native | Titled content section |
 | EqAppShell | Organism | native | Full page layout (header + main + footer) |
 | EqNavbar | Organism | native | Horizontal nav bar |
-| EqGrid | Organism | pending | Data grid with sorting, filtering, pagination, virtualization, DnD, export |
+| EqGrid | Organism | full | Data grid with sorting, filtering, pagination, virtualization, DnD, export |
 | Getting Started Guide | Guide | - | In-app developer guide for the playground |
 | Theme Showcase | Theming | - | Theme color and gradient swatch viewer |
 
@@ -95,7 +95,7 @@ Tier 1 = works as-is, Tier 2 = needs small fix, Tier 3 = needs significant work.
 | EqPageSection | 1 | no |  |
 | EqAppShell | 1 | no |  |
 | EqNavbar | 1 | no |  |
-| EqGrid | 3 | yes | Clipboard via document::eval(), DnD and scroll measurement need Blitz testing |
+| EqGrid | 3 | yes | Full ARIA: aria-sort on headers, scope=col, aria-selected on rows, aria-rowcount/colcount, aria-busy, aria-live pagination, aria-label on filters/nav, aria-hidden spacers |
 | Theme Showcase | 1 | no | Playground-only, feature-gated |
 | EqRadioGroup | 1 | no |  |
 | EqSwitch | 2 | no | CSS transition degrades to instant toggle on Blitz |

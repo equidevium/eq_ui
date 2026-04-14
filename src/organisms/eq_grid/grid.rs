@@ -126,6 +126,15 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
     /// for reordering the data.
     #[props(default)]
     on_reorder: Option<EventHandler<(usize, usize)>>,
+    /// Accessible label for screen readers (e.g. "Employee data",
+    /// "Order history"). Announced as "{label}, table".
+    #[props(into, default)]
+    aria_label: String,
+    /// When `true`, drag-and-drop and reorder operations are announced
+    /// via an ARIA live region so screen reader users hear what moved
+    /// (e.g. "Row 3 moved to position 5", "2 rows received").
+    #[props(default = false)]
+    announce_moves: bool,
     /// Optional class override.
     #[props(into, default)]
     class: String,
@@ -155,6 +164,8 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
     // Reorder state - grip handles and drag logic.
     let reorder_from: Signal<Option<usize>> = use_signal(|| None);
     let reorder_over: Signal<Option<usize>> = use_signal(|| None);
+    // ARIA live region text for announcing drag/reorder operations.
+    let mut move_announcement: Signal<String> = use_signal(|| String::new());
 
     // Clear selection when data length changes (e.g. rows moved via
     // drag-and-drop). Stale indices would point at wrong rows.
@@ -368,6 +379,17 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
         }
     };
 
+    // ── ARIA helpers ─────────────────────────────────────────────
+
+    let has_aria_label = !aria_label.is_empty();
+    // Total column count including utility columns (grip, checkbox).
+    let aria_colcount = columns.len()
+        + if reorderable { 1 } else { 0 }
+        + if row_selection == RowSelection::Multi { 1 } else { 0 };
+    // Total row count is always the full dataset (filtered) so screen
+    // readers know the true size even when paginated or virtualized.
+    let aria_rowcount_val = total_rows + 1; // +1 for header row
+
     // ── Render ──────────────────────────────────────────────────
 
     let wrapper_cls = merge_classes(s::GRID_WRAPPER, &class);
@@ -381,6 +403,7 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
             if resize_active.read().is_some() {
                 div {
                     class: s::RESIZE_OVERLAY,
+                    "aria-hidden": "true",
                     onmousemove: {
                         let mut column_widths = column_widths;
                         let resize_active = resize_active;
@@ -436,6 +459,7 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
             // Grid container (relative for loading overlay positioning)
             div {
                 class: if drop_hover() { format!("relative {} {}", s::GRID_CONTAINER, s::DROP_TARGET_ACTIVE) } else { format!("relative {}", s::GRID_CONTAINER) },
+                "aria-busy": if loading { "true" } else { "" },
                 onmounted: move |evt: MountedEvent| {
                     container_element.set(Some(evt));
                 },
@@ -474,6 +498,14 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
                         drop_hover.set(false);
                         if let Some(mut ctx) = drag_ctx {
                             if let Some(payload) = ctx().take() {
+                                if announce_moves {
+                                    let count = payload.indices.len();
+                                    let src = payload.source_id;
+                                    let noun = if count == 1 { "row" } else { "rows" };
+                                    move_announcement.set(format!(
+                                        "{count} {noun} received from {src}"
+                                    ));
+                                }
                                 if let Some(ref handler) = on_drop_receive {
                                     handler.call(payload);
                                 }
@@ -485,7 +517,7 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
 
                 // Loading overlay
                 if loading {
-                    div { class: s::LOADING_OVERLAY,
+                    div { class: s::LOADING_OVERLAY, "aria-hidden": "true",
                         EqIcon {
                             path: eq_icon_paths::SPINNER,
                             class: s::LOADING_SPINNER,
@@ -503,7 +535,11 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
                     {
                         let has_cb = row_selection == RowSelection::Multi;
                         rsx! {
-                            table { class: s::TABLE,
+                            table {
+                                class: s::TABLE,
+                                "aria-label": if has_aria_label { "{aria_label}" } else { "" },
+                                "aria-rowcount": "{aria_rowcount_val}",
+                                "aria-colcount": "{aria_colcount}",
                                 {render_colgroup(&columns, column_widths, reorderable, has_cb)}
                                 {render_header(&columns, sort_state, current_page, column_filters, density_cls, row_selection, selected_rows, &visible_indices, &on_selection_change, column_widths, resize_active, reorderable)}
                             }
@@ -547,6 +583,8 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
                                             reorder_from,
                                             reorder_over,
                                             &on_reorder,
+                                            announce_moves,
+                                            move_announcement,
                                         )
                                     }
                                 }
@@ -555,7 +593,11 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
                     }
                 } else {
                     // Standard non-virtualized table.
-                    table { class: s::TABLE,
+                    table {
+                        class: s::TABLE,
+                        "aria-label": if has_aria_label { "{aria_label}" } else { "" },
+                        "aria-rowcount": "{aria_rowcount_val}",
+                        "aria-colcount": "{aria_colcount}",
                         {render_header(&columns, sort_state, current_page, column_filters, density_cls, row_selection, selected_rows, &visible_indices, &on_selection_change, column_widths, resize_active, reorderable)}
                         {
                             render_body(
@@ -580,6 +622,8 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
                                 reorder_from,
                                 reorder_over,
                                 &on_reorder,
+                                announce_moves,
+                                move_announcement,
                             )
                         }
                     }
@@ -624,9 +668,22 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
 
             // Virtualization info bar - visible range and total entries
             if virtualize && total_rows > 0 {
-                div { class: s::VIRTUAL_INFO_BAR,
+                div { class: s::VIRTUAL_INFO_BAR, "aria-live": "polite", "aria-atomic": "true",
                     span { "Showing {virt_first}\u{2013}{virt_last} of {total_rows} entries" }
                     span { "{windowed_indices.len()} rows rendered" }
+                }
+            }
+
+            // ARIA live region for announcing drag/reorder operations.
+            // Visually hidden but read aloud by screen readers.
+            if announce_moves {
+                div {
+                    class: "sr-only",
+                    style: "position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;",
+                    "aria-live": "assertive",
+                    "aria-atomic": "true",
+                    role: "status",
+                    "{move_announcement}"
                 }
             }
         }
