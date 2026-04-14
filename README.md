@@ -19,7 +19,7 @@ https://github.com/user-attachments/assets/4ea4f561-4581-481d-bc27-c2f5a2879998
 | EqCheckbox | Atom | full | Checkbox with checked/unchecked/indeterminate states |
 | EqButton | Atom | native | Button with 5 variants, 3 sizes, gradient transitions |
 | EqDivider | Atom | full | Separator with solid/dashed/dotted/spacer variants |
-| EqScrollableSpace | Atom | - | Scrollable container with themed scrollbar |
+| EqScrollableSpace | Atom | full | Scrollable container with themed scrollbar |
 | EqVideo | Atom | full | Video with poster overlay, autoplay, controls |
 | EqProgress | Atom | full | Progress bar with determinate/indeterminate, 4 variants, gradient fill |
 | EqTab | Atom | pending | Tab bar with underline, pill, and card variants; badges; disabled state |
