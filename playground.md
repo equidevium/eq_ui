@@ -439,30 +439,7 @@ eq_ui/
 
 ### Layout
 
-```
-+--------------------------------------------------+
-|  EqHeader  [site_title]         [ThemeSwitcher]  |
-+------------+-------------------------------------+
-|            |                                     |
-|  Sidebar   |         Preview Panel               |
-|  Tree      |                                     |
-|            |  +-----------------------------+    |
-|  > Guide   |  |  Tab bar (if applicable)    |    |
-|    Getting  |  +-----------------------------+    |
-|    Started  |  |  Props controls             |    |
-|  > Atoms   |  +-----------------------------+    |
-|    EqText  |  |  Live preview               |    |
-|    EqLabel |  +-----------------------------+    |
-|    EqTab   |  |  Style tokens               |    |
-|    ...     |  +-----------------------------+    |
-|  > Molecul |  |  Code block                 |    |
-|  > Organis |  +-----------------------------+    |
-|  > Theming |  |                             |    |
-|            |                                     |
-+------------+-------------------------------------+
-|  EqFooter  [copyright_holder]                    |
-+--------------------------------------------------+
-```
+![Playground Layout](assets/playground-layout.png)
 
 ### Preview Panel Rendering Order
 
