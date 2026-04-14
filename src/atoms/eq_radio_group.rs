@@ -111,11 +111,70 @@ pub fn EqRadioGroup(
     };
     let group_cls = merge_classes(group_base, &class);
 
+    // Collect enabled indices for keyboard navigation
+    let enabled_indices: Vec<usize> = items
+        .iter()
+        .enumerate()
+        .filter(|(_, item)| !disabled && !item.disabled)
+        .map(|(i, _)| i)
+        .collect();
+
+    let items_for_keydown = items.clone();
+    let enabled_for_keydown = enabled_indices.clone();
+
     rsx! {
         div {
             class: "{group_cls}",
             role: "radiogroup",
-            for item in items.iter() {
+            onkeydown: move |evt: Event<KeyboardData>| {
+                if enabled_for_keydown.is_empty() { return; }
+                let key = evt.key();
+
+                // Find current index in the enabled list
+                let current_enabled_pos = items_for_keydown
+                    .iter()
+                    .position(|item| item.value == selected)
+                    .and_then(|idx| enabled_for_keydown.iter().position(|&i| i == idx));
+
+                let next_idx = match key {
+                    Key::ArrowDown | Key::ArrowRight => {
+                        evt.prevent_default();
+                        match current_enabled_pos {
+                            Some(pos) => {
+                                let next = (pos + 1) % enabled_for_keydown.len();
+                                Some(enabled_for_keydown[next])
+                            }
+                            None => Some(enabled_for_keydown[0]),
+                        }
+                    }
+                    Key::ArrowUp | Key::ArrowLeft => {
+                        evt.prevent_default();
+                        match current_enabled_pos {
+                            Some(pos) => {
+                                let next = if pos == 0 { enabled_for_keydown.len() - 1 } else { pos - 1 };
+                                Some(enabled_for_keydown[next])
+                            }
+                            None => Some(*enabled_for_keydown.last().unwrap()),
+                        }
+                    }
+                    Key::Home => {
+                        evt.prevent_default();
+                        Some(enabled_for_keydown[0])
+                    }
+                    Key::End => {
+                        evt.prevent_default();
+                        Some(*enabled_for_keydown.last().unwrap())
+                    }
+                    _ => None,
+                };
+
+                if let Some(idx) = next_idx {
+                    if let Some(ref handler) = on_change {
+                        handler.call(items_for_keydown[idx].value.clone());
+                    }
+                }
+            },
+            for (idx , item) in items.iter().enumerate() {
                 {
                     let is_selected = item.value == selected;
                     let is_disabled = disabled || item.disabled;
@@ -145,12 +204,24 @@ pub fn EqRadioGroup(
                     let has_description = item.description.is_some();
                     let description = item.description.clone().unwrap_or_default();
 
+                    // Roving tabindex: only the selected (or first enabled) item is tabbable
+                    let is_tabbable = if is_disabled {
+                        false
+                    } else if is_selected {
+                        true
+                    } else {
+                        // If nothing is selected, first enabled item is tabbable
+                        selected.is_empty() && enabled_indices.first() == Some(&idx)
+                    };
+                    let tab_idx = if is_tabbable { "0" } else { "-1" };
+
                     rsx! {
                         span {
                             class: "{item_cls}",
                             role: "radio",
                             "aria-checked": "{is_selected}",
                             "aria-disabled": "{is_disabled}",
+                            tabindex: "{tab_idx}",
                             onclick: move |evt| {
                                 evt.stop_propagation();
                                 if !is_disabled {

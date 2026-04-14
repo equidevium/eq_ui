@@ -102,8 +102,20 @@ pub fn EqSwitch(
             role: "switch",
             "aria-checked": "{checked}",
             "aria-disabled": "{disabled}",
+            tabindex: if disabled { "-1" } else { "0" },
             onclick: move |_| {
                 if !disabled {
+                    if let Some(ref handler) = on_change {
+                        handler.call(!checked);
+                    }
+                }
+            },
+            onkeydown: move |evt: Event<KeyboardData>| {
+                if disabled { return; }
+                let key = evt.key();
+                // Space toggles, Enter is intentionally blocked for switches
+                if key == Key::Character(" ".into()) {
+                    evt.prevent_default();
                     if let Some(ref handler) = on_change {
                         handler.call(!checked);
                     }

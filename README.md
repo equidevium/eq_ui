@@ -8,35 +8,61 @@ https://github.com/user-attachments/assets/4ea4f561-4581-481d-bc27-c2f5a2879998
 
 <!-- COMPONENTS_START -->
 
-Organized in three layers:
+| Component | Category | ARIA | Description |
+|---|---|---|---|
+| EqText | Atom | native | Semantic text with variant-based tag selection (h1-h3, body, caption, muted) |
+| EqLabel | Atom | native | Form label with for_id binding |
+| EqLink | Atom | native | Anchor link with color theming |
+| EqInput | Atom | native | Input/textarea with kind variants (text, email, password, number, textarea) |
+| EqIcon | Atom | full | Icon wrapper with size variants |
+| EqImage | Atom | full | Image with sizing, aspect ratio, and object-fit control |
+| EqCheckbox | Atom | full | Checkbox with checked/unchecked/indeterminate states |
+| EqButton | Atom | native | Button with 5 variants, 3 sizes, gradient transitions |
+| EqDivider | Atom | full | Separator with solid/dashed/dotted/spacer variants |
+| EqScrollableSpace | Atom | - | Scrollable container with themed scrollbar |
+| EqVideo | Atom | full | Video with poster overlay, autoplay, controls |
+| EqProgress | Atom | full | Progress bar with determinate/indeterminate, 4 variants, gradient fill |
+| EqTab | Atom | pending | Tab bar with underline, pill, and card variants; badges; disabled state |
+| EqRadioGroup | Atom | full | Radio button group with mutually exclusive selection, three sizes, vertical/horizontal layout |
+| EqSwitch | Atom | full | Toggle switch with pill track and sliding thumb, three sizes |
+| EqCard | Molecule | - | Card with header/body/footer slots |
+| EqImageCard | Molecule | - | Image card with caption modes (below/overlay) |
+| EqCarousel | Molecule | pending | Generic content carousel with arrows and dots |
+| EqTree | Molecule | pending | Collapsible tree view with select and expand |
+| EqAccordion | Molecule | pending | Collapsible panels with single/multi-expand modes |
+| EqHeader | Organism | native | Sticky header with brand, nav, and backdrop blur |
+| EqFooter | Organism | native | Footer with link groups and copyright |
+| EqHeroShell | Organism | - | Hero banner with background image, overlay, custom colors |
+| EqPageSection | Organism | native | Titled content section |
+| EqAppShell | Organism | native | Full page layout (header + main + footer) |
+| EqNavbar | Organism | native | Horizontal nav bar |
+| EqGrid | Organism | pending | Data grid with sorting, filtering, pagination, virtualization, DnD, export |
+| Getting Started Guide | Guide | - | In-app developer guide for the playground |
+| Theme Showcase | Theming | - | Theme color and gradient swatch viewer |
 
-**Atoms** - EqText, EqLabel, EqLink, EqInput, EqIcon, EqImage, EqCheckbox, EqButton, EqDivider, EqScrollableSpace, EqVideo, EqProgress, EqTab, EqRadioGroup, EqSwitch.
-
-**Molecules** - EqCard, EqImageCard, EqCarousel, EqTree, EqAccordion.
-
-**Organisms** - EqHeader, EqFooter, EqHeroShell, EqPageSection, EqAppShell, EqNavbar, EqGrid.
+ARIA legend: **full** = roles + attributes + keyboard, **native** = semantic HTML, **pending** = planned, **-** = non-interactive.
 
 **Planned** (not yet built):
 
-| Component | Category | Notes |
-|---|---|---|
-| Skeleton | Atom | CSS keyframes |
-| Slider | Atom | Dioxus mouse events |
-| Calendar | Molecule | Pure date grid |
-| Pagination | Molecule |  |
-| ToastList | Molecule | Needs animation for enter/exit |
-| Dialog | Molecule |  |
-| Sheet / Drawer | Molecule | Needs slide transition |
-| Select | Atom | Positioning via eval |
-| ToolTip | Atom | Positioning via eval |
-| DropDownMenu | Molecule | Positioning via eval |
-| ContextMenu | Molecule | Positioning via eval |
-| HoverCard | Molecule | Positioning via eval |
-| DatePicker | Molecule | Positioning via eval |
-| VirtualList | Organism | Scroll position via eval |
-| RichTextEditor | Organism | JS editor init via eval |
-| Signature | Atom | Canvas drawing via eval |
-| Babylon.js | Organism | JS engine init via eval |
+| Component | Category | ARIA | Notes |
+|---|---|---|---|
+| Skeleton | Atom | - | CSS keyframes |
+| Slider | Atom | planned | Via dioxus-primitives |
+| Calendar | Molecule | planned | Via dioxus-primitives |
+| Pagination | Molecule | planned |  |
+| ToastList | Molecule | planned | Via dioxus-primitives |
+| Dialog | Molecule | planned | Via dioxus-primitives |
+| Sheet / Drawer | Molecule | planned | Needs slide transition |
+| Select | Atom | planned | Via dioxus-primitives, positioning via eval |
+| ToolTip | Atom | planned | Via dioxus-primitives, positioning via eval |
+| DropDownMenu | Molecule | planned | Via dioxus-primitives, positioning via eval |
+| ContextMenu | Molecule | planned | Via dioxus-primitives, positioning via eval |
+| HoverCard | Molecule | planned | Via dioxus-primitives, positioning via eval |
+| DatePicker | Molecule | planned | Via dioxus-primitives, positioning via eval |
+| VirtualList | Organism | - | Scroll position via eval |
+| RichTextEditor | Organism | - | JS editor init via eval |
+| Signature | Atom | - | Canvas drawing via eval |
+| Babylon.js | Organism | - | JS engine init via eval |
 
 ### Blitz (native) readiness
 
@@ -57,12 +83,12 @@ Tier 1 = works as-is, Tier 2 = needs small fix, Tier 3 = needs significant work.
 | EqScrollableSpace | 2 | no | Custom scrollbar CSS cosmetic-only on Blitz |
 | EqVideo | 1 | no | Video playback on Blitz depends on media support |
 | EqProgress | 1 | no | Indeterminate animation needs Blitz fallback |
-| EqTab | 1 | no |  |
+| EqTab | 1 | no | ARIA planned via dioxus-primitives Phase 2 |
 | EqCard | 1 | no |  |
 | EqImageCard | 1 | no |  |
 | EqCarousel | 2 | no | Slide transition needs Blitz fallback |
-| EqTree | 1 | no |  |
-| EqAccordion | 1 | no |  |
+| EqTree | 1 | no | Tree ARIA (treeitem, group) planned |
+| EqAccordion | 1 | no | ARIA planned via dioxus-primitives Phase 2 |
 | EqHeader | 2 | no | backdrop-filter needs Blitz fallback |
 | EqFooter | 1 | no |  |
 | EqHeroShell | 2 | no | Overlay blend mode may need Blitz fallback |
