@@ -27,7 +27,7 @@ https://github.com/user-attachments/assets/4ea4f561-4581-481d-bc27-c2f5a2879998
 | EqSwitch | Atom | full | Toggle switch with pill track and sliding thumb, three sizes |
 | EqCard | Molecule | full | Card with header/body/footer slots |
 | EqImageCard | Molecule | full | Image card with caption modes (below/overlay) |
-| EqCarousel | Molecule | pending | Generic content carousel with arrows and dots |
+| EqCarousel | Molecule | full | Generic content carousel with arrows and dots |
 | EqTree | Molecule | pending | Collapsible tree view with select and expand |
 | EqAccordion | Molecule | pending | Collapsible panels with single/multi-expand modes |
 | EqHeader | Organism | native | Sticky header with brand, nav, and backdrop blur |

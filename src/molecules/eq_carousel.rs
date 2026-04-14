@@ -39,18 +39,22 @@ fn CarouselArrow(
     position: &'static str,
     /// SVG path data for the chevron direction.
     chevron: &'static str,
+    /// Accessible label for screen readers.
+    label: &'static str,
     /// Click handler.
     onclick: EventHandler<MouseEvent>,
 ) -> Element {
     rsx! {
         button {
             class: "{s::ARROW_BASE} {position}",
+            "aria-label": "{label}",
             onclick: move |evt| onclick.call(evt),
             svg {
                 class: s::ARROW_ICON,
                 xmlns: "http://www.w3.org/2000/svg",
                 fill: "none", view_box: "0 0 24 24",
                 stroke_width: "2", stroke: "currentColor",
+                "aria-hidden": "true",
                 path { d: "{chevron}" }
             }
         }
@@ -76,6 +80,10 @@ pub fn EqCarousel(
     /// Gap between slides in pixels (only applies in Peek mode).
     #[props(default = 12)]
     gap: u32,
+    /// Accessible label for screen readers (e.g. "Product images",
+    /// "Featured articles"). Announced as "{label}, carousel".
+    #[props(into, default = "Carousel".to_string())]
+    aria_label: String,
     /// Optional class override - extend or replace default wrapper styles.
     #[props(into, default)]
     class: String,
@@ -91,6 +99,7 @@ pub fn EqCarousel(
     };
 
     let show_controls = len > 1;
+    let slide_label = format!("Slide {} of {}", current() + 1, len);
 
     match mode {
         CarouselMode::Default => {
@@ -98,16 +107,39 @@ pub fn EqCarousel(
 
             let cls = merge_classes(s::CAROUSEL, &class);
             rsx! {
-                div { class: "{cls}",
+                div {
+                    class: "{cls}",
+                    role: "region",
+                    "aria-roledescription": "carousel",
+                    "aria-label": "{aria_label}",
+                    onkeydown: move |evt: Event<KeyboardData>| {
+                        match evt.key() {
+                            Key::ArrowLeft => {
+                                evt.prevent_default();
+                                current.set(if current() == 0 { len - 1 } else { current() - 1 });
+                            }
+                            Key::ArrowRight => {
+                                evt.prevent_default();
+                                current.set(if current() + 1 >= len { 0 } else { current() + 1 });
+                            }
+                            _ => {}
+                        }
+                    },
 
-                    // Slide strip
+                    // Slide strip with live region
                     div {
                         class: s::SLIDE_STRIP,
                         style: "{offset}",
+                        "aria-live": "polite",
+                        "aria-atomic": "true",
                         for (i, slide) in slides.into_iter().enumerate() {
                             div {
                                 key: "{i}",
                                 class: s::SLIDE,
+                                role: "group",
+                                "aria-roledescription": "slide",
+                                "aria-label": "Slide {i + 1} of {len}",
+                                "aria-hidden": if i != current() { "true" } else { "" },
                                 {slide}
                             }
                         }
@@ -115,17 +147,23 @@ pub fn EqCarousel(
 
                     // Arrows
                     if show_controls {
-                        CarouselArrow { position: s::ARROW_LEFT, chevron: "M15.75 19.5 8.25 12l7.5-7.5", onclick: go_prev }
-                        CarouselArrow { position: s::ARROW_RIGHT, chevron: "m8.25 4.5 7.5 7.5-7.5 7.5", onclick: go_next }
+                        CarouselArrow { position: s::ARROW_LEFT, chevron: "M15.75 19.5 8.25 12l7.5-7.5", label: "Previous slide", onclick: go_prev }
+                        CarouselArrow { position: s::ARROW_RIGHT, chevron: "m8.25 4.5 7.5 7.5-7.5 7.5", label: "Next slide", onclick: go_next }
                     }
 
                     // Dots
                     if show_controls {
-                        div { class: s::DOTS,
+                        div {
+                            class: s::DOTS,
+                            role: "tablist",
+                            "aria-label": "Slide controls",
                             for i in 0..len {
-                                span {
+                                button {
                                     key: "{i}",
                                     class: if current() == i { s::DOT_ACTIVE } else { s::DOT },
+                                    role: "tab",
+                                    "aria-selected": if current() == i { "true" } else { "false" },
+                                    "aria-label": "Go to slide {i + 1}",
                                     onclick: move |_| current.set(i),
                                 }
                             }
@@ -149,45 +187,76 @@ pub fn EqCarousel(
 
             let cls = merge_classes(s::CAROUSEL_PEEK, &class);
             rsx! {
-                div { class: "{cls}",
+                div {
+                    class: "{cls}",
+                    role: "region",
+                    "aria-roledescription": "carousel",
+                    "aria-label": "{aria_label}",
+                    onkeydown: move |evt: Event<KeyboardData>| {
+                        match evt.key() {
+                            Key::ArrowLeft => {
+                                evt.prevent_default();
+                                current.set(if current() == 0 { len - 1 } else { current() - 1 });
+                            }
+                            Key::ArrowRight => {
+                                evt.prevent_default();
+                                current.set(if current() + 1 >= len { 0 } else { current() + 1 });
+                            }
+                            _ => {}
+                        }
+                    },
 
                     // Slide strip
                     div {
                         class: s::SLIDE_STRIP_PEEK,
                         style: "{strip_gap} {offset}",
+                        "aria-live": "polite",
+                        "aria-atomic": "true",
                         for (i, slide) in slides.into_iter().enumerate() {
                             div {
                                 key: "{i}",
                                 class: s::SLIDE_PEEK,
                                 style: "width: 80%;",
+                                role: "group",
+                                "aria-roledescription": "slide",
+                                "aria-label": "Slide {i + 1} of {len}",
+                                "aria-hidden": if i != current() { "true" } else { "" },
                                 {slide}
                             }
                         }
                     }
 
-                    // Fade masks
+                    // Fade masks (decorative)
                     div {
                         class: s::PEEK_FADE_LEFT,
                         style: "width: 12%; {fade_left}",
+                        "aria-hidden": "true",
                     }
                     div {
                         class: s::PEEK_FADE_RIGHT,
                         style: "width: 12%; {fade_right}",
+                        "aria-hidden": "true",
                     }
 
                     // Arrows
                     if show_controls {
-                        CarouselArrow { position: s::ARROW_LEFT, chevron: "M15.75 19.5 8.25 12l7.5-7.5", onclick: go_prev }
-                        CarouselArrow { position: s::ARROW_RIGHT, chevron: "m8.25 4.5 7.5 7.5-7.5 7.5", onclick: go_next }
+                        CarouselArrow { position: s::ARROW_LEFT, chevron: "M15.75 19.5 8.25 12l7.5-7.5", label: "Previous slide", onclick: go_prev }
+                        CarouselArrow { position: s::ARROW_RIGHT, chevron: "m8.25 4.5 7.5 7.5-7.5 7.5", label: "Next slide", onclick: go_next }
                     }
 
                     // Dots
                     if show_controls {
-                        div { class: s::DOTS,
+                        div {
+                            class: s::DOTS,
+                            role: "tablist",
+                            "aria-label": "Slide controls",
                             for i in 0..len {
-                                span {
+                                button {
                                     key: "{i}",
                                     class: if current() == i { s::DOT_ACTIVE } else { s::DOT },
+                                    role: "tab",
+                                    "aria-selected": if current() == i { "true" } else { "false" },
+                                    "aria-label": "Go to slide {i + 1}",
                                     onclick: move |_| current.set(i),
                                 }
                             }
