@@ -114,7 +114,7 @@ pub fn EqAccordion(
                 // Each header button has id "{prefix}-hdr-{item_id}".
                 // We can infer the index from the item_ids list.
                 // Fall back to first/last depending on key direction.
-                let cur_idx = {
+                let _cur_idx = {
                     // Try to figure out which header is focused from focused_id
                     // We don't store focused state — all buttons are natively
                     // focusable, so we rely on document.activeElement.

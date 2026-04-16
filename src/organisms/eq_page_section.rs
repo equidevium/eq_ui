@@ -1,5 +1,4 @@
 use dioxus::prelude::*;
-use super::eq_page_section_styles as s;
 use super::eq_page_section_styles::*;
 use crate::theme::{merge_classes, CONTAINER_LAYOUT};
 

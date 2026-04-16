@@ -194,7 +194,7 @@ pub fn EqRadioGroup(
                     let is_disabled = disabled || item.disabled;
                     let item_cls = if is_disabled { s::ITEM_DISABLED } else { s::ITEM };
 
-                    let (circle_base, dot_cls) = match size {
+                    let (_circle_base, dot_cls) = match size {
                         RadioSize::Sm => (s::SM_CIRCLE, s::SM_DOT),
                         RadioSize::Md => (s::CIRCLE, s::DOT),
                         RadioSize::Lg => (s::LG_CIRCLE, s::LG_DOT),

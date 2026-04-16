@@ -99,7 +99,7 @@ pub fn EqCarousel(
     };
 
     let show_controls = len > 1;
-    let slide_label = format!("Slide {} of {}", current() + 1, len);
+    let _slide_label = format!("Slide {} of {}", current() + 1, len);
 
     match mode {
         CarouselMode::Default => {

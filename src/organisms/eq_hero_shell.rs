@@ -1,5 +1,4 @@
 use dioxus::prelude::*;
-use super::eq_hero_shell_styles as s;
 use super::eq_hero_shell_styles::*;
 use crate::theme::{merge_classes, CONTAINER_LAYOUT};
 

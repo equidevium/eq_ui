@@ -387,15 +387,6 @@
   .ml-4 {
     margin-left: calc(var(--spacing) * 4);
   }
-  .ml-\[14px\] {
-    margin-left: 14px;
-  }
-  .ml-\[18px\] {
-    margin-left: 18px;
-  }
-  .ml-\[22px\] {
-    margin-left: 22px;
-  }
   .block {
     display: block;
   }
@@ -637,22 +628,6 @@
     --tw-translate-x: calc(var(--spacing) * 0);
     translate: var(--tw-translate-x) var(--tw-translate-y);
   }
-  .translate-x-0\.5 {
-    --tw-translate-x: calc(var(--spacing) * 0.5);
-    translate: var(--tw-translate-x) var(--tw-translate-y);
-  }
-  .translate-x-\[14px\] {
-    --tw-translate-x: 14px;
-    translate: var(--tw-translate-x) var(--tw-translate-y);
-  }
-  .translate-x-\[18px\] {
-    --tw-translate-x: 18px;
-    translate: var(--tw-translate-x) var(--tw-translate-y);
-  }
-  .translate-x-\[22px\] {
-    --tw-translate-x: 22px;
-    translate: var(--tw-translate-x) var(--tw-translate-y);
-  }
   .-translate-y-1 {
     --tw-translate-y: calc(var(--spacing) * -1);
     translate: var(--tw-translate-x) var(--tw-translate-y);
@@ -855,6 +830,9 @@
   }
   .rounded {
     border-radius: 0.25rem;
+  }
+  .rounded-\[20px\] {
+    border-radius: 20px;
   }
   .rounded-full {
     border-radius: calc(infinity * 1px);
