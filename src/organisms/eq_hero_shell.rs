@@ -3,6 +3,8 @@ use super::eq_hero_shell_styles::*;
 use crate::theme::{merge_classes, CONTAINER_LAYOUT};
 
 #[cfg(feature = "playground")]
+use super::eq_hero_shell_styles as s;
+#[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{CodeBlock, DemoSection, PropInput, PropToggle, StyleInfo, format_catalog};
 #[cfg(feature = "playground")]
 use crate::atoms::{EqText, TextVariant};
