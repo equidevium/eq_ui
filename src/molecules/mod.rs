@@ -19,3 +19,8 @@ pub mod eq_accordion_styles;
 
 pub use eq_tree::{EqTree, TreeNode};
 pub use eq_accordion::{EqAccordion, AccordionItem, AccordionMode};
+
+pub mod eq_nav_item;
+pub mod eq_nav_item_styles;
+
+pub use eq_nav_item::EqNavItem;

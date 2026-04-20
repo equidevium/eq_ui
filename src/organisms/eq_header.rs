@@ -18,6 +18,11 @@ use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory
 pub fn EqHeader(
     #[props(default = "Equidevium")]
     site_title: &'static str,
+    /// When false, the brand/site_title is hidden entirely.
+    /// Useful when integrating with a router navbar that provides
+    /// its own branding or when the header is nav-only.
+    #[props(default = true)]
+    show_brand: bool,
     /// Navigation content - the caller provides `<li>` elements.
     /// EqHeader wraps them in `<nav><ul>` with correct styling.
     nav: Option<Element>,
@@ -29,11 +34,13 @@ pub fn EqHeader(
     rsx! {
         header { class: "{cls}",
             div { class: "{CONTAINER_LAYOUT} {s::HEADER_INNER}",
-                h1 {
-                    a {
-                        class: s::BRAND,
-                        href: "/",
-                        "{site_title}"
+                if show_brand {
+                    h1 {
+                        a {
+                            class: s::BRAND,
+                            href: "/",
+                            "{site_title}"
+                        }
                     }
                 }
                 if let Some(nav_content) = nav {
