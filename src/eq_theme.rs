@@ -3,7 +3,6 @@ use dioxus::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, Default)]
 pub enum EqTheme {
-    #[default]
     Unghosty,
     Burgundy,
     Gold,
@@ -27,6 +26,9 @@ pub enum EqTheme {
     TokyoNight,
     Warcraft,
     SweetRush,
+    Cloud,
+    #[default]
+    Limbotron,
     /// User-provided CSS injected at runtime.
     Custom(String),
 }
@@ -57,6 +59,8 @@ impl EqTheme {
             EqTheme::TokyoNight => Some(include_str!("../assets/theme/tokyo_night.css")),
             EqTheme::Warcraft   => Some(include_str!("../assets/theme/warcraft.css")),
             EqTheme::SweetRush  => Some(include_str!("../assets/theme/sweet_rush.css")),
+            EqTheme::Cloud      => Some(include_str!("../assets/theme/cloud.css")),
+            EqTheme::Limbotron   => Some(include_str!("../assets/theme/limbotron.css")),
             EqTheme::Custom(_)  => None,
         }
     }
@@ -93,6 +97,8 @@ impl EqTheme {
             ("TokyoNight", EqTheme::TokyoNight),
             ("Warcraft", EqTheme::Warcraft),
             ("SweetRush", EqTheme::SweetRush),
+            ("Cloud", EqTheme::Cloud),
+            ("Limbotron", EqTheme::Limbotron),
         ]
     }
 

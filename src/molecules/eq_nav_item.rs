@@ -14,6 +14,15 @@ use crate::atoms::{EqText, TextVariant};
 #[cfg(feature = "playground")]
 use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
 
+/// Size variant for EqNavItem.
+#[derive(Clone, PartialEq, Default)]
+pub enum NavItemSize {
+    #[default]
+    Sm,
+    Md,
+    Lg,
+}
+
 /// Navigation item molecule pairing an icon with a text label.
 ///
 /// Designed to live inside EqHeader's `nav` prop, wrapped in `<li>`.
@@ -57,6 +66,13 @@ pub fn EqNavItem(
     /// When true, applies the active/highlighted visual state.
     #[props(default = false)]
     active: bool,
+    /// Size of the nav item — controls text size, padding, icon size.
+    #[props(default)]
+    size: NavItemSize,
+    /// Optional icon color override (CSS color value, e.g. "#3eb489").
+    /// When empty, the icon inherits the text color.
+    #[props(into, default)]
+    icon_color: String,
     /// Click handler — use with `navigator().push(Route::…)`
     /// for Dioxus Router integration without adding a router dependency.
     #[props(default)]
@@ -65,10 +81,26 @@ pub fn EqNavItem(
     #[props(into, default)]
     class: String,
 ) -> Element {
+    let size_cls = match size {
+        NavItemSize::Sm => s::NAV_ITEM_SM,
+        NavItemSize::Md => s::NAV_ITEM_MD,
+        NavItemSize::Lg => s::NAV_ITEM_LG,
+    };
+    let icon_wrap_cls = match size {
+        NavItemSize::Sm => s::ICON_SM,
+        NavItemSize::Md => s::ICON_MD,
+        NavItemSize::Lg => s::ICON_LG,
+    };
+    let icon_size = match size {
+        NavItemSize::Sm => IconSize::Sm,
+        NavItemSize::Md => IconSize::Md,
+        NavItemSize::Lg => IconSize::Lg,
+    };
+
     let base = if active {
-        format!("{} {}", s::NAV_ITEM, s::NAV_ITEM_ACTIVE)
+        format!("{} {} {}", s::NAV_ITEM_BASE, size_cls, s::NAV_ITEM_ACTIVE)
     } else {
-        s::NAV_ITEM.to_string()
+        format!("{} {}", s::NAV_ITEM_BASE, size_cls)
     };
     let cls = merge_classes(&base, &class);
 
@@ -88,8 +120,8 @@ pub fn EqNavItem(
                     }
                 },
                 if has_icon {
-                    span { class: s::ICON_WRAP,
-                        EqIcon { path: icon, size: IconSize::Sm }
+                    span { class: icon_wrap_cls,
+                        EqIcon { path: icon, size: icon_size, color: icon_color.clone() }
                     }
                 }
                 span { class: s::LABEL, "{label}" }
@@ -107,8 +139,8 @@ pub fn EqNavItem(
                     }
                 },
                 if has_icon {
-                    span { class: s::ICON_WRAP,
-                        EqIcon { path: icon, size: IconSize::Sm }
+                    span { class: icon_wrap_cls,
+                        EqIcon { path: icon, size: icon_size, color: icon_color.clone() }
                     }
                 }
                 span { class: s::LABEL, "{label}" }

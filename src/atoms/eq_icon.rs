@@ -54,6 +54,10 @@ pub fn EqIcon(
     /// from assistive technology via `aria-hidden="true"`.
     #[props(into, default)]
     aria_label: String,
+    /// Optional CSS color override (e.g. "#3eb489", "var(--color-success)").
+    /// When set, overrides the default/muted color via inline style.
+    #[props(into, default)]
+    color: String,
     /// Optional class override - extend or replace default styles.
     #[props(into, default)]
     class: String,
@@ -64,15 +68,28 @@ pub fn EqIcon(
         IconSize::Md => s::MD,
         IconSize::Lg => s::LG,
     };
-    let color_class = if muted { s::MUTED } else { s::DEFAULT };
+    let has_color = !color.is_empty();
+    let color_class = if has_color {
+        "" // skip default color class when custom color is set
+    } else if muted {
+        s::MUTED
+    } else {
+        s::DEFAULT
+    };
     let base = format!("{} {} {}", s::WRAPPER, size_class, color_class);
     let cls = merge_classes(&base, &class);
+    let color_style = if has_color {
+        format!("color: {};", color)
+    } else {
+        String::new()
+    };
 
     let is_decorative = aria_label.is_empty();
 
     rsx! {
         span {
             class: "{cls}",
+            style: "{color_style}",
             "aria-hidden": if is_decorative { "true" } else { "" },
             "aria-label": if !is_decorative { "{aria_label}" } else { "" },
             role: if !is_decorative { "img" } else { "" },

@@ -1,0 +1,191 @@
+:root {
+
+    /* ============================================
+       THEME: Limbotron
+       Dark mode · Hot Rose accent · Pill corners
+       Mint borders · Yellow-mint glow
+       ============================================ */
+
+    /* --- Core darks --- */
+    --color-primary-dark: #1e1018;
+    --color-secondary-dark: #a08090;
+    --color-tertiary-dark: #2c1620;
+    --color-hover-button: #5a2040;
+    --color-card: #2c1620;
+    --color-card-border: #3eb489;
+    --color-card-shadow: rgba(200, 170, 50, 0.30);
+    --color-background: #150c12;
+
+    /* --- Labels / text --- */
+    --color-label-primary: #f7f0f3;
+    --color-label-secondary: #c4a4b2;
+    --color-label-bold: #fb4f8b;
+    --color-label-muted: #96758a;
+    --color-label-disabled: #664858;
+
+    /* --- Gradients --- */
+    --color-gradient-default-start: #e8365d;
+    --color-gradient-default-mid: #fb4f8b;
+    --color-gradient-default-end: #ff8ab5;
+    --color-btn-hover-start: #d4254c;
+    --color-btn-hover-mid: #e8365d;
+    --color-btn-hover-end: #ff8ab5;
+
+    --color-btn-default-start: #1e1018;
+    --color-btn-default-mid: #5a2040;
+    --color-btn-default-end: #fb4f8b;
+
+    --gradient-primary-tricolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-start) 0%,
+            var(--color-gradient-default-mid) 50%,
+            var(--color-gradient-default-end) 100%
+    );
+
+    --gradient-primary-tricolor-hover: linear-gradient(
+            135deg,
+            var(--color-btn-hover-start) 0%,
+            var(--color-btn-hover-mid) 50%,
+            var(--color-btn-hover-end) 100%
+    );
+
+    --gradient-background: linear-gradient(
+            135deg,
+            #000000 0%,
+            #3d1528 100%
+    );
+
+    --gradient-primary-duocolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-end) 0%,
+            var(--color-gradient-default-start) 100%
+    );
+
+    /* --- Accent & interaction --- */
+    --color-accent-primary: #fb4f8b;
+    --color-accent-secondary: #e8365d;
+    --color-accent-muted: #5a2040;
+
+    /* --- State / feedback --- */
+    --color-success: #34d399;
+    --color-warning: #fbbf24;
+    --color-error: #f87171;
+    --color-info: #fb4f8b;
+
+    /* --- Borders & dividers --- */
+    --color-border-default: #4d2838;
+    --color-border-subtle: #2c1620;
+    --color-border-active: #fb4f8b;
+
+    /* --- Input / form elements --- */
+    --color-input-bg: #1e1018;
+    --color-input-border: #4d2838;
+    --color-input-focus: #fb4f8b;
+    --color-input-placeholder: #96758a;
+
+    /* --- Overlay & surface --- */
+    --color-surface-elevated: #2c1620;
+    --color-surface-overlay: rgba(0, 0, 0, 0.55);
+    --color-surface-tooltip: #4d2838;
+
+    /* --- Code / terminal feel --- */
+    --color-code-bg: #150c12;
+    --color-code-text: #ff8ab5;
+    --color-code-comment: #96758a;
+    --color-code-keyword: #fb4f8b;
+    --color-code-string: #34d399;
+
+    /* --- Buttons --- */
+    --btn-primary-bg: var(--gradient-primary-tricolor);
+    --btn-primary-bg-hover: var(--gradient-primary-tricolor-hover);
+    --btn-primary-bg-solid: var(--color-accent-primary);
+    --btn-primary-hover: #1e1018;
+    --btn-primary-text: #ffffff;
+    --btn-ghost-hover: #2c1620;
+    --btn-outline-border: var(--color-card-border);
+    --btn-outline-hover-border: #fb4f8b;
+    --btn-outline-hover-bg: var(--gradient-primary-duocolor);
+    --btn-danger-bg: #f87171;
+
+    /* --- Interactive states --- */
+    --color-card-border-bright: #4dcfa0;
+    --color-focus-ring: #fb4f8b;
+    --color-shadow-glow: rgba(200, 170, 50, 0.30);
+    --color-primary: #fb4f8b;
+
+    /* --- Transitions --- */
+    --transition-fast: 0.15s;
+    --transition-normal: 0.25s;
+
+    /* --- Scrollbar --- */
+    --color-scrollbar-thumb: rgba(196, 164, 178, 0.25);
+    --color-scrollbar-track: transparent;
+
+    /* --- Grid --- */
+    --color-grid-header-bg: #1e1018;
+    --color-grid-header-text: var(--color-label-primary);
+    --color-grid-border: var(--color-card-border);
+
+    /* --- Pill radius tokens --- */
+    --radius-pill: 9999px;
+    --radius-container: 1.25rem;
+    --radius-textarea: 1.25rem;
+}
+
+/* ============================================
+   Akatsuki: Pill-everything corner overrides
+   (same as Cloud)
+   ============================================ */
+
+/* --- Buttons → pill --- */
+button,
+.btn-primary,
+.btn-ghost,
+.btn-outline,
+.btn-card,
+.btn-danger,
+.btn-glass,
+[class*="btn-"] {
+    border-radius: var(--radius-pill) !important;
+}
+
+/* --- Inputs & form controls → pill --- */
+input,
+select {
+    border-radius: var(--radius-pill) !important;
+}
+textarea {
+    border-radius: var(--radius-textarea) !important;
+}
+
+/* --- Cards, sections, containers → generous rounding --- */
+.rounded-xl,
+[class*="rounded-xl"] {
+    border-radius: var(--radius-container) !important;
+}
+.rounded-lg,
+[class*="rounded-lg"] {
+    border-radius: var(--radius-container) !important;
+}
+.rounded-md,
+[class*="rounded-md"] {
+    border-radius: var(--radius-container) !important;
+}
+
+/* --- Tabs (underline variant top rounding) --- */
+[class*="rounded-t-lg"] {
+    border-radius: var(--radius-container) var(--radius-container) 0 0 !important;
+}
+
+/* --- Header → generous rounding --- */
+header {
+    border-radius: var(--radius-container) !important;
+}
+
+/* --- Grid header cells → match container rounding at edges --- */
+th:first-child {
+    border-top-left-radius: var(--radius-container) !important;
+}
+th:last-child {
+    border-top-right-radius: var(--radius-container) !important;
+}

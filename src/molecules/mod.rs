@@ -23,4 +23,4 @@ pub use eq_accordion::{EqAccordion, AccordionItem, AccordionMode};
 pub mod eq_nav_item;
 pub mod eq_nav_item_styles;
 
-pub use eq_nav_item::EqNavItem;
+pub use eq_nav_item::{EqNavItem, NavItemSize};

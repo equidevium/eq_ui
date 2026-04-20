@@ -23,6 +23,10 @@ pub fn EqHeader(
     /// its own branding or when the header is nav-only.
     #[props(default = true)]
     show_brand: bool,
+    /// When true (default), the brand is a clickable link to "/".
+    /// Set to false to render the brand as plain text.
+    #[props(default = true)]
+    brand_link: bool,
     /// Navigation content - the caller provides `<li>` elements.
     /// EqHeader wraps them in `<nav><ul>` with correct styling.
     nav: Option<Element>,
@@ -36,10 +40,17 @@ pub fn EqHeader(
             div { class: "{CONTAINER_LAYOUT} {s::HEADER_INNER}",
                 if show_brand {
                     h1 {
-                        a {
-                            class: s::BRAND,
-                            href: "/",
-                            "{site_title}"
+                        if brand_link {
+                            a {
+                                class: s::BRAND,
+                                href: "/",
+                                "{site_title}"
+                            }
+                        } else {
+                            span {
+                                class: s::BRAND,
+                                "{site_title}"
+                            }
                         }
                     }
                 }

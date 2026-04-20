@@ -1,0 +1,192 @@
+:root {
+
+    /* ============================================
+       THEME: Cloud
+       Dark mode · Electric Blue accent · Pill corners
+       Inspired by Remote.com's soft, rounded aesthetic
+       ============================================ */
+
+    /* --- Core darks --- */
+    --color-primary-dark: #0f1729;
+    --color-secondary-dark: #64748b;
+    --color-tertiary-dark: #1e293b;
+    --color-hover-button: #1e3a5f;
+    --color-card: #1e293b;
+    --color-card-border: #334155;
+    --color-card-shadow: rgba(0, 0, 0, 0.40);
+    --color-background: #0b1120;
+
+    /* --- Labels / text --- */
+    --color-label-primary: #f1f5f9;
+    --color-label-secondary: #94a3b8;
+    --color-label-bold: #60a5fa;
+    --color-label-muted: #64748b;
+    --color-label-disabled: #475569;
+
+    /* --- Gradients --- */
+    --color-gradient-default-start: #3b82f6;
+    --color-gradient-default-mid: #60a5fa;
+    --color-gradient-default-end: #93c5fd;
+    --color-btn-hover-start: #2563eb;
+    --color-btn-hover-mid: #3b82f6;
+    --color-btn-hover-end: #93c5fd;
+
+    --color-btn-default-start: #0f1729;
+    --color-btn-default-mid: #1e3a5f;
+    --color-btn-default-end: #60a5fa;
+
+    --gradient-primary-tricolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-start) 0%,
+            var(--color-gradient-default-mid) 50%,
+            var(--color-gradient-default-end) 100%
+    );
+
+    --gradient-primary-tricolor-hover: linear-gradient(
+            135deg,
+            var(--color-btn-hover-start) 0%,
+            var(--color-btn-hover-mid) 50%,
+            var(--color-btn-hover-end) 100%
+    );
+
+    --gradient-background: linear-gradient(
+            135deg,
+            var(--color-primary-dark) 0%,
+            var(--color-tertiary-dark) 100%
+    );
+
+    --gradient-primary-duocolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-end) 0%,
+            var(--color-gradient-default-start) 100%
+    );
+
+    /* --- Accent & interaction --- */
+    --color-accent-primary: #60a5fa;
+    --color-accent-secondary: #3b82f6;
+    --color-accent-muted: #1e3a5f;
+
+    /* --- State / feedback --- */
+    --color-success: #34d399;
+    --color-warning: #fbbf24;
+    --color-error: #f87171;
+    --color-info: #60a5fa;
+
+    /* --- Borders & dividers --- */
+    --color-border-default: #334155;
+    --color-border-subtle: #1e293b;
+    --color-border-active: #60a5fa;
+
+    /* --- Input / form elements --- */
+    --color-input-bg: #0f172a;
+    --color-input-border: #334155;
+    --color-input-focus: #60a5fa;
+    --color-input-placeholder: #64748b;
+
+    /* --- Overlay & surface --- */
+    --color-surface-elevated: #1e293b;
+    --color-surface-overlay: rgba(0, 0, 0, 0.6);
+    --color-surface-tooltip: #334155;
+
+    /* --- Code / terminal feel --- */
+    --color-code-bg: #0b1120;
+    --color-code-text: #93c5fd;
+    --color-code-comment: #64748b;
+    --color-code-keyword: #60a5fa;
+    --color-code-string: #34d399;
+
+    /* --- Buttons --- */
+    --btn-primary-bg: var(--gradient-primary-tricolor);
+    --btn-primary-bg-hover: var(--gradient-primary-tricolor-hover);
+    --btn-primary-bg-solid: var(--color-accent-primary);
+    --btn-primary-hover: #0f1729;
+    --btn-primary-text: #ffffff;
+    --btn-ghost-hover: #1e293b;
+    --btn-outline-border: var(--color-card-border);
+    --btn-outline-hover-border: #60a5fa;
+    --btn-outline-hover-bg: var(--gradient-primary-duocolor);
+    --btn-danger-bg: #f87171;
+
+    /* --- Interactive states --- */
+    --color-card-border-bright: #475569;
+    --color-focus-ring: #60a5fa;
+    --color-shadow-glow: rgba(96, 165, 250, 0.25);
+    --color-primary: #60a5fa;
+
+    /* --- Transitions --- */
+    --transition-fast: 0.15s;
+    --transition-normal: 0.25s;
+
+    /* --- Scrollbar --- */
+    --color-scrollbar-thumb: rgba(148, 163, 184, 0.25);
+    --color-scrollbar-track: transparent;
+
+    /* --- Grid --- */
+    --color-grid-header-bg: #0f1729;
+    --color-grid-header-text: var(--color-label-primary);
+    --color-grid-border: var(--color-card-border);
+
+    /* --- Cloud pill radius tokens --- */
+    --radius-pill: 9999px;
+    --radius-container: 1.25rem;
+    --radius-textarea: 1.25rem;
+}
+
+/* ============================================
+   Cloud: Pill-everything corner overrides
+   These rules are only injected when the Cloud
+   theme is active (via inline <style>).
+   ============================================ */
+
+/* --- Buttons → pill --- */
+button,
+.btn-primary,
+.btn-ghost,
+.btn-outline,
+.btn-card,
+.btn-danger,
+.btn-glass,
+[class*="btn-"] {
+    border-radius: var(--radius-pill) !important;
+}
+
+/* --- Inputs & form controls → pill --- */
+input,
+select {
+    border-radius: var(--radius-pill) !important;
+}
+textarea {
+    border-radius: var(--radius-textarea) !important;
+}
+
+/* --- Cards, sections, containers → generous rounding --- */
+.rounded-xl,
+[class*="rounded-xl"] {
+    border-radius: var(--radius-container) !important;
+}
+.rounded-lg,
+[class*="rounded-lg"] {
+    border-radius: var(--radius-container) !important;
+}
+.rounded-md,
+[class*="rounded-md"] {
+    border-radius: var(--radius-container) !important;
+}
+
+/* --- Tabs (underline variant top rounding) --- */
+[class*="rounded-t-lg"] {
+    border-radius: var(--radius-container) var(--radius-container) 0 0 !important;
+}
+
+/* --- Header → generous rounding --- */
+header {
+    border-radius: var(--radius-container) !important;
+}
+
+/* --- Grid header cells → match container rounding at edges --- */
+th:first-child {
+    border-top-left-radius: var(--radius-container) !important;
+}
+th:last-child {
+    border-top-right-radius: var(--radius-container) !important;
+}
