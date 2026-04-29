@@ -39,11 +39,12 @@ use dioxus::prelude::*;
 #[component]
 fn ThemeSwitcher() -> Element {
     let mut theme = EqTheme::use_theme();
+    let current_name = format!("{:?}", *theme.read());
 
     rsx! {
         select {
             class: s::THEME_SELECT,
-            value: format!("{:?}", *theme.read()),
+            value: "{current_name}",
             onchange: move |evt: Event<FormData>| {
                 let val = evt.value();
                 let new_theme = EqTheme::build_in_variants()
@@ -55,7 +56,11 @@ fn ThemeSwitcher() -> Element {
             },
 
             for (name, _variant) in EqTheme::build_in_variants() {
-                option { value: "{name}", "{name}" }
+                option {
+                    value: "{name}",
+                    selected: name == current_name,
+                    "{name}"
+                }
             }
         }
     }

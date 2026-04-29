@@ -105,9 +105,8 @@ pub fn expand(attr: TokenStream, item: TokenStream) -> Result<TokenStream> {
     // Kebab-case ID: "EqSwitch" → "eq-switch"
     let id_str = to_kebab_case(&comp_name_str);
 
-    // Snake-case for styles module: "EqSwitch" → "eq_switch_styles"
-    let styles_mod_name = format!("{}_styles", to_snake_case(&comp_name_str));
-    let styles_mod = Ident::new(&styles_mod_name, Span::call_site());
+    // Snake-case for styles file display name
+    let styles_file_display = format!("{}_styles.rs", to_snake_case(&comp_name_str));
 
     // Category ident: Atom → ComponentCategory::Atom
     let category = &attr.category;
@@ -145,7 +144,7 @@ pub fn expand(attr: TokenStream, item: TokenStream) -> Result<TokenStream> {
     let demo_component = if attr.custom_demo {
         quote! {} // User writes their own Demo component
     } else {
-        codegen::gen_demo(comp_name, &styles_mod, &props)
+        codegen::gen_demo(comp_name, &props, &attr.examples)
     };
 
     // ── Generate gallery component ───────────────────────────────
