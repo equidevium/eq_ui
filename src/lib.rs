@@ -19,6 +19,9 @@ pub mod atoms;
 pub mod molecules;
 pub mod organisms;
 pub mod eq_theme;
+pub mod preview_enum_trait;
+
+pub use eq_ui_macros::{preview, PreviewEnum};
 
 #[cfg(feature = "playground")]
 pub use playground::{ComponentDescriptor, ComponentCategory, UsageExample, EqPlayground};

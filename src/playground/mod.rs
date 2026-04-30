@@ -29,3 +29,5 @@ pub use playground_helpers::{
     PROP_ROW, PROP_LABEL, PROP_CONTROL,
 };
 pub use eq_playground::EqPlayground;
+
+pub use crate::preview_enum_trait::PreviewEnumInfo;

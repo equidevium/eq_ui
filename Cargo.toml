@@ -1,5 +1,5 @@
 [workspace]
-members = ["eq_ui_build"]
+members = ["eq_ui_build", "eq_ui_macros"]
 
 [package]
 name = "eq_ui"
@@ -19,6 +19,7 @@ playground = []
 
 [dependencies]
 dioxus = "=0.7.3"
+eq_ui_macros = { path = "eq_ui_macros" }
 
 [build-dependencies]
 eq_ui_build = "0.1.0"
