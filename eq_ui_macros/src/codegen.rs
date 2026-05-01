@@ -259,17 +259,17 @@ pub fn gen_demo(
                 }
             }
         } else {
-            // No bool prop, just show each variant
+            // No bool prop, just show each variant with label above
             quote! {
                 div { class: "space-y-4",
                     EqText { variant: TextVariant::Emphasis, #enum_label }
-                    div { class: "flex flex-wrap items-center gap-4",
+                    div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-4",
                         for variant_name in <#enum_ty as crate::preview_enum_trait::PreviewEnumInfo>::variant_names() {
-                            div { class: "flex flex-col items-center gap-1",
+                            div { class: "space-y-2",
+                                EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "{variant_name}" }
                                 #comp_name {
                                     #enum_name: <#enum_ty as crate::preview_enum_trait::PreviewEnumInfo>::from_name(variant_name),
                                 }
-                                EqText { variant: TextVariant::Caption, "{variant_name}" }
                             }
                         }
                     }
@@ -397,7 +397,7 @@ pub fn gen_demo(
                         #(#prop_controls)*
                     }
                     // Live preview
-                    div { class: "rounded-lg border border-dashed border-[var(--color-card-border)] p-6 flex items-center gap-4",
+                    div { class: "rounded-lg border border-dashed border-[var(--color-card-border)] p-6 space-y-4",
                         #comp_name {
                             #(#preview_props)*
                             #(#handler_props)*

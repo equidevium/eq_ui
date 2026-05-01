@@ -1,5 +1,6 @@
 use super::eq_divider_styles as s;
 use crate::theme::merge_classes;
+use crate::{PreviewEnum, preview};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
@@ -12,7 +13,7 @@ use crate::atoms::{EqText, TextVariant};
 use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
 
 /// Visual style of the divider line.
-#[derive(Clone, PartialEq, Default)]
+#[derive(Clone, PartialEq, Default, PreviewEnum)]
 pub enum DividerVariant {
     /// Solid continuous line (default).
     #[default]
@@ -26,7 +27,7 @@ pub enum DividerVariant {
 }
 
 /// Thickness of the divider.
-#[derive(Clone, PartialEq, Default)]
+#[derive(Clone, PartialEq, Default, PreviewEnum)]
 pub enum DividerWeight {
     /// Default thickness (1px).
     #[default]
@@ -38,7 +39,7 @@ pub enum DividerWeight {
 }
 
 /// Vertical spacing around the divider.
-#[derive(Clone, PartialEq, Default)]
+#[derive(Clone, PartialEq, Default, PreviewEnum)]
 pub enum DividerSpacing {
     /// Compact spacing (my-2).
     Compact,
@@ -52,6 +53,16 @@ pub enum DividerSpacing {
 /// A horizontal divider atom.
 ///
 /// Renders an `<hr>` element with configurable style, thickness, and spacing.
+#[preview(
+    category = Atom,
+    description = "Horizontal divider with configurable style (solid/dashed/dotted/spacer), \
+                   thickness, and spacing presets.",
+    examples = [
+        ("Basic solid divider", "EqDivider {}"),
+        ("Dashed variant", "EqDivider { variant: DividerVariant::Dashed }"),
+        ("Thick with wide spacing", "EqDivider {\n    variant: DividerVariant::Solid,\n    weight: DividerWeight::Thick,\n    spacing: DividerSpacing::Wide,\n}"),
+    ],
+)]
 #[component]
 pub fn EqDivider(
     /// Visual style of the line.
@@ -107,140 +118,6 @@ pub fn EqDivider(
             class: "{cls}",
             role: "separator",
             "aria-orientation": "horizontal",
-        }
-    }
-}
-
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-divider",
-        name: "EqDivider",
-        category: ComponentCategory::Atom,
-        description: "Horizontal divider with configurable style (solid/dashed/dotted/spacer), \
-                      thickness, and spacing presets.",
-        style_tokens: || s::catalog(),
-        usage_examples: || vec![
-            UsageExample {
-                label: "Basic solid divider",
-                code: "EqDivider {}".into(),
-            },
-            UsageExample {
-                label: "Dashed variant",
-                code: "EqDivider { variant: DividerVariant::Dashed }".into(),
-            },
-            UsageExample {
-                label: "Thick with wide spacing",
-                code: "EqDivider {\n    variant: DividerVariant::Solid,\n    weight: DividerWeight::Thick,\n    spacing: DividerSpacing::Wide,\n}".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqDivider {} },
-        render_gallery: || rsx! { GalleryEqDivider {} },
-    }
-}
-
-// ── Interactive demo ───────────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-#[component]
-fn DemoEqDivider() -> Element {
-    let mut variant_str = use_signal(|| "Solid".to_string());
-    let mut weight_str = use_signal(|| "Normal".to_string());
-    let mut spacing_str = use_signal(|| "Default".to_string());
-
-    let variant = match variant_str().as_str() {
-        "Dashed" => DividerVariant::Dashed,
-        "Dotted" => DividerVariant::Dotted,
-        "Spacer" => DividerVariant::Spacer,
-        _ => DividerVariant::Solid,
-    };
-    let weight = match weight_str().as_str() {
-        "Thick" => DividerWeight::Thick,
-        "ExtraThick" => DividerWeight::ExtraThick,
-        _ => DividerWeight::Normal,
-    };
-    let spacing = match spacing_str().as_str() {
-        "Compact" => DividerSpacing::Compact,
-        "Wide" => DividerSpacing::Wide,
-        _ => DividerSpacing::Default,
-    };
-
-    let code = "EqDivider {}  // solid, normal weight\n\nEqDivider { variant: DividerVariant::Dashed }\n\nEqDivider {\n    variant: DividerVariant::Dashed,\n    weight: DividerWeight::Thick,\n}\n\nEqDivider {\n    variant: DividerVariant::Spacer,\n    spacing: DividerSpacing::Wide,\n}".to_string();
-
-    rsx! {
-        DemoSection { title: "EqDivider",
-            div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-3",
-                EqText {
-                    variant: TextVariant::Caption,
-                    class: "font-semibold uppercase tracking-wider",
-                    "Props"
-                }
-                PropSelect {
-                    label: "variant",
-                    value: variant_str(),
-                    options: vec!["Solid", "Dashed", "Dotted", "Spacer"],
-                    onchange: move |v: String| variant_str.set(v),
-                }
-                PropSelect {
-                    label: "weight",
-                    value: weight_str(),
-                    options: vec!["Normal", "Thick", "ExtraThick"],
-                    onchange: move |v: String| weight_str.set(v),
-                }
-                PropSelect {
-                    label: "spacing",
-                    value: spacing_str(),
-                    options: vec!["Compact", "Default", "Wide"],
-                    onchange: move |v: String| spacing_str.set(v),
-                }
-            }
-            div { class: "rounded-lg border border-dashed border-[var(--color-card-border)] p-6 max-w-lg",
-                div { class: "rounded-lg bg-[var(--color-card)]/30 p-2 text-sm text-[var(--color-label-secondary)]",
-                    "Content above"
-                }
-                EqDivider { variant, weight, spacing }
-                div { class: "rounded-lg bg-[var(--color-card)]/30 p-2 text-sm text-[var(--color-label-secondary)]",
-                    "Content below"
-                }
-            }
-            StyleInfo { file: "eq_divider_styles.rs", styles: format_catalog(&s::catalog()) }
-            CodeBlock { code }
-        }
-    }
-}
-
-// ── Gallery (compact showcase) ─────────────────────────────────────
-
-#[cfg(feature = "playground")]
-#[component]
-fn GalleryEqDivider() -> Element {
-    rsx! {
-        div { class: "space-y-4",
-            EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Variants" }
-            div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-4 max-w-lg",
-                div { class: "space-y-2",
-                    EqText { variant: TextVariant::Muted, class: "text-xs font-medium uppercase", "Solid" }
-                    EqDivider { variant: DividerVariant::Solid }
-                }
-                div { class: "space-y-2",
-                    EqText { variant: TextVariant::Muted, class: "text-xs font-medium uppercase", "Dashed" }
-                    EqDivider { variant: DividerVariant::Dashed }
-                }
-                div { class: "space-y-2",
-                    EqText { variant: TextVariant::Muted, class: "text-xs font-medium uppercase", "Dotted" }
-                    EqDivider { variant: DividerVariant::Dotted }
-                }
-                div { class: "space-y-2",
-                    EqText { variant: TextVariant::Muted, class: "text-xs font-medium uppercase", "Thick" }
-                    EqDivider { variant: DividerVariant::Solid, weight: DividerWeight::Thick }
-                }
-                div { class: "space-y-2",
-                    EqText { variant: TextVariant::Muted, class: "text-xs font-medium uppercase", "Extra Thick" }
-                    EqDivider { variant: DividerVariant::Solid, weight: DividerWeight::ExtraThick }
-                }
-            }
         }
     }
 }
