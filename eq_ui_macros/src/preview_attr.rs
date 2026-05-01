@@ -16,6 +16,7 @@ struct PreviewAttr {
     description: String,
     examples: Vec<(String, String)>,
     no_styles: bool,
+    no_variant_gallery: bool,
     custom_demo: bool,
     custom_gallery: bool,
 }
@@ -26,6 +27,7 @@ impl Parse for PreviewAttr {
         let mut description = None;
         let mut examples = Vec::new();
         let mut no_styles = false;
+        let mut no_variant_gallery = false;
         let mut custom_demo = false;
         let mut custom_gallery = false;
 
@@ -59,6 +61,9 @@ impl Parse for PreviewAttr {
                 "no_styles" => {
                     no_styles = true;
                 }
+                "no_variant_gallery" => {
+                    no_variant_gallery = true;
+                }
                 "custom_demo" => {
                     custom_demo = true;
                 }
@@ -87,6 +92,7 @@ impl Parse for PreviewAttr {
             })?,
             examples,
             no_styles,
+            no_variant_gallery,
             custom_demo,
             custom_gallery,
         })
@@ -144,7 +150,7 @@ pub fn expand(attr: TokenStream, item: TokenStream) -> Result<TokenStream> {
     let demo_component = if attr.custom_demo {
         quote! {} // User writes their own Demo component
     } else {
-        codegen::gen_demo(comp_name, &props, &attr.examples)
+        codegen::gen_demo(comp_name, &props, &attr.examples, attr.no_variant_gallery)
     };
 
     // ── Generate gallery component ───────────────────────────────

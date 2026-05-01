@@ -5,12 +5,10 @@ use crate::preview;
 
 #[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
-    CodeBlock, DemoSection, PropSelect, PropInput, StyleInfo, format_catalog,
+    CodeBlock, DemoSection, PropInput, StyleInfo, format_catalog,
 };
 #[cfg(feature = "playground")]
-use crate::atoms::EqText;
-#[cfg(feature = "playground")]
-use crate::atoms::TextVariant;
+use crate::atoms::{EqText, TextVariant};
 #[cfg(feature = "playground")]
 use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
 
@@ -26,8 +24,6 @@ use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory
         ("Basic", "EqLabel { for_id: \"username\", \"Username\" }"),
         ("Without for attribute", "EqLabel { \"Label without for attribute\" }"),
     ],
-    custom_demo,
-    custom_gallery,
 )]
 #[component]
 pub fn EqLabel(
@@ -45,74 +41,6 @@ pub fn EqLabel(
             class: "{cls}",
             r#for: "{for_id}",
             {children}
-        }
-    }
-}
-
-// ── Custom demo (children-based component) ────────────────────────
-
-#[cfg(feature = "playground")]
-#[component]
-fn DemoEqLabel() -> Element {
-    let mut for_id_str = use_signal(|| "username".to_string());
-    let mut content = use_signal(|| "Username".to_string());
-
-    let for_id: &'static str = match for_id_str().as_str() {
-        "email" => "email",
-        "password" => "password",
-        "(none)" => "",
-        _ => "username",
-    };
-
-    let code = r#"EqLabel { for_id: "username", "Username" }
-
-EqLabel { "Label without for attribute" }"#
-        .to_string();
-
-    rsx! {
-        DemoSection { title: "EqLabel",
-            div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-3",
-                EqText {
-                    variant: TextVariant::Caption,
-                    class: "font-semibold uppercase tracking-wider",
-                    "Props"
-                }
-                PropSelect {
-                    label: "for_id",
-                    value: for_id_str(),
-                    options: vec!["username", "email", "password", "(none)"],
-                    onchange: move |v: String| for_id_str.set(v),
-                }
-                PropInput {
-                    label: "content",
-                    value: content(),
-                    placeholder: "Label text",
-                    onchange: move |v: String| content.set(v),
-                }
-            }
-            div { class: "rounded-lg border border-dashed border-[var(--color-card-border)] p-6",
-                EqLabel { for_id, "{content}" }
-            }
-            StyleInfo { file: "eq_label_styles.rs", styles: format_catalog(&s::catalog()) }
-            CodeBlock { code }
-        }
-    }
-}
-
-// ── Custom gallery ────────────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-#[component]
-fn GalleryEqLabel() -> Element {
-    rsx! {
-        div { class: "space-y-3",
-            EqText { variant: TextVariant::Emphasis, "Label examples" }
-            div { class: "space-y-2",
-                EqLabel { for_id: "username", "Username" }
-                EqLabel { for_id: "email", "Email address" }
-                EqLabel { for_id: "password", "Password" }
-                EqLabel { "Label without for attribute" }
-            }
         }
     }
 }

@@ -1,6 +1,7 @@
 use dioxus::prelude::*;
 use super::eq_icon_styles as s;
 use crate::theme::merge_classes;
+use crate::{PreviewEnum, preview};
 
 #[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
@@ -12,7 +13,7 @@ use crate::atoms::{EqText, TextVariant};
 use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
 
 /// Icon size variant.
-#[derive(Clone, PartialEq, Default)]
+#[derive(Clone, PartialEq, Default, PreviewEnum)]
 pub enum IconSize {
     Sm,
     #[default]
@@ -26,18 +27,20 @@ pub enum IconSize {
 /// The component renders an inline `<svg>` with `fill="currentColor"`,
 /// so color is controlled by the wrapper's text color class.
 ///
-/// ```rust,ignore
-/// EqIcon { path: eq_ui::atoms::icons::CARET_UP, size: IconSize::Sm }
-/// ```
-///
 /// **Children mode** - pass any element (custom SVG, `<img>`, etc.)
 /// as children. The wrapper applies consistent sizing and color.
-///
-/// ```rust,ignore
-/// EqIcon { size: IconSize::Md,
-///     svg { /* custom svg */ }
-/// }
-/// ```
+#[preview(
+    category = Atom,
+    description = "Icon wrapper supporting SVG path data or custom SVG children. \
+                   Configurable sizes with optional muted variant.",
+    examples = [
+        ("With path", "EqIcon { path: \"M12 4.5v15m7.5-7.5h-15\", size: IconSize::Sm }"),
+        ("With SVG children", "EqIcon { size: IconSize::Md,\n    svg { /* custom svg */ }\n}"),
+        ("Muted", "EqIcon { size: IconSize::Lg, muted: true,\n    svg { /* icon */ }\n}"),
+    ],
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqIcon(
     /// SVG path data (`d` attribute). When set, an inline `<svg>` is
@@ -49,13 +52,9 @@ pub fn EqIcon(
     #[props(default = false)]
     muted: bool,
     /// Accessible label for standalone icons (e.g. icon-only buttons).
-    /// When set, the icon is announced by screen readers with this text.
-    /// When empty (default), the icon is treated as decorative and hidden
-    /// from assistive technology via `aria-hidden="true"`.
     #[props(into, default)]
     aria_label: String,
     /// Optional CSS color override (e.g. "#3eb489", "var(--color-success)").
-    /// When set, overrides the default/muted color via inline style.
     #[props(into, default)]
     color: String,
     /// Optional class override - extend or replace default styles.
@@ -109,37 +108,7 @@ pub fn EqIcon(
     }
 }
 
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-icon",
-        name: "EqIcon",
-        category: ComponentCategory::Atom,
-        description: "Icon wrapper supporting SVG path data or custom SVG children. \
-                      Configurable sizes with optional muted variant.",
-        style_tokens: || s::catalog(),
-        usage_examples: || vec![
-            UsageExample {
-                label: "With path",
-                code: "EqIcon { path: \"M12 4.5v15m7.5-7.5h-15\", size: IconSize::Sm }".into(),
-            },
-            UsageExample {
-                label: "With SVG children",
-                code: "EqIcon { size: IconSize::Md,\n    svg { /* custom svg */ }\n}".into(),
-            },
-            UsageExample {
-                label: "Muted",
-                code: "EqIcon { size: IconSize::Lg, muted: true,\n    svg { /* icon */ }\n}".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqIcon {} },
-        render_gallery: || rsx! { GalleryEqIcon {} },
-    }
-}
-
-// ── Interactive demo ───────────────────────────────────────────────
+// ── Custom demo (SVG children needed) ────────────────────────────
 
 #[cfg(feature = "playground")]
 #[component]
@@ -193,7 +162,7 @@ fn DemoEqIcon() -> Element {
     }
 }
 
-// ── Gallery (compact showcase) ─────────────────────────────────────
+// ── Custom gallery ───────────────────────────────────────────────
 
 #[cfg(feature = "playground")]
 #[component]

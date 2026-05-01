@@ -19,11 +19,13 @@ pub enum PropKind {
     Bool,
     /// `String` → PropInput
     String,
+    /// `&'static str` → PropInput (value leaked via .leak())
+    StaticStr,
     /// Named enum type (e.g. `SwitchSize`) → PropSelect via PreviewEnumInfo
     Enum(Ident),
     /// `Option<EventHandler<T>>` or `Option<Callback<T>>` → skip
     Handler,
-    /// `Element` or `Option<Element>` or `children` → skip
+    /// `Element` or `Option<Element>` or `children` → render with sample content
     Children,
     /// Anything else → skip with a comment
     Unknown,
@@ -52,7 +54,7 @@ pub fn extract_props(sig: &syn::Signature) -> Result<Vec<PropInfo>> {
         let kind = classify_type(&name, &ty);
 
         let skip = has_preview_skip
-            || matches!(kind, PropKind::Handler | PropKind::Children | PropKind::Unknown);
+            || matches!(kind, PropKind::Handler | PropKind::Unknown);
 
         props.push(PropInfo {
             name,
@@ -89,6 +91,11 @@ fn classify_type(name: &Ident, ty: &Type) -> PropKind {
     // String
     if ty_str == "String" {
         return PropKind::String;
+    }
+
+    // &'static str
+    if ty_str.contains("&'staticstr") || ty_str.contains("&'static str") {
+        return PropKind::StaticStr;
     }
 
     // Option<Element>

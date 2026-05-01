@@ -5,6 +5,52 @@ use quote::{format_ident, quote};
 
 use crate::parse_props::{PropInfo, PropKind};
 
+/// Generate `handler_name: move |_| {}` for every Handler prop.
+/// Used in static gallery instances where handlers are required but not interactive.
+fn noop_handler_props(props: &[PropInfo]) -> Vec<TokenStream> {
+    props.iter()
+        .filter(|p| p.kind == PropKind::Handler)
+        .map(|p| {
+            let name = &p.name;
+            quote! { #name: move |_| {}, }
+        })
+        .collect()
+}
+
+/// Detect if a Handler prop is a FormEvent handler paired with a `value: String` prop.
+/// This is the standard "controlled input" pattern in Dioxus:
+///   `oninput: EventHandler<FormEvent>` + `value: String`
+/// Returns pairs of (handler_name, value_prop_name).
+fn find_form_handler_pairs(props: &[PropInfo]) -> Vec<(Ident, Ident)> {
+    let mut pairs = Vec::new();
+
+    let handlers: Vec<_> = props.iter().filter(|p| p.kind == PropKind::Handler).collect();
+    let string_props: Vec<_> = props.iter()
+        .filter(|p| matches!(p.kind, PropKind::String) && p.name != "class")
+        .collect();
+
+    for handler in &handlers {
+        let handler_ty = &handler.ty;
+        let ty_str = quote::quote!(#handler_ty).to_string();
+        let is_form_handler = ty_str.contains("FormEvent") || ty_str.contains("FormData");
+
+        if !is_form_handler {
+            continue;
+        }
+
+        // Try to pair with a `value` prop first, then fall back to first String prop
+        let value_prop = string_props.iter()
+            .find(|p| p.name == "value")
+            .or_else(|| string_props.first());
+
+        if let Some(target) = value_prop {
+            pairs.push((handler.name.clone(), target.name.clone()));
+        }
+    }
+
+    pairs
+}
+
 /// Detect if a Handler prop controls a Bool prop.
 /// Convention: `on_change` pairs with `checked`, `on_toggle` pairs with `toggled`, etc.
 /// Fallback: any `Option<EventHandler<bool>>` pairs with the first `bool` prop.
@@ -57,11 +103,17 @@ pub fn gen_demo(
     comp_name: &Ident,
     props: &[PropInfo],
     examples: &[(String, String)],
+    no_variant_gallery: bool,
 ) -> TokenStream {
     let demo_name = format_ident!("__PreviewDemo{}", comp_name);
 
-    let controllable: Vec<_> = props.iter().filter(|p| !p.skip).collect();
+    // Separate controllable props (get signals + controls) from children (get sample content)
+    let controllable: Vec<_> = props.iter()
+        .filter(|p| !p.skip && !matches!(p.kind, PropKind::Children))
+        .collect();
+    let has_children = props.iter().any(|p| matches!(p.kind, PropKind::Children));
     let handler_pairs = find_bool_handler_pairs(props);
+    let form_handler_pairs = find_form_handler_pairs(props);
 
     // ── Signal declarations ──────────────────────────────────────
     let signal_decls: Vec<TokenStream> = controllable
@@ -76,7 +128,7 @@ pub fn gen_demo(
                     };
                     quote! { let mut #sig_name = use_signal(|| #default); }
                 }
-                PropKind::String => {
+                PropKind::String | PropKind::StaticStr => {
                     let default = match &p.default_expr {
                         Some(expr) => quote! { #expr.to_string() },
                         None => quote! { String::new() },
@@ -116,7 +168,7 @@ pub fn gen_demo(
                         }
                     }
                 }
-                PropKind::String => {
+                PropKind::String | PropKind::StaticStr => {
                     let placeholder = format!("Enter {}", label_str);
                     let ph_const = format_ident!("__PH_{}", p.name.to_string().to_uppercase());
                     quote! {
@@ -157,7 +209,6 @@ pub fn gen_demo(
         .collect();
 
     // ── Prop values passed to the live preview component ─────────
-    // Include all controllable props + wired handlers
     let preview_props: Vec<TokenStream> = controllable
         .iter()
         .map(|p| {
@@ -166,6 +217,10 @@ pub fn gen_demo(
             match &p.kind {
                 PropKind::Bool => quote! { #prop_name: #sig_name(), },
                 PropKind::String => quote! { #prop_name: #sig_name(), },
+                PropKind::StaticStr => {
+                    // Leak the String into &'static str. Safe in WASM — page lifetime = app lifetime.
+                    quote! { #prop_name: Box::leak(#sig_name().into_boxed_str()), }
+                }
                 PropKind::Enum(_) => {
                     let ty = &p.ty;
                     quote! {
@@ -177,14 +232,73 @@ pub fn gen_demo(
         })
         .collect();
 
+    // ── Children: editable signal + control ────────────────────────
+    // For components with `children: Element`, we add a `sig_content` signal
+    // that lets the user type custom children text in the demo.
+    let comp_label = comp_name.to_string()
+        .trim_start_matches("Eq")
+        .to_string();
+    let default_children_text = format!("Sample {}", comp_label);
+
+    let children_signal_decl = if has_children {
+        let default = &default_children_text;
+        quote! { let mut sig_content = use_signal(|| #default.to_string()); }
+    } else {
+        quote! {}
+    };
+
+    let children_control = if has_children {
+        quote! {
+            {
+                const __LABEL_CONTENT: &str = "content";
+                const __PH_CONTENT: &str = "Child content text";
+                rsx! {
+                    PropInput {
+                        label: __LABEL_CONTENT,
+                        value: sig_content(),
+                        placeholder: __PH_CONTENT,
+                        onchange: move |v: String| sig_content.set(v),
+                    }
+                }
+            }
+        }
+    } else {
+        quote! {}
+    };
+
+    // In the live preview, children come from the signal
+    let children_preview = if has_children {
+        quote! { "{sig_content}" }
+    } else {
+        quote! {}
+    };
+
+    // In gallery/variant sections, children use a static sample
+    let children_static = if has_children {
+        let sample = &default_children_text;
+        quote! { #sample }
+    } else {
+        quote! {}
+    };
+
     // ── Handler wiring ──────────────────────────────────────────
     // For each handler that pairs with a bool prop, generate an on_change/on_click
     // prop that toggles the bool signal.
-    let handler_props: Vec<TokenStream> = handler_pairs
+    let bool_handler_props: Vec<TokenStream> = handler_pairs
         .iter()
         .map(|(handler_name, bool_name)| {
             let sig_name = format_ident!("sig_{}", bool_name);
             quote! { #handler_name: move |v: bool| #sig_name.set(v), }
+        })
+        .collect();
+
+    // For each form handler (EventHandler<FormEvent>) paired with a value prop,
+    // wire it to update the value signal: `oninput: move |e: FormEvent| sig_value.set(e.value())`
+    let form_handler_props: Vec<TokenStream> = form_handler_pairs
+        .iter()
+        .map(|(handler_name, value_name)| {
+            let sig_name = format_ident!("sig_{}", value_name);
+            quote! { #handler_name: move |e: FormEvent| #sig_name.set(e.value()), }
         })
         .collect();
 
@@ -211,8 +325,13 @@ pub fn gen_demo(
         .filter(|p| p.kind == PropKind::Bool && !p.skip)
         .collect();
     let string_props: Vec<_> = props.iter()
-        .filter(|p| matches!(p.kind, PropKind::String) && !p.skip && p.name != "class")
+        .filter(|p| matches!(p.kind, PropKind::String | PropKind::StaticStr) && !p.skip && p.name != "class")
         .collect();
+
+    // No-op handlers for static instances in variant galleries.
+    // Handlers are skipped in normal prop generation, but required handlers
+    // still need a value passed. Generate `handler: move |_| {}` for each.
+    let noop_handlers: Vec<TokenStream> = noop_handler_props(props);
 
     // Section 1: Sizes — one column per enum variant, with bool on/off rows
     let sizes_section = if let Some(first_enum) = enum_props.first() {
@@ -246,11 +365,15 @@ pub fn gen_demo(
                                         #bool_name: true,
                                         #enum_name: <#enum_ty as crate::preview_enum_trait::PreviewEnumInfo>::from_name(variant_name),
                                         #on_label
+                                        #(#noop_handlers)*
+                                        #children_static
                                     }
                                     #comp_name {
                                         #bool_name: false,
                                         #enum_name: <#enum_ty as crate::preview_enum_trait::PreviewEnumInfo>::from_name(variant_name),
                                         #off_label
+                                        #(#noop_handlers)*
+                                        #children_static
                                     }
                                 }
                             }
@@ -269,6 +392,8 @@ pub fn gen_demo(
                                 EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "{variant_name}" }
                                 #comp_name {
                                     #enum_name: <#enum_ty as crate::preview_enum_trait::PreviewEnumInfo>::from_name(variant_name),
+                                    #(#noop_handlers)*
+                                    #children_static
                                 }
                             }
                         }
@@ -296,6 +421,8 @@ pub fn gen_demo(
             quote! { #pname: }
         });
 
+        let children_ref = &children_static;
+        let noop_ref = &noop_handlers;
         let make_instance = |v1: bool, v2: bool| -> TokenStream {
             let label_text = match (v1, v2) {
                 (false, false) => format!("Default off"),
@@ -305,11 +432,11 @@ pub fn gen_demo(
             };
             if let Some(ref lt) = label_prop_tokens {
                 quote! {
-                    #comp_name { #b1: #v1, #b2: #v2, #lt #label_text }
+                    #comp_name { #b1: #v1, #b2: #v2, #lt #label_text, #(#noop_ref)* #children_ref }
                 }
             } else {
                 quote! {
-                    #comp_name { #b1: #v1, #b2: #v2 }
+                    #comp_name { #b1: #v1, #b2: #v2, #(#noop_ref)* #children_ref }
                 }
             }
         };
@@ -367,10 +494,14 @@ pub fn gen_demo(
                     #comp_name {
                         #first_bool_on
                         #(#string_filled)*
+                        #(#noop_handlers)*
+                        #children_static
                     }
                     #comp_name {
                         #first_bool_off
                         #(#string_filled)*
+                        #(#noop_handlers)*
+                        #children_static
                     }
                 }
             }
@@ -379,11 +510,73 @@ pub fn gen_demo(
         quote! {}
     };
 
+    // Section 4: Children examples — for children-based components without enums/bools,
+    // show a small gallery of instances with different sample content
+    let children_examples_section = if has_children && enum_props.is_empty() && bool_props.is_empty() {
+        // Build 3 sample instances with varied children text
+        let samples = vec![
+            format!("First {}", comp_label),
+            format!("Second {}", comp_label),
+            format!("Third {}", comp_label),
+        ];
+
+        // For each string/static-str prop, provide sensible defaults
+        let default_prop_vals: Vec<TokenStream> = controllable.iter().filter_map(|p| {
+            let pname = &p.name;
+            match &p.kind {
+                PropKind::String | PropKind::StaticStr => {
+                    let val = match p.name.to_string().as_str() {
+                        "href" => "https://example.com".to_string(),
+                        "for_id" => "field".to_string(),
+                        other => format!("sample-{}", other),
+                    };
+                    Some(quote! { #pname: #val, })
+                }
+                _ => None,
+            }
+        }).collect();
+
+        let instances: Vec<TokenStream> = samples.iter().map(|sample_text| {
+            quote! {
+                #comp_name {
+                    #(#default_prop_vals)*
+                    #(#noop_handlers)*
+                    #sample_text
+                }
+            }
+        }).collect();
+
+        quote! {
+            div { class: "space-y-4",
+                EqText { variant: TextVariant::Emphasis, "Examples" }
+                div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-3",
+                    #(#instances)*
+                }
+            }
+        }
+    } else {
+        quote! {}
+    };
+
+    let variant_gallery_section = if no_variant_gallery {
+        quote! {}
+    } else {
+        quote! {
+            div { class: "space-y-4",
+                #sizes_section
+                #states_section
+                #strings_section
+                #children_examples_section
+            }
+        }
+    };
+
     quote! {
         #[cfg(feature = "playground")]
         #[component]
         fn #demo_name() -> Element {
             #(#signal_decls)*
+            #children_signal_decl
 
             rsx! {
                 DemoSection { title: #title_str,
@@ -395,20 +588,19 @@ pub fn gen_demo(
                             "Props"
                         }
                         #(#prop_controls)*
+                        #children_control
                     }
                     // Live preview
                     div { class: "rounded-lg border border-dashed border-[var(--color-card-border)] p-6 space-y-4",
                         #comp_name {
                             #(#preview_props)*
-                            #(#handler_props)*
+                            #(#bool_handler_props)*
+                            #(#form_handler_props)*
+                            #children_preview
                         }
                     }
                     // Variant gallery
-                    div { class: "space-y-4",
-                        #sizes_section
-                        #states_section
-                        #strings_section
-                    }
+                    #variant_gallery_section
                     // Style info + code
                     StyleInfo {
                         file: #style_file_display,
@@ -435,15 +627,35 @@ pub fn gen_gallery(
     let enum_props: Vec<_> = props.iter().filter(|p| matches!(p.kind, PropKind::Enum(_))).collect();
     let bool_props: Vec<_> = props.iter().filter(|p| p.kind == PropKind::Bool && !p.skip).collect();
 
-    // For String props, provide sensible defaults
+    let has_children = props.iter().any(|p| matches!(p.kind, PropKind::Children));
+    let children_content = if has_children {
+        let comp_label = comp_name.to_string()
+            .trim_start_matches("Eq")
+            .to_string();
+        let sample = format!("Sample {}", comp_label);
+        quote! { #sample }
+    } else {
+        quote! {}
+    };
+
+    // No-op handlers for static gallery instances
+    let noop_handlers: Vec<TokenStream> = noop_handler_props(props);
+
+    // For String and StaticStr props, provide sensible defaults
     let string_defaults: Vec<TokenStream> = props
         .iter()
-        .filter(|p| matches!(p.kind, PropKind::String) && !p.skip && p.name != "class")
+        .filter(|p| matches!(p.kind, PropKind::String | PropKind::StaticStr) && !p.skip && p.name != "class")
         .map(|p| {
             let pname = &p.name;
             let val = p.name.to_string().replace('_', " ");
             let val = capitalize_first(&val);
-            quote! { #pname: #val, }
+            match &p.kind {
+                PropKind::StaticStr => {
+                    // Use a string literal directly for &'static str
+                    quote! { #pname: #val, }
+                }
+                _ => quote! { #pname: #val, }
+            }
         })
         .collect();
 
@@ -469,11 +681,15 @@ pub fn gen_gallery(
                                         #prop_name: <#ty as crate::preview_enum_trait::PreviewEnumInfo>::from_name(variant_name),
                                         #bool_name: true,
                                         #(#string_defaults)*
+                                        #(#noop_handlers)*
+                                        #children_content
                                     }
                                     #comp {
                                         #prop_name: <#ty as crate::preview_enum_trait::PreviewEnumInfo>::from_name(variant_name),
                                         #bool_name: false,
                                         #(#string_defaults)*
+                                        #(#noop_handlers)*
+                                        #children_content
                                     }
                                 }
                             }
@@ -494,6 +710,8 @@ pub fn gen_gallery(
                                     #comp {
                                         #prop_name: <#ty as crate::preview_enum_trait::PreviewEnumInfo>::from_name(variant_name),
                                         #(#string_defaults)*
+                                        #(#noop_handlers)*
+                                        #children_content
                                     }
                                     EqText { variant: TextVariant::Caption, "{variant_name}" }
                                 }
@@ -519,10 +737,14 @@ pub fn gen_gallery(
                         #comp {
                             #bool_name: true,
                             #(#string_defaults)*
+                            #(#noop_handlers)*
+                            #children_content
                         }
                         #comp {
                             #bool_name: false,
                             #(#string_defaults)*
+                            #(#noop_handlers)*
+                            #children_content
                         }
                     }
                 }
@@ -539,6 +761,8 @@ pub fn gen_gallery(
                     }
                     #comp {
                         #(#string_defaults)*
+                        #(#noop_handlers)*
+                        #children_content
                     }
                 }
             }
