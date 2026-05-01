@@ -1,6 +1,7 @@
 use dioxus::prelude::*;
 use super::eq_label_styles as s;
 use crate::theme::merge_classes;
+use crate::preview;
 
 #[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
@@ -17,6 +18,17 @@ use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory
 /// Renders a `<label>` element with consistent styling.
 ///
 /// Use `class` to extend or replace the default styles .
+#[preview(
+    category = Atom,
+    description = "Form label component with consistent styling. Associates with \
+                   form controls via the `for_id` attribute.",
+    examples = [
+        ("Basic", "EqLabel { for_id: \"username\", \"Username\" }"),
+        ("Without for attribute", "EqLabel { \"Label without for attribute\" }"),
+    ],
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqLabel(
     /// The `id` of the form control this label is associated with.
@@ -37,33 +49,7 @@ pub fn EqLabel(
     }
 }
 
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-label",
-        name: "EqLabel",
-        category: ComponentCategory::Atom,
-        description: "Form label component with consistent styling. Associates with \
-                      form controls via the `for_id` attribute.",
-        style_tokens: || s::catalog(),
-        usage_examples: || vec![
-            UsageExample {
-                label: "Basic",
-                code: "EqLabel { for_id: \"username\", \"Username\" }".into(),
-            },
-            UsageExample {
-                label: "Without for attribute",
-                code: "EqLabel { \"Label without for attribute\" }".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqLabel {} },
-        render_gallery: || rsx! { GalleryEqLabel {} },
-    }
-}
-
-// ── Interactive demo ───────────────────────────────────────────────
+// ── Custom demo (children-based component) ────────────────────────
 
 #[cfg(feature = "playground")]
 #[component]
@@ -113,7 +99,7 @@ EqLabel { "Label without for attribute" }"#
     }
 }
 
-// ── Gallery (compact showcase) ─────────────────────────────────────
+// ── Custom gallery ────────────────────────────────────────────────
 
 #[cfg(feature = "playground")]
 #[component]
