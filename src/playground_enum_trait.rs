@@ -1,12 +1,12 @@
-//! The `PreviewEnumInfo` trait — always compiled so `#[derive(PreviewEnum)]`
+//! The `PlaygroundEnumInfo` trait — always compiled so `#[derive(PlaygroundEnum)]`
 //! works regardless of the `playground` feature flag.
 
-/// Trait implemented by `#[derive(PreviewEnum)]` to expose enum variant
+/// Trait implemented by `#[derive(PlaygroundEnum)]` to expose enum variant
 /// names for auto-generated playground demo controls.
 ///
-/// This enables the `#[preview]` macro to generate `PropSelect` dropdowns
+/// This enables the `#[playground]` macro to generate `PropSelect` dropdowns
 /// for enum props without the macro needing to see the enum definition.
-pub trait PreviewEnumInfo: Clone + PartialEq + Default {
+pub trait PlaygroundEnumInfo: Clone + PartialEq + Default {
     /// All variant names as string slices (e.g. `["Sm", "Md", "Lg"]`).
     fn variant_names() -> &'static [&'static str];
     /// Construct a variant from its name. Returns the `#[default]` variant

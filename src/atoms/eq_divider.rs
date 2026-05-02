@@ -1,6 +1,6 @@
 use super::eq_divider_styles as s;
 use crate::theme::merge_classes;
-use crate::{PreviewEnum, preview};
+use crate::{PlaygroundEnum, playground};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
@@ -13,7 +13,7 @@ use crate::atoms::{EqText, TextVariant};
 use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
 
 /// Visual style of the divider line.
-#[derive(Clone, PartialEq, Default, PreviewEnum)]
+#[derive(Clone, PartialEq, Default, PlaygroundEnum)]
 pub enum DividerVariant {
     /// Solid continuous line (default).
     #[default]
@@ -27,7 +27,7 @@ pub enum DividerVariant {
 }
 
 /// Thickness of the divider.
-#[derive(Clone, PartialEq, Default, PreviewEnum)]
+#[derive(Clone, PartialEq, Default, PlaygroundEnum)]
 pub enum DividerWeight {
     /// Default thickness (1px).
     #[default]
@@ -39,7 +39,7 @@ pub enum DividerWeight {
 }
 
 /// Vertical spacing around the divider.
-#[derive(Clone, PartialEq, Default, PreviewEnum)]
+#[derive(Clone, PartialEq, Default, PlaygroundEnum)]
 pub enum DividerSpacing {
     /// Compact spacing (my-2).
     Compact,
@@ -53,7 +53,7 @@ pub enum DividerSpacing {
 /// A horizontal divider atom.
 ///
 /// Renders an `<hr>` element with configurable style, thickness, and spacing.
-#[preview(
+#[playground(
     category = Atom,
     description = "Horizontal divider with configurable style (solid/dashed/dotted/spacer), \
                    thickness, and spacing presets.",

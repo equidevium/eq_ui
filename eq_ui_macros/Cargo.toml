@@ -2,7 +2,7 @@
 name = "eq_ui_macros"
 version = "0.1.0"
 edition = "2024"
-description = "Proc macros for eq_ui — #[preview] playground generation and PreviewEnum derive"
+description = "Proc macros for eq_ui — #[playground] generation and PlaygroundEnum derive"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/equidevium/eq_ui"
 homepage = "https://github.com/equidevium/eq_ui"

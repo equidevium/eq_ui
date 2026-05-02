@@ -6,7 +6,7 @@
 
 use super::eq_switch_styles as s;
 use crate::theme::merge_classes;
-use crate::{PreviewEnum, preview};
+use crate::{PlaygroundEnum, playground};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
@@ -21,7 +21,7 @@ use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory
 // ── Types ─────────────────────────────────────────────────────────
 
 /// Size of the switch.
-#[derive(Clone, Copy, PartialEq, Default, PreviewEnum)]
+#[derive(Clone, Copy, PartialEq, Default, PlaygroundEnum)]
 pub enum SwitchSize {
     Sm,
     #[default]
@@ -35,7 +35,7 @@ pub enum SwitchSize {
 ///
 /// Renders a pill-shaped track with a sliding thumb. Controlled component
 /// pattern: pass `checked` + `on_change`.
-#[preview(
+#[playground(
     category = Atom,
     description = "Toggle switch with pill track and sliding thumb. \
                    Three sizes, optional label/description, disabled state. \

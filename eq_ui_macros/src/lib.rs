@@ -2,13 +2,13 @@
 //!
 //! Procedural macros for the eq_ui component library.
 //!
-//! ## `#[preview]` — Auto-generate playground boilerplate
+//! ## `#[playground]` — Auto-generate playground boilerplate
 //!
 //! Place on a `#[component]` function to generate the `descriptor()`,
 //! `Demo*`, and `Gallery*` functions behind `#[cfg(feature = "playground")]`.
 //!
 //! ```rust,ignore
-//! #[preview(
+//! #[playground(
 //!     category = Atom,
 //!     description = "Toggle switch with pill track.",
 //!     examples = [
@@ -25,10 +25,10 @@
 //! ) -> Element { ... }
 //! ```
 //!
-//! ## `#[derive(PreviewEnum)]` — Expose enum variants for demo controls
+//! ## `#[derive(PlaygroundEnum)]` — Expose enum variants for demo controls
 //!
 //! ```rust,ignore
-//! #[derive(Clone, PartialEq, Default, PreviewEnum)]
+//! #[derive(Clone, PartialEq, Default, PlaygroundEnum)]
 //! pub enum SwitchSize {
 //!     Sm,
 //!     #[default]
@@ -41,22 +41,22 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, DeriveInput};
 
-mod preview_attr;
-mod preview_enum;
+mod playground_attr;
+mod playground_enum;
 mod codegen;
 mod parse_props;
 
-/// Derive macro that implements `PreviewEnumInfo` for an enum,
+/// Derive macro that implements `PlaygroundEnumInfo` for an enum,
 /// exposing variant names and a `from_name` constructor for use
 /// in auto-generated playground demos.
 ///
 /// # Requirements
 /// - Only works on unit enums (no fields)
 /// - Expects exactly one variant annotated `#[default]`
-#[proc_macro_derive(PreviewEnum)]
-pub fn derive_preview_enum(input: TokenStream) -> TokenStream {
+#[proc_macro_derive(PlaygroundEnum)]
+pub fn derive_playground_enum(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
-    preview_enum::expand(input)
+    playground_enum::expand(input)
         .unwrap_or_else(|e| e.to_compile_error())
         .into()
 }
@@ -73,7 +73,7 @@ pub fn derive_preview_enum(input: TokenStream) -> TokenStream {
 /// # Attributes
 ///
 /// ```text
-/// #[preview(
+/// #[playground(
 ///     category = Atom | Molecule | Organism,
 ///     description = "...",
 ///     examples = [("Label", "code"), ...],
@@ -83,9 +83,9 @@ pub fn derive_preview_enum(input: TokenStream) -> TokenStream {
 /// )]
 /// ```
 #[proc_macro_attribute]
-pub fn preview(attr: TokenStream, item: TokenStream) -> TokenStream {
+pub fn playground(attr: TokenStream, item: TokenStream) -> TokenStream {
     let item2: proc_macro2::TokenStream = item.clone().into();
-    preview_attr::expand(attr.into(), item.into())
+    playground_attr::expand(attr.into(), item.into())
         .unwrap_or_else(|e| {
             let err = e.to_compile_error();
             // Still emit the original item so the component compiles

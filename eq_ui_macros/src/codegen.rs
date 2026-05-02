@@ -95,7 +95,7 @@ fn find_bool_handler_pairs(props: &[PropInfo]) -> Vec<(Ident, Ident)> {
     pairs
 }
 
-/// Generate the `__PreviewDemo{Name}` component.
+/// Generate the `__PlaygroundDemo{Name}` component.
 ///
 /// Creates `use_signal` for each non-skipped prop, PropToggle/PropSelect/PropInput
 /// controls, a live preview instance with handler wiring, and a CodeBlock with examples.
@@ -105,7 +105,7 @@ pub fn gen_demo(
     examples: &[(String, String)],
     no_variant_gallery: bool,
 ) -> TokenStream {
-    let demo_name = format_ident!("__PreviewDemo{}", comp_name);
+    let demo_name = format_ident!("__PlaygroundDemo{}", comp_name);
 
     // Separate controllable props (get signals + controls) from children (get sample content)
     let controllable: Vec<_> = props.iter()
@@ -138,7 +138,7 @@ pub fn gen_demo(
                 PropKind::Enum(_) => {
                     let ty = &p.ty;
                     quote! {
-                        let mut #sig_name = use_signal(|| <#ty as crate::preview_enum_trait::PreviewEnumInfo>::default_name().to_string());
+                        let mut #sig_name = use_signal(|| <#ty as crate::playground_enum_trait::PlaygroundEnumInfo>::default_name().to_string());
                     }
                 }
                 _ => quote! {},
@@ -191,7 +191,7 @@ pub fn gen_demo(
                     quote! {
                         {
                             const #label_const: &str = #label_str;
-                            let options: Vec<&'static str> = <#ty as crate::preview_enum_trait::PreviewEnumInfo>::variant_names().to_vec();
+                            let options: Vec<&'static str> = <#ty as crate::playground_enum_trait::PlaygroundEnumInfo>::variant_names().to_vec();
                             rsx! {
                                 PropSelect {
                                     label: #label_const,
@@ -224,7 +224,7 @@ pub fn gen_demo(
                 PropKind::Enum(_) => {
                     let ty = &p.ty;
                     quote! {
-                        #prop_name: <#ty as crate::preview_enum_trait::PreviewEnumInfo>::from_name(&#sig_name()),
+                        #prop_name: <#ty as crate::playground_enum_trait::PlaygroundEnumInfo>::from_name(&#sig_name()),
                     }
                 }
                 _ => quote! {},
@@ -357,20 +357,20 @@ pub fn gen_demo(
                 div { class: "space-y-4",
                     EqText { variant: TextVariant::Emphasis, #enum_label }
                     div { class: "grid grid-cols-1 md:grid-cols-3 gap-6",
-                        for variant_name in <#enum_ty as crate::preview_enum_trait::PreviewEnumInfo>::variant_names() {
+                        for variant_name in <#enum_ty as crate::playground_enum_trait::PlaygroundEnumInfo>::variant_names() {
                             div { class: "space-y-3",
                                 EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "{variant_name}" }
                                 div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-3",
                                     #comp_name {
                                         #bool_name: true,
-                                        #enum_name: <#enum_ty as crate::preview_enum_trait::PreviewEnumInfo>::from_name(variant_name),
+                                        #enum_name: <#enum_ty as crate::playground_enum_trait::PlaygroundEnumInfo>::from_name(variant_name),
                                         #on_label
                                         #(#noop_handlers)*
                                         #children_static
                                     }
                                     #comp_name {
                                         #bool_name: false,
-                                        #enum_name: <#enum_ty as crate::preview_enum_trait::PreviewEnumInfo>::from_name(variant_name),
+                                        #enum_name: <#enum_ty as crate::playground_enum_trait::PlaygroundEnumInfo>::from_name(variant_name),
                                         #off_label
                                         #(#noop_handlers)*
                                         #children_static
@@ -387,11 +387,11 @@ pub fn gen_demo(
                 div { class: "space-y-4",
                     EqText { variant: TextVariant::Emphasis, #enum_label }
                     div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-4",
-                        for variant_name in <#enum_ty as crate::preview_enum_trait::PreviewEnumInfo>::variant_names() {
+                        for variant_name in <#enum_ty as crate::playground_enum_trait::PlaygroundEnumInfo>::variant_names() {
                             div { class: "space-y-2",
                                 EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "{variant_name}" }
                                 #comp_name {
-                                    #enum_name: <#enum_ty as crate::preview_enum_trait::PreviewEnumInfo>::from_name(variant_name),
+                                    #enum_name: <#enum_ty as crate::playground_enum_trait::PlaygroundEnumInfo>::from_name(variant_name),
                                     #(#noop_handlers)*
                                     #children_static
                                 }
@@ -613,7 +613,7 @@ pub fn gen_demo(
     }
 }
 
-/// Generate the `__PreviewGallery{Name}` component.
+/// Generate the `__PlaygroundGallery{Name}` component.
 ///
 /// Renders a compact showcase with representative instances.
 /// If there's an enum prop, shows one instance per variant.
@@ -622,7 +622,7 @@ pub fn gen_gallery(
     comp_name: &Ident,
     props: &[PropInfo],
 ) -> TokenStream {
-    let gallery_name = format_ident!("__PreviewGallery{}", comp_name);
+    let gallery_name = format_ident!("__PlaygroundGallery{}", comp_name);
 
     let enum_props: Vec<_> = props.iter().filter(|p| matches!(p.kind, PropKind::Enum(_))).collect();
     let bool_props: Vec<_> = props.iter().filter(|p| p.kind == PropKind::Bool && !p.skip).collect();
@@ -674,18 +674,18 @@ pub fn gen_gallery(
                             "All Variants"
                         }
                         div { class: "flex flex-wrap items-center gap-6",
-                            for variant_name in <#ty as crate::preview_enum_trait::PreviewEnumInfo>::variant_names() {
+                            for variant_name in <#ty as crate::playground_enum_trait::PlaygroundEnumInfo>::variant_names() {
                                 div { class: "flex flex-col items-center gap-2",
                                     EqText { variant: TextVariant::Caption, "{variant_name}" }
                                     #comp {
-                                        #prop_name: <#ty as crate::preview_enum_trait::PreviewEnumInfo>::from_name(variant_name),
+                                        #prop_name: <#ty as crate::playground_enum_trait::PlaygroundEnumInfo>::from_name(variant_name),
                                         #bool_name: true,
                                         #(#string_defaults)*
                                         #(#noop_handlers)*
                                         #children_content
                                     }
                                     #comp {
-                                        #prop_name: <#ty as crate::preview_enum_trait::PreviewEnumInfo>::from_name(variant_name),
+                                        #prop_name: <#ty as crate::playground_enum_trait::PlaygroundEnumInfo>::from_name(variant_name),
                                         #bool_name: false,
                                         #(#string_defaults)*
                                         #(#noop_handlers)*
@@ -705,10 +705,10 @@ pub fn gen_gallery(
                             "All Variants"
                         }
                         div { class: "flex flex-wrap items-center gap-4",
-                            for variant_name in <#ty as crate::preview_enum_trait::PreviewEnumInfo>::variant_names() {
+                            for variant_name in <#ty as crate::playground_enum_trait::PlaygroundEnumInfo>::variant_names() {
                                 div { class: "flex flex-col items-center gap-1",
                                     #comp {
-                                        #prop_name: <#ty as crate::preview_enum_trait::PreviewEnumInfo>::from_name(variant_name),
+                                        #prop_name: <#ty as crate::playground_enum_trait::PlaygroundEnumInfo>::from_name(variant_name),
                                         #(#string_defaults)*
                                         #(#noop_handlers)*
                                         #children_content

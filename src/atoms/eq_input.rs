@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 use super::eq_input_styles as s;
 use crate::theme::merge_classes;
-use crate::{PreviewEnum, preview};
+use crate::{PlaygroundEnum, playground};
 
 #[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
@@ -13,7 +13,7 @@ use crate::atoms::{EqText, TextVariant};
 use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
 
 /// Input kind - determines the rendered element and `type` attribute.
-#[derive(Clone, PartialEq, Default, PreviewEnum)]
+#[derive(Clone, PartialEq, Default, PlaygroundEnum)]
 pub enum InputKind {
     #[default]
     Text,
@@ -26,7 +26,7 @@ pub enum InputKind {
 /// Renders a styled `<input>` or `<textarea>` depending on `kind`.
 ///
 /// Use `class` to extend or replace the default styles .
-#[preview(
+#[playground(
     category = Atom,
     description = "Atomic input component supporting text, email, password, and \
                    textarea kinds with consistent styling.",

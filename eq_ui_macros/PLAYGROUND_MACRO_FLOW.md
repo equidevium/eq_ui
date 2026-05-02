@@ -1,10 +1,10 @@
-# The `#[preview]` Macro: How It Works
+# The `#[playground]` Macro: How It Works
 
 ## The Problem
 
 Every component in eq_ui needs playground support, which means an interactive demo where you can tweak props and see the result live. Writing that by hand means around 200 lines of boilerplate per component: signal declarations, prop controls, a live preview, a gallery, a descriptor. It's the same pattern every time. Only the prop names and types change.
 
-The `#[preview]` macro reads your component's signature and writes all of that for you.
+The `#[playground]` macro reads your component's signature and writes all of that for you.
 
 ---
 
@@ -12,11 +12,11 @@ The `#[preview]` macro reads your component's signature and writes all of that f
 
 There are two macros that work together. One is for enums, the other is for components.
 
-### `#[derive(PreviewEnum)]`: Teaching Enums to Describe Themselves
+### `#[derive(PlaygroundEnum)]`: Teaching Enums to Describe Themselves
 
 When you write a prop enum like `SwitchSize { Sm, Md, Lg }`, the macro system needs to know what variants exist so it can build a dropdown control. But a proc macro can only see the code it's attached to. It can't peek into other files.
 
-`PreviewEnum` solves this by making each enum carry its own description. When the compiler sees `#[derive(PreviewEnum)]` on an enum, it generates three functions:
+`PlaygroundEnum` solves this by making each enum carry its own description. When the compiler sees `#[derive(PlaygroundEnum)]` on an enum, it generates three functions:
 
 - **`variant_names()`** returns `["Sm", "Md", "Lg"]` so the demo can populate a dropdown.
 - **`from_name("Lg")`** converts the selected dropdown string back into `SwitchSize::Lg`.
@@ -24,7 +24,7 @@ When you write a prop enum like `SwitchSize { Sm, Md, Lg }`, the macro system ne
 
 That's it. A self-description card stapled to the enum at compile time.
 
-### `#[preview(...)]`: The Main Event
+### `#[playground(...)]`: The Main Event
 
 This is the attribute you place above `#[component]`. It does four things in sequence.
 
@@ -37,7 +37,7 @@ This is the attribute you place above `#[component]`. It does four things in seq
 The macro reads the arguments you passed:
 
 ```rust
-#[preview(
+#[playground(
     category = Atom,
     description = "Toggle switch with pill track.",
     examples = [("Basic", "EqSwitch { checked: true }")],
@@ -57,7 +57,7 @@ The macro walks through each parameter in the function signature, looks at its t
 
 It sees `checked` and `disabled` are booleans, so it knows those should be on/off toggle switches. The user clicks the toggle, the component re-renders with the new value.
 
-It sees `size` is a `SwitchSize`, which is not a primitive type. It recognizes this as a custom enum and decides to make a dropdown menu for it. The dropdown options come from the `PreviewEnumInfo` trait that `#[derive(PreviewEnum)]` generated earlier. So the dropdown automatically shows "Sm", "Md", "Lg" without the macro ever seeing the enum definition.
+It sees `size` is a `SwitchSize`, which is not a primitive type. It recognizes this as a custom enum and decides to make a dropdown menu for it. The dropdown options come from the `PlaygroundEnumInfo` trait that `#[derive(PlaygroundEnum)]` generated earlier. So the dropdown automatically shows "Sm", "Md", "Lg" without the macro ever seeing the enum definition.
 
 It sees `label` and `description` are strings, so it creates text input fields for them. The user types something in, the component updates live.
 
@@ -83,7 +83,7 @@ This is where `codegen.rs` does its work. It takes the classified prop list and 
 **The demo component.** This is the big one. For each non-skipped prop, it generates:
 
 - A `use_signal` declaration with the right default value. `use_signal(|| false)` for a bool, `use_signal(|| "Md".to_string())` for an enum.
-- A prop control in the UI panel. `PropToggle` for bools, `PropSelect` for enums (populated via `PreviewEnumInfo::variant_names()`), `PropInput` for strings.
+- A prop control in the UI panel. `PropToggle` for bools, `PropSelect` for enums (populated via `PlaygroundEnumInfo::variant_names()`), `PropInput` for strings.
 - A line in the live preview that reads from the signal. `checked: sig_checked()`, or `size: SwitchSize::from_name(&sig_size())` for enums.
 
 All of this gets wrapped in the standard demo layout: a controls panel at the top, a live preview in the middle, style info at the bottom.
@@ -107,7 +107,7 @@ For most components, the auto-generated demo is perfect. For the rest (component
 
 - **`custom_demo`**: the macro skips demo generation. You write `DemoEqTree` by hand, but still get the free descriptor and gallery.
 - **`custom_gallery`**: same idea, but for the gallery.
-- **`#[preview(skip)]`** on a prop: excludes a specific prop from the controls panel.
+- **`#[playground(skip)]`** on a prop: excludes a specific prop from the controls panel.
 - **`no_styles`**: for components that don't have a co-located `_styles.rs` file.
 
 ---
@@ -126,8 +126,8 @@ For most components, the auto-generated demo is perfect. For the rest (component
 **After**, with the macro:
 
 1. Write the component (~60 lines)
-2. Add `#[derive(PreviewEnum)]` to any prop enums (0 extra lines)
-3. Add `#[preview(...)]` above `#[component]` (~5 lines)
+2. Add `#[derive(PlaygroundEnum)]` to any prop enums (0 extra lines)
+3. Add `#[playground(...)]` above `#[component]` (~5 lines)
 4. Register in `lib.rs` (1 line)
 
 The ~180 lines of boilerplate per component disappear. Across 20+ components, that's thousands of lines you never have to write, read, or maintain.

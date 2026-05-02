@@ -1,4 +1,4 @@
-//! `#[derive(PreviewEnum)]` — generates `PreviewEnumInfo` impl.
+//! `#[derive(PlaygroundEnum)]` — generates `PlaygroundEnumInfo` impl.
 
 use proc_macro2::TokenStream;
 use quote::quote;
@@ -12,7 +12,7 @@ pub fn expand(input: DeriveInput) -> Result<TokenStream> {
         _ => {
             return Err(syn::Error::new_spanned(
                 &input.ident,
-                "PreviewEnum can only be derived on enums",
+                "PlaygroundEnum can only be derived on enums",
             ));
         }
     };
@@ -22,7 +22,7 @@ pub fn expand(input: DeriveInput) -> Result<TokenStream> {
         if !matches!(v.fields, Fields::Unit) {
             return Err(syn::Error::new_spanned(
                 v,
-                "PreviewEnum only supports unit variants (no fields)",
+                "PlaygroundEnum only supports unit variants (no fields)",
             ));
         }
     }
@@ -53,7 +53,7 @@ pub fn expand(input: DeriveInput) -> Result<TokenStream> {
         .unwrap_or(&variant_idents[0]);
 
     Ok(quote! {
-        impl crate::preview_enum_trait::PreviewEnumInfo for #name {
+        impl crate::playground_enum_trait::PlaygroundEnumInfo for #name {
             fn variant_names() -> &'static [&'static str] {
                 static NAMES: [&str; #variant_count] = [#(#variant_names),*];
                 &NAMES

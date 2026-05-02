@@ -1,6 +1,6 @@
 use super::eq_image_styles as s;
 use crate::theme::merge_classes;
-use crate::{PreviewEnum, preview};
+use crate::{PlaygroundEnum, playground};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
@@ -13,7 +13,7 @@ use crate::atoms::{EqText, TextVariant};
 use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
 
 /// Image size preset.
-#[derive(Clone, PartialEq, Default, PreviewEnum)]
+#[derive(Clone, PartialEq, Default, PlaygroundEnum)]
 pub enum AtomImageSize {
     Sm,
     #[default]
@@ -23,7 +23,7 @@ pub enum AtomImageSize {
 }
 
 /// Aspect ratio constraint.
-#[derive(Clone, PartialEq, Default, PreviewEnum)]
+#[derive(Clone, PartialEq, Default, PlaygroundEnum)]
 pub enum AspectRatio {
     Ratio16_9,
     Ratio4_3,
@@ -33,7 +33,7 @@ pub enum AspectRatio {
 }
 
 /// How the image fills its container.
-#[derive(Clone, PartialEq, Default, PreviewEnum)]
+#[derive(Clone, PartialEq, Default, PlaygroundEnum)]
 pub enum ObjectFit {
     #[default]
     Cover,
@@ -44,7 +44,7 @@ pub enum ObjectFit {
 /// Atomic image component.
 /// Renders a styled `<img>` inside a sized wrapper with lazy loading.
 /// Accepts both Dioxus `Asset` (via `asset!()`) and URL strings as `src`.
-#[preview(
+#[playground(
     category = Atom,
     description = "Atomic image component with lazy loading, aspect ratio constraints, \
                    object-fit control, and optional rounded corners.",

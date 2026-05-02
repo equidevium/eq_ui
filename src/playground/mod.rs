@@ -30,4 +30,4 @@ pub use playground_helpers::{
 };
 pub use eq_playground::EqPlayground;
 
-pub use crate::preview_enum_trait::PreviewEnumInfo;
+pub use crate::playground_enum_trait::PlaygroundEnumInfo;

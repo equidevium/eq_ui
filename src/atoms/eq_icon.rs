@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 use super::eq_icon_styles as s;
 use crate::theme::merge_classes;
-use crate::{PreviewEnum, preview};
+use crate::{PlaygroundEnum, playground};
 
 #[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
@@ -13,7 +13,7 @@ use crate::atoms::{EqText, TextVariant};
 use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
 
 /// Icon size variant.
-#[derive(Clone, PartialEq, Default, PreviewEnum)]
+#[derive(Clone, PartialEq, Default, PlaygroundEnum)]
 pub enum IconSize {
     Sm,
     #[default]
@@ -29,7 +29,7 @@ pub enum IconSize {
 ///
 /// **Children mode** - pass any element (custom SVG, `<img>`, etc.)
 /// as children. The wrapper applies consistent sizing and color.
-#[preview(
+#[playground(
     category = Atom,
     description = "Icon wrapper supporting SVG path data or custom SVG children. \
                    Configurable sizes with optional muted variant.",

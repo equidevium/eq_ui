@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 use super::eq_label_styles as s;
 use crate::theme::merge_classes;
-use crate::preview;
+use crate::playground;
 
 #[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
@@ -16,7 +16,7 @@ use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory
 /// Renders a `<label>` element with consistent styling.
 ///
 /// Use `class` to extend or replace the default styles .
-#[preview(
+#[playground(
     category = Atom,
     description = "Form label component with consistent styling. Associates with \
                    form controls via the `for_id` attribute.",

@@ -1,4 +1,4 @@
-//! `#[preview(...)]` attribute macro implementation.
+//! `#[playground(...)]` attribute macro implementation.
 
 use proc_macro2::{Ident, Span, TokenStream};
 use quote::{format_ident, quote};
@@ -10,8 +10,8 @@ use crate::parse_props;
 
 // ── Attribute parsing ────────────────────────────────────────────
 
-/// Parsed contents of `#[preview(...)]`.
-struct PreviewAttr {
+/// Parsed contents of `#[playground(...)]`.
+struct PlaygroundAttr {
     category: Ident,
     description: String,
     examples: Vec<(String, String)>,
@@ -21,7 +21,7 @@ struct PreviewAttr {
     custom_gallery: bool,
 }
 
-impl Parse for PreviewAttr {
+impl Parse for PlaygroundAttr {
     fn parse(input: ParseStream) -> Result<Self> {
         let mut category = None;
         let mut description = None;
@@ -73,7 +73,7 @@ impl Parse for PreviewAttr {
                 other => {
                     return Err(syn::Error::new(
                         key.span(),
-                        format!("unknown preview attribute: `{other}`"),
+                        format!("unknown playground attribute: `{other}`"),
                     ));
                 }
             }
@@ -83,12 +83,12 @@ impl Parse for PreviewAttr {
             }
         }
 
-        Ok(PreviewAttr {
+        Ok(PlaygroundAttr {
             category: category.ok_or_else(|| {
-                syn::Error::new(Span::call_site(), "missing `category` in #[preview]")
+                syn::Error::new(Span::call_site(), "missing `category` in #[playground]")
             })?,
             description: description.ok_or_else(|| {
-                syn::Error::new(Span::call_site(), "missing `description` in #[preview]")
+                syn::Error::new(Span::call_site(), "missing `description` in #[playground]")
             })?,
             examples,
             no_styles,
@@ -102,7 +102,7 @@ impl Parse for PreviewAttr {
 // ── Main expansion ───────────────────────────────────────────────
 
 pub fn expand(attr: TokenStream, item: TokenStream) -> Result<TokenStream> {
-    let attr: PreviewAttr = syn::parse2(attr)?;
+    let attr: PlaygroundAttr = syn::parse2(attr)?;
     let func: ItemFn = syn::parse2(item.clone())?;
 
     let comp_name = &func.sig.ident;
@@ -143,8 +143,8 @@ pub fn expand(attr: TokenStream, item: TokenStream) -> Result<TokenStream> {
     };
 
     // ── Demo and Gallery names ───────────────────────────────────
-    let demo_name = format_ident!("__PreviewDemo{}", comp_name);
-    let gallery_name = format_ident!("__PreviewGallery{}", comp_name);
+    let demo_name = format_ident!("__PlaygroundDemo{}", comp_name);
+    let gallery_name = format_ident!("__PlaygroundGallery{}", comp_name);
 
     // ── Generate demo component ──────────────────────────────────
     let demo_component = if attr.custom_demo {

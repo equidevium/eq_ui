@@ -21,7 +21,7 @@ pub enum PropKind {
     String,
     /// `&'static str` → PropInput (value leaked via .leak())
     StaticStr,
-    /// Named enum type (e.g. `SwitchSize`) → PropSelect via PreviewEnumInfo
+    /// Named enum type (e.g. `SwitchSize`) → PropSelect via PlaygroundEnumInfo
     Enum(Ident),
     /// `Option<EventHandler<T>>` or `Option<Callback<T>>` → skip
     Handler,
@@ -46,14 +46,14 @@ pub fn extract_props(sig: &syn::Signature) -> Result<Vec<PropInfo>> {
         let ty = pat_ty.ty.as_ref().clone();
         let attrs = &pat_ty.attrs;
 
-        let has_preview_skip = attrs.iter().any(|a| {
-            a.path().is_ident("preview") && a.parse_args::<Ident>().map(|i| i == "skip").unwrap_or(false)
+        let has_playground_skip = attrs.iter().any(|a| {
+            a.path().is_ident("playground") && a.parse_args::<Ident>().map(|i| i == "skip").unwrap_or(false)
         });
 
         let default_expr = extract_default_value(attrs);
         let kind = classify_type(&name, &ty);
 
-        let skip = has_preview_skip
+        let skip = has_playground_skip
             || matches!(kind, PropKind::Handler | PropKind::Unknown);
 
         props.push(PropInfo {

@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 use super::eq_text_styles as s;
 use crate::theme::merge_classes;
-use crate::{PreviewEnum, preview};
+use crate::{PlaygroundEnum, playground};
 
 #[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
@@ -11,7 +11,7 @@ use crate::playground::playground_helpers::{
 use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
 
 /// Text variant - determines the HTML element and style applied.
-#[derive(Clone, PartialEq, Default, PreviewEnum)]
+#[derive(Clone, PartialEq, Default, PlaygroundEnum)]
 pub enum TextVariant {
     H1,
     H2,
@@ -28,7 +28,7 @@ pub enum TextVariant {
 /// Renders the correct semantic HTML element based on the chosen variant.
 ///
 /// Use `class` to extend or replace the default styles .
-#[preview(
+#[playground(
     category = Atom,
     description = "Semantic text component with variants for headings, body, muted, \
                    caption, emphasis, and monospace text.",

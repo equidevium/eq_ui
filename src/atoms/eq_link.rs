@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 use super::eq_link_styles as s;
 use crate::theme::merge_classes;
-use crate::preview;
+use crate::playground;
 
 #[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
@@ -18,7 +18,7 @@ use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory
 /// navigation and apply EqLink's style classes directly when needed.
 ///
 /// Use `class` to extend or replace the default styles .
-#[preview(
+#[playground(
     category = Atom,
     description = "Atomic link component with consistent styling. Use the router Link \
                    component for internal navigation.",
