@@ -1,5 +1,6 @@
 use super::eq_image_styles as s;
 use crate::theme::merge_classes;
+use crate::{PreviewEnum, preview};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
@@ -12,7 +13,7 @@ use crate::atoms::{EqText, TextVariant};
 use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
 
 /// Image size preset.
-#[derive(Clone, PartialEq, Default)]
+#[derive(Clone, PartialEq, Default, PreviewEnum)]
 pub enum AtomImageSize {
     Sm,
     #[default]
@@ -22,7 +23,7 @@ pub enum AtomImageSize {
 }
 
 /// Aspect ratio constraint.
-#[derive(Clone, PartialEq, Default)]
+#[derive(Clone, PartialEq, Default, PreviewEnum)]
 pub enum AspectRatio {
     Ratio16_9,
     Ratio4_3,
@@ -32,7 +33,7 @@ pub enum AspectRatio {
 }
 
 /// How the image fills its container.
-#[derive(Clone, PartialEq, Default)]
+#[derive(Clone, PartialEq, Default, PreviewEnum)]
 pub enum ObjectFit {
     #[default]
     Cover,
@@ -43,6 +44,17 @@ pub enum ObjectFit {
 /// Atomic image component.
 /// Renders a styled `<img>` inside a sized wrapper with lazy loading.
 /// Accepts both Dioxus `Asset` (via `asset!()`) and URL strings as `src`.
+#[preview(
+    category = Atom,
+    description = "Atomic image component with lazy loading, aspect ratio constraints, \
+                   object-fit control, and optional rounded corners.",
+    examples = [
+        ("Basic", "EqImage {\n    src: \"https://example.com/photo.jpg\",\n    alt: \"A scenic view\",\n}"),
+        ("With aspect ratio", "EqImage {\n    src: \"photo.jpg\",\n    alt: \"Image\",\n    aspect_ratio: AspectRatio::Ratio16_9,\n    rounded: true,\n}"),
+    ],
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqImage(
     /// Image source - Asset or URL string.
@@ -63,14 +75,10 @@ pub fn EqImage(
     /// Apply rounded corners.
     #[props(default = false)]
     rounded: bool,
-    /// Explicit ARIA label for screen readers. Overrides `alt` for
-    /// assistive technology when you need a more descriptive announcement
-    /// than the visual alt text.
+    /// Explicit ARIA label for screen readers.
     #[props(into, default)]
     aria_label: String,
-    /// Mark as decorative (hides from screen readers). When true, sets
-    /// `role="presentation"` and `aria-hidden="true"` so assistive
-    /// technology skips this image entirely.
+    /// Mark as decorative (hides from screen readers).
     #[props(default = false)]
     decorative: bool,
     /// Optional class override - extend or replace default wrapper styles.
@@ -116,33 +124,7 @@ pub fn EqImage(
     }
 }
 
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-image",
-        name: "EqImage",
-        category: ComponentCategory::Atom,
-        description: "Atomic image component with lazy loading, aspect ratio constraints, \
-                      object-fit control, and optional rounded corners.",
-        style_tokens: || s::catalog(),
-        usage_examples: || vec![
-            UsageExample {
-                label: "Basic",
-                code: "EqImage {\n    src: \"https://example.com/photo.jpg\",\n    alt: \"A scenic view\",\n}".into(),
-            },
-            UsageExample {
-                label: "With aspect ratio",
-                code: "EqImage {\n    src: \"photo.jpg\",\n    alt: \"Image\",\n    aspect_ratio: AspectRatio::Ratio16_9,\n    rounded: true,\n}".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqImage {} },
-        render_gallery: || rsx! { GalleryEqImage {} },
-    }
-}
-
-// ── Interactive demo ───────────────────────────────────────────────
+// ── Custom demo (needs real image URLs) ──────────────────────────
 
 #[cfg(feature = "playground")]
 #[component]
@@ -176,14 +158,6 @@ fn DemoEqImage() -> Element {
     size: AtomImageSize::Md,
     aspect_ratio: AspectRatio::Ratio16_9,
     rounded: true,
-}
-
-EqImage {
-    src: "avatar.png",
-    alt: "User avatar",
-    size: AtomImageSize::Sm,
-    aspect_ratio: AspectRatio::Square,
-    object_fit: ObjectFit::Cover,
 }"#
     .to_string();
 
@@ -235,17 +209,15 @@ EqImage {
     }
 }
 
-// ── Gallery (compact showcase) ─────────────────────────────────────
+// ── Custom gallery ───────────────────────────────────────────────
 
 #[cfg(feature = "playground")]
 #[component]
 fn GalleryEqImage() -> Element {
     rsx! {
         div { class: "space-y-4",
-            // Size gallery
             div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-4",
                 EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Sizes" }
-
                 div { class: "space-y-3",
                     div { class: "space-y-1",
                         EqText { variant: TextVariant::Muted, "Small" }
@@ -273,11 +245,8 @@ fn GalleryEqImage() -> Element {
                     }
                 }
             }
-
-            // Aspect ratio gallery
             div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-4",
                 EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Aspect Ratios" }
-
                 div { class: "space-y-3",
                     div { class: "space-y-1",
                         EqText { variant: TextVariant::Muted, "16:9" }
