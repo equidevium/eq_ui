@@ -59,6 +59,9 @@ pub fn all_component_descriptors() -> Vec<ComponentDescriptor> {
         molecules::eq_tree::descriptor(),
         molecules::eq_accordion::descriptor(),
         molecules::eq_nav_item::descriptor(),
+        molecules::eq_cta::descriptor(),
+        molecules::eq_modal::descriptor(),
+        molecules::eq_toast::descriptor(),
         // Organisms
         organisms::eq_header::descriptor(),
         organisms::eq_footer::descriptor(),

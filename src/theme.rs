@@ -78,18 +78,6 @@ pub const SHADOW_MD: &str = "shadow-md shadow-black/20";
 pub const SHADOW_LG: &str = "shadow-lg shadow-black/30";
 pub const SHADOW_FOCUS: &str = "focus:shadow-md focus:shadow-black/30";
 
-// ── CTAs (move to eq_cta_styles.rs when EqCta is created) ──────────
-pub const CTA: &str =
-    "rounded-xl border border-[var(--color-card-border)] \
-     bg-[var(--color-tertiary-dark)]/60 \
-     p-4 md:p-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between";
-pub const CTA_TEXT_GROUP: &str = "space-y-1";
-pub const CTA_TITLE: &str =
-    "text-lg font-semibold text-[var(--color-label-primary)]";
-pub const CTA_DESCRIPTION: &str =
-    "text-sm text-[var(--color-label-secondary)]";
-pub const CTA_ACTION: &str = "shrink-0";
-
 // ── Section cards (move when component is created) ──────────────────
 pub const SECTION_CARD: &str =
     "rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card)]/60 p-4 md:p-6 shadow-sm";
