@@ -1,5 +1,6 @@
 use super::eq_scrollable_space_styles as s;
 use crate::theme::merge_classes;
+use crate::playground;
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
@@ -14,8 +15,17 @@ use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory
 /// A scrollable container atom.
 /// Wraps content with vertical overflow scrolling and themed scrollbar.
 /// Designed for sidebars, panels, and any area that needs independent scroll.
-///
-/// Use `class` to extend or replace the default styles .
+#[playground(
+    category = Atom,
+    description = "Scrollable container with vertical overflow and themed scrollbar. \
+                   Ideal for sidebars, panels, and independent scroll areas.",
+    examples = [
+        ("Basic", "div { class: \"h-48 flex flex-col\",\n    EqScrollableSpace {\n        p { \"Scrollable content...\" }\n    }\n}"),
+        ("With max-height", "EqScrollableSpace { max_height: \"max-h-96\",\n    // Content that overflows will scroll\n}"),
+    ],
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqScrollableSpace(
     /// The content to render inside the scrollable area.
@@ -56,33 +66,7 @@ pub fn EqScrollableSpace(
     }
 }
 
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-scrollable-space",
-        name: "EqScrollableSpace",
-        category: ComponentCategory::Atom,
-        description: "Scrollable container with vertical overflow and themed scrollbar. \
-                      Ideal for sidebars, panels, and independent scroll areas.",
-        style_tokens: || s::catalog(),
-        usage_examples: || vec![
-            UsageExample {
-                label: "Basic scrollable area",
-                code: "// Wrap in a flex-col container with fixed height\ndiv { class: \"h-48 flex flex-col\",\n    EqScrollableSpace {\n        p { \"Scrollable content...\" }\n    }\n}".into(),
-            },
-            UsageExample {
-                label: "With max-height",
-                code: "EqScrollableSpace { max_height: \"max-h-96\",\n    // Content that overflows will scroll\n}".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqScrollableSpace {} },
-        render_gallery: || rsx! { GalleryEqScrollableSpace {} },
-    }
-}
-
-// ── Interactive demo ───────────────────────────────────────────────
+// ── Custom demo (item count control + fixed-height container) ─────
 
 #[cfg(feature = "playground")]
 #[component]

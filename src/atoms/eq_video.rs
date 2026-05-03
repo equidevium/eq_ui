@@ -1,6 +1,7 @@
 use super::eq_video_styles as s;
 use super::{AspectRatio, AtomImageSize};
 use crate::theme::merge_classes;
+use crate::playground;
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
@@ -17,6 +18,17 @@ use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory
 /// Renders a styled `<video>` inside a sized wrapper. Uses the native HTML
 /// `poster` attribute for thumbnail display - the browser handles the
 /// poster-to-playback transition without any JavaScript.
+#[playground(
+    category = Atom,
+    description = "Styled video player with size presets, aspect ratio constraints, \
+                   native browser controls, and optional poster image.",
+    examples = [
+        ("Basic video", "EqVideo {\n    src: \"https://example.com/video.mp4\",\n    controls: true,\n    rounded: true,\n}"),
+        ("With poster", "EqVideo {\n    src: \"https://example.com/video.mp4\",\n    poster: \"https://example.com/thumb.jpg\",\n    muted: true,\n    autoplay: true,\n}"),
+    ],
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqVideo(
     /// Video source URL.
@@ -84,42 +96,18 @@ pub fn EqVideo(
                 src: "{src}",
                 poster: if !poster.is_empty() { "{poster}" },
                 autoplay,
-                muted,
+                muted: if autoplay { true } else { muted },
+                "playsinline": if autoplay { "true" } else { "" },
                 r#loop: loop_video,
                 controls,
+                preload: "metadata",
                 "aria-label": if !aria_label.is_empty() { "{aria_label}" } else { "" },
             }
         }
     }
 }
 
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-video",
-        name: "EqVideo",
-        category: ComponentCategory::Atom,
-        description: "Styled video player with size presets, aspect ratio constraints, \
-                      native browser controls, and optional poster image.",
-        style_tokens: || s::catalog(),
-        usage_examples: || vec![
-            UsageExample {
-                label: "Basic video with controls",
-                code: "EqVideo {\n    src: \"https://example.com/video.mp4\",\n    controls: true,\n    rounded: true,\n}".into(),
-            },
-            UsageExample {
-                label: "With poster and autoplay",
-                code: "EqVideo {\n    src: \"https://example.com/video.mp4\",\n    poster: \"https://example.com/thumb.jpg\",\n    muted: true,\n    autoplay: true,\n}".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqVideo {} },
-        render_gallery: || rsx! { GalleryEqVideo {} },
-    }
-}
-
-// ── Interactive demo ───────────────────────────────────────────────
+// ── Custom demo (real video URLs + poster toggle) ─────────────────
 
 #[cfg(feature = "playground")]
 #[component]
@@ -207,7 +195,7 @@ fn DemoEqVideo() -> Element {
             }
             div { class: "rounded-lg border border-dashed border-[var(--color-card-border)] overflow-hidden p-4",
                 EqVideo {
-                    src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                    src: "https://www.w3schools.com/html/mov_bbb.mp4",
                     poster: poster_url,
                     size,
                     aspect_ratio,
@@ -236,7 +224,7 @@ fn GalleryEqVideo() -> Element {
                 div { class: "space-y-1",
                     EqText { variant: TextVariant::Muted, class: "text-xs font-medium uppercase", "Small" }
                     EqVideo {
-                        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                        src: "https://www.w3schools.com/html/mov_bbb.mp4",
                         poster: "https://picsum.photos/seed/eq-video-sm/400/300",
                         size: AtomImageSize::Sm,
                         controls: true,
@@ -246,7 +234,7 @@ fn GalleryEqVideo() -> Element {
                 div { class: "space-y-1",
                     EqText { class: "text-xs font-medium uppercase text-[var(--color-label-secondary)]", "Medium" }
                     EqVideo {
-                        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                        src: "https://www.w3schools.com/html/mov_bbb.mp4",
                         poster: "https://picsum.photos/seed/eq-video-md/512/384",
                         size: AtomImageSize::Md,
                         controls: true,
@@ -260,7 +248,7 @@ fn GalleryEqVideo() -> Element {
                 div { class: "space-y-1",
                     EqText { variant: TextVariant::Muted, class: "text-xs font-medium uppercase", "16:9" }
                     EqVideo {
-                        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                        src: "https://www.w3schools.com/html/mov_bbb.mp4",
                         poster: "https://picsum.photos/seed/eq-video-16-9/640/360",
                         size: AtomImageSize::Lg,
                         aspect_ratio: AspectRatio::Ratio16_9,
@@ -271,7 +259,7 @@ fn GalleryEqVideo() -> Element {
                 div { class: "space-y-1",
                     EqText { variant: TextVariant::Muted, class: "text-xs font-medium uppercase", "Square" }
                     EqVideo {
-                        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                        src: "https://www.w3schools.com/html/mov_bbb.mp4",
                         poster: "https://picsum.photos/seed/eq-video-square/400/400",
                         size: AtomImageSize::Lg,
                         aspect_ratio: AspectRatio::Square,

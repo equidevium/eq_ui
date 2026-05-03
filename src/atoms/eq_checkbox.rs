@@ -5,6 +5,7 @@ use super::eq_checkbox_styles as s;
 use super::eq_icon_paths;
 use super::{EqIcon, IconSize};
 use crate::theme::merge_classes;
+use crate::{PlaygroundEnum, playground};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
@@ -17,7 +18,7 @@ use crate::atoms::{EqText, TextVariant};
 use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
 
 /// Visual state of the checkbox.
-#[derive(Clone, Copy, PartialEq, Default)]
+#[derive(Clone, Copy, PartialEq, Default, PlaygroundEnum)]
 pub enum CheckboxState {
     /// Empty square.
     #[default]
@@ -33,6 +34,17 @@ pub enum CheckboxState {
 /// Can be used standalone or composed inside other components (e.g. EqGrid
 /// row selection). The component renders an icon-based checkbox - no native
 /// `<input type="checkbox">` - for full theme control.
+#[playground(
+    category = Atom,
+    description = "Themed checkbox with checked, unchecked, and indeterminate states. \
+                   Icon-based rendering for full theme control.",
+    examples = [
+        ("Basic checkbox", "let mut agreed = use_signal(|| CheckboxState::Unchecked);\n\nEqCheckbox {\n    state: agreed(),\n    label: \"I agree\",\n    on_change: move |next| agreed.set(next),\n}"),
+        ("Indeterminate", "EqCheckbox {\n    state: CheckboxState::Indeterminate,\n    label: \"Select all\",\n    on_change: move |_| { /* select all */ },\n}"),
+    ],
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqCheckbox(
     /// Current visual state.
@@ -112,33 +124,7 @@ pub fn EqCheckbox(
     }
 }
 
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-checkbox",
-        name: "EqCheckbox",
-        category: ComponentCategory::Atom,
-        description: "Themed checkbox with checked, unchecked, and indeterminate states. \
-                      Icon-based rendering for full theme control, supports optional labels and disabled state.",
-        style_tokens: || s::catalog(),
-        usage_examples: || vec![
-            UsageExample {
-                label: "Basic checkbox",
-                code: "let mut agreed = use_signal(|| CheckboxState::Unchecked);\n\nEqCheckbox {\n    state: agreed(),\n    label: \"I agree\",\n    on_change: move |next| agreed.set(next),\n}".into(),
-            },
-            UsageExample {
-                label: "Indeterminate (select all)",
-                code: "EqCheckbox {\n    state: CheckboxState::Indeterminate,\n    label: \"Select all\",\n    on_change: move |_| { /* select all items */ },\n}".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqCheckbox {} },
-        render_gallery: || rsx! { GalleryEqCheckbox {} },
-    }
-}
-
-// ── Interactive demo ───────────────────────────────────────────────
+// ── Custom demo (three-state cycling needs manual wiring) ─────────
 
 #[cfg(feature = "playground")]
 #[component]

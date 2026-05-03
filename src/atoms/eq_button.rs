@@ -7,6 +7,7 @@
 
 use super::eq_button_styles as s;
 use crate::theme::merge_classes;
+use crate::{PlaygroundEnum, playground};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
@@ -19,7 +20,7 @@ use crate::atoms::{EqText, TextVariant};
 use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
 
 /// Visual variant of the button.
-#[derive(Clone, Copy, PartialEq, Default)]
+#[derive(Clone, Copy, PartialEq, Default, PlaygroundEnum)]
 pub enum ButtonVariant {
     /// Gradient background with color-morphing transition on hover.
     #[default]
@@ -35,7 +36,7 @@ pub enum ButtonVariant {
 }
 
 /// Size preset for the button.
-#[derive(Clone, Copy, PartialEq, Default)]
+#[derive(Clone, Copy, PartialEq, Default, PlaygroundEnum)]
 pub enum ButtonSize {
     Sm,
     #[default]
@@ -50,15 +51,18 @@ pub enum ButtonSize {
 /// smoothly transition between two three-color gradients on hover.
 ///
 /// Content is passed via children - text, icons, or any combination.
-///
-/// ```rust,ignore
-/// EqButton {
-///     variant: ButtonVariant::Primary,
-///     size: ButtonSize::Lg,
-///     on_click: move |_| do_something(),
-///     "Save Changes"
-/// }
-/// ```
+#[playground(
+    category = Atom,
+    description = "Themed button with five variants (Primary, Ghost, Outline, Card, Danger), \
+                   three sizes, gradient transitions, and custom color support.",
+    examples = [
+        ("Primary", "EqButton {\n    variant: ButtonVariant::Primary,\n    size: ButtonSize::Lg,\n    on_click: move |_| do_something(),\n    \"Save Changes\"\n}"),
+        ("Solid (no gradient)", "EqButton {\n    gradient: false,\n    color: \"#fbbf24\",\n    \"Solid Button\"\n}"),
+        ("Disabled", "EqButton {\n    disabled: true,\n    \"Not Available\"\n}"),
+    ],
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqButton(
     /// Visual variant.
@@ -143,38 +147,7 @@ pub fn EqButton(
     }
 }
 
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-button",
-        name: "EqButton",
-        category: ComponentCategory::Atom,
-        description: "Themed button atom with five visual variants and three size presets. \
-                      Gradient variants use animated background-position shift on hover for smooth \
-                      flowing effect. Renders native <button> for accessibility.",
-        style_tokens: || s::catalog(),
-        usage_examples: || vec![
-            UsageExample {
-                label: "Primary button",
-                code: "EqButton {\n    variant: ButtonVariant::Primary,\n    size: ButtonSize::Lg,\n    on_click: move |_| do_something(),\n    \"Save Changes\"\n}".into(),
-            },
-            UsageExample {
-                label: "Solid (no gradient)",
-                code: "EqButton {\n    gradient: false,\n    color: \"#fbbf24\",\n    \"Solid Button\"\n}".into(),
-            },
-            UsageExample {
-                label: "Disabled state",
-                code: "EqButton {\n    disabled: true,\n    \"Not Available\"\n}".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqButton {} },
-        render_gallery: || rsx! { GalleryEqButton {} },
-    }
-}
-
-// ── Interactive demo ───────────────────────────────────────────────
+// ── Custom demo (angle, color, click counter need manual wiring) ──
 
 #[cfg(feature = "playground")]
 #[component]

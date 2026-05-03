@@ -1,7 +1,7 @@
 //! Style constants for EqVideo.
 
 /// Video wrapper container
-pub const WRAPPER: &str = "relative overflow-hidden";
+pub const WRAPPER: &str = "relative";
 
 /// Small (192px width)
 pub const SM: &str = "w-48";
@@ -24,8 +24,8 @@ pub const RATIO_FREE: &str = "";
 /// Rounded corners
 pub const ROUNDED: &str = "rounded-lg";
 
-/// Video element - fills wrapper
-pub const VIDEO_ELEMENT: &str = "w-full h-full";
+/// Video element - fills wrapper, object-contain keeps controls visible
+pub const VIDEO_ELEMENT: &str = "w-full h-full object-contain";
 
 /// All style tokens for playground introspection.
 pub fn catalog() -> Vec<(&'static str, &'static str)> {

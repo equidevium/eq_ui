@@ -21,6 +21,7 @@
 
 use super::eq_tab_styles as s;
 use crate::theme::merge_classes;
+use crate::{PlaygroundEnum, playground};
 use dioxus::document;
 use dioxus::prelude::*;
 
@@ -36,7 +37,7 @@ use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory
 // ── Types ─────────────────────────────────────────────────────────
 
 /// Visual variant for the tab bar.
-#[derive(Clone, Copy, PartialEq, Default)]
+#[derive(Clone, Copy, PartialEq, Default, PlaygroundEnum)]
 pub enum TabVariant {
     /// Bottom-border indicator on the active tab (default).
     #[default]
@@ -48,7 +49,7 @@ pub enum TabVariant {
 }
 
 /// Size preset for tab buttons.
-#[derive(Clone, Copy, PartialEq, Default)]
+#[derive(Clone, Copy, PartialEq, Default, PlaygroundEnum)]
 pub enum TabSize {
     Sm,
     #[default]
@@ -98,6 +99,17 @@ impl TabItem {
 /// index via a signal and is notified through `on_change` when the user
 /// clicks a different tab. Content switching is handled externally -
 /// EqTab only renders the tab row itself.
+#[playground(
+    category = Atom,
+    description = "Themed tab bar with underline, pill, and card variants. \
+                   Supports badges, disabled tabs, and three size presets.",
+    examples = [
+        ("Basic underline", "let mut active = use_signal(|| 0usize);\n\nEqTab {\n    tabs: vec![\n        TabItem::new(\"Overview\"),\n        TabItem::new(\"Details\"),\n    ],\n    active: active(),\n    on_change: move |idx| active.set(idx),\n}"),
+        ("Pill with badge", "EqTab {\n    tabs: vec![\n        TabItem::new(\"Inbox\").badge(12),\n        TabItem::new(\"Sent\"),\n    ],\n    variant: TabVariant::Pill,\n    active: active(),\n    on_change: move |idx| active.set(idx),\n}"),
+    ],
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqTab(
     /// The list of tabs to display.
@@ -262,61 +274,7 @@ pub fn EqTab(
     }
 }
 
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-tab",
-        name: "EqTab",
-        category: ComponentCategory::Atom,
-        description: "Themed tab bar with underline, pill, and card variants. \
-                      Supports badges, disabled tabs, and three size presets.",
-        style_tokens: || s::catalog(),
-        usage_examples: || vec![
-            UsageExample {
-                label: "Basic underline",
-                code: "let mut active = use_signal(|| 0usize);\n\n\
-                       EqTab {\n\
-                       \x20   tabs: vec![\n\
-                       \x20       TabItem::new(\"Overview\"),\n\
-                       \x20       TabItem::new(\"Details\"),\n\
-                       \x20       TabItem::new(\"Settings\"),\n\
-                       \x20   ],\n\
-                       \x20   active: active(),\n\
-                       \x20   on_change: move |idx| active.set(idx),\n\
-                       }".into(),
-            },
-            UsageExample {
-                label: "Pill variant with badge",
-                code: "EqTab {\n\
-                       \x20   tabs: vec![\n\
-                       \x20       TabItem::new(\"Inbox\").badge(12),\n\
-                       \x20       TabItem::new(\"Sent\"),\n\
-                       \x20       TabItem::new(\"Trash\").disabled(true),\n\
-                       \x20   ],\n\
-                       \x20   variant: TabVariant::Pill,\n\
-                       \x20   active: active(),\n\
-                       \x20   on_change: move |idx| active.set(idx),\n\
-                       }".into(),
-            },
-            UsageExample {
-                label: "Card variant",
-                code: "EqTab {\n\
-                       \x20   variant: TabVariant::Card,\n\
-                       \x20   size: TabSize::Lg,\n\
-                       \x20   tabs: vec![TabItem::new(\"Code\"), TabItem::new(\"Preview\")],\n\
-                       \x20   active: active(),\n\
-                       \x20   on_change: move |idx| active.set(idx),\n\
-                       }".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqTab {} },
-        render_gallery: || rsx! { GalleryEqTab {} },
-    }
-}
-
-// ── Interactive demo ───────────────────────────────────────────────
+// ── Custom demo (Vec<TabItem> props + tab content switching) ──────
 
 #[cfg(feature = "playground")]
 #[component]

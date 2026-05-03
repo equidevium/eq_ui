@@ -14,6 +14,7 @@
 
 use super::eq_progress_styles as s;
 use crate::theme::merge_classes;
+use crate::{PlaygroundEnum, playground};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
@@ -27,7 +28,7 @@ use crate::atoms::{EqText, TextVariant};
 use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
 
 /// Semantic colour variant for the progress fill.
-#[derive(Clone, Copy, PartialEq, Default)]
+#[derive(Clone, Copy, PartialEq, Default, PlaygroundEnum)]
 pub enum ProgressVariant {
     /// Theme gradient fill (default).
     #[default]
@@ -41,7 +42,7 @@ pub enum ProgressVariant {
 }
 
 /// Height preset for the progress track.
-#[derive(Clone, Copy, PartialEq, Default)]
+#[derive(Clone, Copy, PartialEq, Default, PlaygroundEnum)]
 pub enum ProgressSize {
     /// 4px track height.
     Sm,
@@ -57,6 +58,18 @@ pub enum ProgressSize {
 /// Renders a track with a fill bar whose width reflects the `value` prop
 /// (0.0–1.0). When `indeterminate` is true the fill animates continuously
 /// regardless of `value`. An optional label displays the percentage.
+#[playground(
+    category = Atom,
+    description = "Themed progress bar with determinate/indeterminate modes, \
+                   semantic variants, gradient fill, and size presets.",
+    examples = [
+        ("Basic", "EqProgress { value: 0.65 }"),
+        ("With label & variant", "EqProgress {\n    value: 0.3,\n    variant: ProgressVariant::Warning,\n    label: true,\n}"),
+        ("Indeterminate", "EqProgress { indeterminate: true, size: ProgressSize::Lg }"),
+    ],
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqProgress(
     /// Fill amount from 0.0 (empty) to 1.0 (full). Clamped internally.
@@ -145,37 +158,7 @@ pub fn EqProgress(
     }
 }
 
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-progress",
-        name: "EqProgress",
-        category: ComponentCategory::Atom,
-        description: "Themed progress bar with determinate/indeterminate modes, \
-                      semantic variants, gradient fill, and size presets.",
-        style_tokens: || s::catalog(),
-        usage_examples: || vec![
-            UsageExample {
-                label: "Basic",
-                code: "EqProgress { value: 0.65 }".into(),
-            },
-            UsageExample {
-                label: "With label & variant",
-                code: "EqProgress {\n    value: 0.3,\n    variant: ProgressVariant::Warning,\n    label: true,\n}".into(),
-            },
-            UsageExample {
-                label: "Indeterminate",
-                code: "EqProgress { indeterminate: true, size: ProgressSize::Lg }".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqProgress {} },
-        render_gallery: || rsx! { GalleryEqProgress {} },
-    }
-}
-
-// ── Interactive demo ───────────────────────────────────────────────
+// ── Custom demo (range slider for value, variant/size galleries) ──
 
 #[cfg(feature = "playground")]
 #[component]

@@ -6,6 +6,7 @@
 
 use super::eq_radio_group_styles as s;
 use crate::theme::merge_classes;
+use crate::{PlaygroundEnum, playground};
 use dioxus::document;
 use dioxus::prelude::*;
 
@@ -21,7 +22,7 @@ use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory
 // ── Types ─────────────────────────────────────────────────────────
 
 /// Size of the radio circle indicator.
-#[derive(Clone, Copy, PartialEq, Default)]
+#[derive(Clone, Copy, PartialEq, Default, PlaygroundEnum)]
 pub enum RadioSize {
     Sm,
     #[default]
@@ -30,7 +31,7 @@ pub enum RadioSize {
 }
 
 /// Layout direction for the radio group.
-#[derive(Clone, Copy, PartialEq, Default)]
+#[derive(Clone, Copy, PartialEq, Default, PlaygroundEnum)]
 pub enum RadioLayout {
     /// Stack items vertically (default).
     #[default]
@@ -80,6 +81,17 @@ impl RadioItem {
 /// Renders mutually exclusive options as styled circles with labels.
 /// The group manages selection state via `selected` + `on_change` props
 /// (controlled component pattern).
+#[playground(
+    category = Atom,
+    description = "Themed radio button group with mutually exclusive selection. \
+                   Pure CSS circles, three sizes, vertical/horizontal layout.",
+    examples = [
+        ("Basic", "let mut selected = use_signal(|| \"opt1\".to_string());\n\nEqRadioGroup {\n    items: vec![\n        RadioItem::new(\"opt1\", \"Option One\"),\n        RadioItem::new(\"opt2\", \"Option Two\"),\n    ],\n    selected: selected(),\n    on_change: move |v| selected.set(v),\n}"),
+        ("Horizontal", "EqRadioGroup {\n    items: vec![...],\n    layout: RadioLayout::Horizontal,\n    selected: size(),\n    on_change: move |v| size.set(v),\n}"),
+    ],
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqRadioGroup(
     /// The available options.
@@ -269,65 +281,7 @@ pub fn EqRadioGroup(
     }
 }
 
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-radio-group",
-        name: "EqRadioGroup",
-        category: ComponentCategory::Atom,
-        description: "Themed radio button group with mutually exclusive selection. \
-                      Pure CSS circles, three sizes, vertical/horizontal layout, \
-                      optional item descriptions, and disabled state.",
-        style_tokens: || s::catalog(),
-        usage_examples: || vec![
-            UsageExample {
-                label: "Basic",
-                code: "let mut selected = use_signal(|| \"opt1\".to_string());\n\n\
-                       EqRadioGroup {\n\
-                       \x20   items: vec![\n\
-                       \x20       RadioItem::new(\"opt1\", \"Option One\"),\n\
-                       \x20       RadioItem::new(\"opt2\", \"Option Two\"),\n\
-                       \x20       RadioItem::new(\"opt3\", \"Option Three\"),\n\
-                       \x20   ],\n\
-                       \x20   selected: selected(),\n\
-                       \x20   on_change: move |v| selected.set(v),\n\
-                       }".into(),
-            },
-            UsageExample {
-                label: "With descriptions",
-                code: "EqRadioGroup {\n\
-                       \x20   items: vec![\n\
-                       \x20       RadioItem::new(\"free\", \"Free\")\n\
-                       \x20           .description(\"Basic features, no cost\"),\n\
-                       \x20       RadioItem::new(\"pro\", \"Pro\")\n\
-                       \x20           .description(\"Advanced features, $9/mo\"),\n\
-                       \x20   ],\n\
-                       \x20   selected: plan(),\n\
-                       \x20   on_change: move |v| plan.set(v),\n\
-                       }".into(),
-            },
-            UsageExample {
-                label: "Horizontal layout",
-                code: "EqRadioGroup {\n\
-                       \x20   items: vec![\n\
-                       \x20       RadioItem::new(\"sm\", \"Small\"),\n\
-                       \x20       RadioItem::new(\"md\", \"Medium\"),\n\
-                       \x20       RadioItem::new(\"lg\", \"Large\"),\n\
-                       \x20   ],\n\
-                       \x20   layout: RadioLayout::Horizontal,\n\
-                       \x20   selected: size(),\n\
-                       \x20   on_change: move |v| size.set(v),\n\
-                       }".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqRadioGroup {} },
-        render_gallery: || rsx! { GalleryEqRadioGroup {} },
-    }
-}
-
-// ── Interactive demo ───────────────────────────────────────────────
+// ── Custom demo (Vec<RadioItem> + selection state) ────────────────
 
 #[cfg(feature = "playground")]
 #[component]

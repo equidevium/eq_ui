@@ -197,6 +197,7 @@ pub fn EqPlayground(
         EqThemeRenderer {}
 
         EqAppShell {
+            class: "pt-6 px-2",
             header: rsx! {
                 EqHeader {
                     site_title: site_title,
