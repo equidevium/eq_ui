@@ -1,4 +1,5 @@
 use dioxus::prelude::*;
+use crate::playground;
 
 #[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{CodeBlock, DemoSection, StyleInfo, format_catalog};
@@ -9,6 +10,17 @@ use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory
 
 const NAVBAR_CSS: Asset = asset!("/assets/styling/navbar.css");
 
+#[playground(
+    category = Organism,
+    description = "Custom navbar wrapper that applies navbar-specific styling via external CSS.",
+    examples = [
+        ("Basic", "EqNavbar {\n    div { \"Navigation content here\" }\n}"),
+        ("With items", "EqNavbar {\n    ul { class: \"flex gap-4\",\n        li { a { href: \"/\", \"Home\" } }\n        li { a { href: \"/about\", \"About\" } }\n    }\n}"),
+    ],
+    no_styles,
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqNavbar(children: Element) -> Element {
     rsx! {
@@ -18,33 +30,6 @@ pub fn EqNavbar(children: Element) -> Element {
             id: "navbar",
             {children}
         }
-    }
-}
-
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-navbar",
-        name: "EqNavbar",
-        category: ComponentCategory::Organism,
-        description: "Custom navbar wrapper that applies navbar-specific styling via external CSS.",
-        style_tokens: || vec![
-            ("NAVBAR", "id=\"navbar\" - styled via navbar.css"),
-        ],
-        usage_examples: || vec![
-            UsageExample {
-                label: "Basic",
-                code: "EqNavbar {\n    div { \"Navigation content here\" }\n}".into(),
-            },
-            UsageExample {
-                label: "With items",
-                code: "EqNavbar {\n    ul { class: \"flex gap-4\",\n        li { a { href: \"/\", \"Home\" } }\n        li { a { href: \"/about\", \"About\" } }\n    }\n}".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqNavbar {} },
-        render_gallery: || rsx! { GalleryEqNavbar {} },
     }
 }
 

@@ -1,5 +1,6 @@
 use super::eq_carousel_styles as s;
 use crate::theme::merge_classes;
+use crate::{PlaygroundEnum, playground};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
@@ -18,7 +19,7 @@ use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory
 // ---------------------------------------------------------------------------
 
 /// Controls the visual presentation of the carousel.
-#[derive(Clone, PartialEq, Default)]
+#[derive(Clone, PartialEq, Default, PlaygroundEnum)]
 pub enum CarouselMode {
     /// Standard full-width slides - one at a time with a smooth slide transition.
     #[default]
@@ -70,6 +71,17 @@ fn CarouselArrow(
 /// Cycles through any content passed as a `Vec<Element>`.
 /// Shows previous/next arrows and dot indicators when there are multiple slides.
 /// Supports two modes: `Default` (full-width) and `Peek` (show neighbours).
+#[playground(
+    category = Molecule,
+    description = "Carousel molecule cycling through slides with arrow navigation and dot indicators. \
+                   Supports default full-width and peek (neighbours visible) modes.",
+    examples = [
+        ("Default mode", "EqCarousel {\n    slides: vec![\n        rsx! { /* slide content */ },\n        rsx! { /* slide content */ },\n    ],\n}"),
+        ("Peek mode", "EqCarousel {\n    mode: CarouselMode::Peek,\n    gap: 24,\n    slides: vec![ /* ... */ ],\n}"),
+    ],
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqCarousel(
     /// The slides to cycle through.
@@ -265,32 +277,6 @@ pub fn EqCarousel(
                 }
             }
         }
-    }
-}
-
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-carousel",
-        name: "EqCarousel",
-        category: ComponentCategory::Molecule,
-        description: "Carousel molecule cycling through slides with arrow navigation and dot indicators. \
-                      Supports default full-width and peek (neighbours visible) modes.",
-        style_tokens: || s::catalog(),
-        usage_examples: || vec![
-            UsageExample {
-                label: "Default mode",
-                code: "EqCarousel {\n    slides: vec![\n        rsx! { /* slide content */ },\n        rsx! { /* slide content */ },\n    ],\n}".into(),
-            },
-            UsageExample {
-                label: "Peek mode",
-                code: "EqCarousel {\n    mode: CarouselMode::Peek,\n    gap: 24,\n    slides: vec![ /* ... */ ],\n}".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqCarousel {} },
-        render_gallery: || rsx! { GalleryEqCarousel {} },
     }
 }
 

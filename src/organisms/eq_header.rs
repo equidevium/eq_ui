@@ -1,6 +1,7 @@
 use dioxus::prelude::*;
 use super::eq_header_styles as s;
 use crate::theme::{merge_classes, CONTAINER_LAYOUT};
+use crate::playground;
 
 #[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{CodeBlock, DemoSection, PropSelect, StyleInfo, format_catalog};
@@ -14,6 +15,16 @@ use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory
 /// Portable header component.
 /// Accepts nav content as an Element prop so the platform crate
 /// can provide router-aware Links or plain `<a>` tags.
+#[playground(
+    category = Organism,
+    description = "Sticky navigation header with configurable site title and nav items.",
+    examples = [
+        ("Basic", "EqHeader { site_title: \"My App\" }"),
+        ("With navigation", "EqHeader {\n    site_title: \"My App\",\n    nav: rsx! {\n        li { a { href: \"/\", \"Home\" } }\n        li { a { href: \"/about\", \"About\" } }\n    },\n}"),
+    ],
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqHeader(
     #[props(default = "Equidevium")]
@@ -63,31 +74,6 @@ pub fn EqHeader(
                 }
             }
         }
-    }
-}
-
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-header",
-        name: "EqHeader",
-        category: ComponentCategory::Organism,
-        description: "Sticky navigation header with configurable site title and nav items.",
-        style_tokens: || s::catalog(),
-        usage_examples: || vec![
-            UsageExample {
-                label: "Basic",
-                code: "EqHeader { site_title: \"My App\" }".into(),
-            },
-            UsageExample {
-                label: "With navigation",
-                code: "EqHeader {\n    site_title: \"My App\",\n    nav: rsx! {\n        li { a { href: \"/\", \"Home\" } }\n        li { a { href: \"/about\", \"About\" } }\n    },\n}".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqHeader {} },
-        render_gallery: || rsx! { GalleryEqHeader {} },
     }
 }
 

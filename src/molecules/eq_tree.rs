@@ -1,5 +1,6 @@
 use super::eq_tree_styles as s;
 use crate::theme::merge_classes;
+use crate::playground;
 use dioxus::document;
 use dioxus::prelude::*;
 use std::collections::HashSet;
@@ -273,6 +274,17 @@ fn find_parent_id(nodes: &[TreeNode], target: &str) -> Option<String> {
 /// (Up / Down / Left / Right / Home / End / Enter / Space).
 ///
 /// [tv]: https://www.w3.org/WAI/ARIA/apg/patterns/treeview/
+#[playground(
+    category = Molecule,
+    description = "Collapsible tree view for hierarchical data. Branches expand to show children, \
+                   leaves trigger selection events. Optional child count display.",
+    examples = [
+        ("Basic", "let nodes = vec![\n    TreeNode::new_with_children(\"branch\", \"Branch\", vec![\n        TreeNode::new(\"leaf-1\", \"Leaf 1\"),\n        TreeNode::new(\"leaf-2\", \"Leaf 2\"),\n    ]),\n];\n\nEqTree {\n    nodes: nodes,\n    on_select: move |id: String| { /* handle */ },\n}"),
+        ("With counts", "EqTree {\n    nodes,\n    selected: selected(),\n    on_select: move |id: String| selected.set(Some(id)),\n    show_count: true,\n}"),
+    ],
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqTree(
     /// The root-level nodes to display.
@@ -562,32 +574,6 @@ fn TreeBranch(
                 }
             }
         }
-    }
-}
-
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-tree",
-        name: "EqTree",
-        category: ComponentCategory::Molecule,
-        description: "Collapsible tree view for hierarchical data. Branches expand to show children, \
-                      leaves trigger selection events. Optional child count display.",
-        style_tokens: || s::catalog(),
-        usage_examples: || vec![
-            UsageExample {
-                label: "Basic",
-                code: "let nodes = vec![\n    TreeNode::new_with_children(\"branch\", \"Branch\", vec![\n        TreeNode::new(\"leaf-1\", \"Leaf 1\"),\n        TreeNode::new(\"leaf-2\", \"Leaf 2\"),\n    ]),\n];\n\nEqTree {\n    nodes: nodes,\n    on_select: move |id: String| { /* handle */ },\n}".into(),
-            },
-            UsageExample {
-                label: "With counts",
-                code: "EqTree {\n    nodes,\n    selected: selected(),\n    on_select: move |id: String| selected.set(Some(id)),\n    show_count: true,\n}".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqTree {} },
-        render_gallery: || rsx! { GalleryEqTree {} },
     }
 }
 

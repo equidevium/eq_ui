@@ -1,5 +1,6 @@
 use dioxus::prelude::*;
 use crate::theme::{merge_classes, APP, CONTAINER_LAYOUT, MAIN_CONTENT, MAIN_INNER};
+use crate::playground;
 
 #[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{CodeBlock, DemoSection, StyleInfo, format_catalog};
@@ -11,6 +12,16 @@ use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory
 /// Generic app shell layout.
 /// The platform crate passes its own header, footer, and main content
 /// (typically `Outlet::<Route>`) as Element props.
+#[playground(
+    category = Organism,
+    description = "Full page layout wrapper with header, footer, and main content area.",
+    examples = [
+        ("Basic", "EqAppShell {\n    header: rsx! {\n        EqHeader { site_title: \"My App\",\n            nav: rsx! { li { \"Nav item\" } },\n        }\n    },\n    footer: rsx! { EqFooter {} },\n    div { \"Your page content here\" }\n}"),
+    ],
+    no_styles,
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqAppShell(
     header: Element,
@@ -33,32 +44,6 @@ pub fn EqAppShell(
 
             {footer}
         }
-    }
-}
-
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-app-shell",
-        name: "EqAppShell",
-        category: ComponentCategory::Organism,
-        description: "Full page layout wrapper with header, footer, and main content area.",
-        style_tokens: || vec![
-            ("APP", "min-h-screen bg-[var(--color-primary-dark)]"),
-            ("CONTAINER_LAYOUT", "mx-auto max-w-6xl px-4"),
-            ("MAIN_CONTENT", "flex-1"),
-            ("MAIN_INNER", "py-10"),
-        ],
-        usage_examples: || vec![
-            UsageExample {
-                label: "Basic",
-                code: "EqAppShell {\n    header: rsx! {\n        EqHeader { site_title: \"My App\",\n            nav: rsx! { li { \"Nav item\" } },\n        }\n    },\n    footer: rsx! { EqFooter {} },\n    div { \"Your page content here\" }\n}".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqAppShell {} },
-        render_gallery: || rsx! { GalleryEqAppShell {} },
     }
 }
 

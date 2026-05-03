@@ -1,6 +1,7 @@
 use super::eq_image_card_styles as s;
 use crate::atoms::{AspectRatio, AtomImageSize, EqImage, ObjectFit};
 use crate::theme::merge_classes;
+use crate::{PlaygroundEnum, playground};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
@@ -13,7 +14,7 @@ use crate::atoms::{EqText, TextVariant};
 use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
 
 /// Controls how the caption is displayed relative to the image.
-#[derive(Clone, PartialEq, Default)]
+#[derive(Clone, PartialEq, Default, PlaygroundEnum)]
 pub enum CaptionMode {
     /// Caption text below the image (figure/figcaption).
     #[default]
@@ -48,6 +49,17 @@ fn CaptionContent(
 /// Image card molecule.
 /// Composes EqImage with title, description, and attribution text.
 /// Supports two layout modes: caption below or overlay.
+#[playground(
+    category = Molecule,
+    description = "Image card with optional title, description, and attribution. \
+                   Supports caption below or overlaid on the image.",
+    examples = [
+        ("Below caption", "EqImageCard {\n    src: \"photo.jpg\",\n    alt: \"Description\",\n    mode: CaptionMode::Below,\n    title: \"Card Title\",\n}"),
+        ("Overlay caption", "EqImageCard {\n    src: \"photo.jpg\",\n    alt: \"Description\",\n    mode: CaptionMode::Overlay,\n    title: \"Card Title\",\n    description: \"A short description.\",\n}"),
+    ],
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqImageCard(
     /// Image source - Asset or URL string.
@@ -137,32 +149,6 @@ pub fn EqImageCard(
                 }
             }
         }},
-    }
-}
-
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-image-card",
-        name: "EqImageCard",
-        category: ComponentCategory::Molecule,
-        description: "Image card with optional title, description, and attribution. \
-                      Supports caption below or overlaid on the image.",
-        style_tokens: || s::catalog(),
-        usage_examples: || vec![
-            UsageExample {
-                label: "Below caption",
-                code: "EqImageCard {\n    src: \"photo.jpg\",\n    alt: \"Description\",\n    mode: CaptionMode::Below,\n    title: \"Card Title\",\n}".into(),
-            },
-            UsageExample {
-                label: "Overlay caption",
-                code: "EqImageCard {\n    src: \"photo.jpg\",\n    alt: \"Description\",\n    mode: CaptionMode::Overlay,\n    title: \"Card Title\",\n    description: \"A short description.\",\n}".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqImageCard {} },
-        render_gallery: || rsx! { GalleryEqImageCard {} },
     }
 }
 

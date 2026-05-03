@@ -1,6 +1,7 @@
 use dioxus::prelude::*;
 use super::eq_hero_shell_styles::*;
 use crate::theme::{merge_classes, CONTAINER_LAYOUT};
+use crate::playground;
 
 #[cfg(feature = "playground")]
 use super::eq_hero_shell_styles as s;
@@ -17,6 +18,16 @@ use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory
 /// `aria-labelledby` pointing at the `<h1>` title, so screen readers announce
 /// it as a named region (e.g. "Welcome, region"). Decorative background and
 /// overlay elements are hidden from the accessibility tree.
+#[playground(
+    category = Organism,
+    description = "Full-width hero section with optional background image, customizable colors, and action buttons.",
+    examples = [
+        ("Basic", "EqHeroShell {\n    title: \"Welcome\",\n    subtitle: \"Build something great.\",\n}"),
+        ("With background", "EqHeroShell {\n    title: \"Welcome\",\n    subtitle: \"Build something great.\",\n    background: rsx! {\n        EqImage {\n            src: \"hero.jpg\",\n            alt: \"Hero\",\n            size: AtomImageSize::Full,\n        }\n    },\n}"),
+    ],
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqHeroShell(
     #[props(into)]
@@ -91,31 +102,6 @@ pub fn EqHeroShell(
                 }
             }
         }
-    }
-}
-
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-hero-shell",
-        name: "EqHeroShell",
-        category: ComponentCategory::Organism,
-        description: "Full-width hero section with optional background image, customizable colors, and action buttons.",
-        style_tokens: || s::catalog(),
-        usage_examples: || vec![
-            UsageExample {
-                label: "Basic",
-                code: "EqHeroShell {\n    title: \"Welcome\",\n    subtitle: \"Build something great.\",\n}".into(),
-            },
-            UsageExample {
-                label: "With background",
-                code: "EqHeroShell {\n    title: \"Welcome\",\n    subtitle: \"Build something great.\",\n    background: rsx! {\n        EqImage {\n            src: \"hero.jpg\",\n            alt: \"Hero\",\n            size: AtomImageSize::Full,\n            aspect_ratio: AspectRatio::Ratio4_3,\n            object_fit: ObjectFit::Cover,\n        }\n    },\n}".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqHeroShell {} },
-        render_gallery: || rsx! { GalleryEqHeroShell {} },
     }
 }
 

@@ -2,6 +2,7 @@ use dioxus::prelude::*;
 use super::eq_nav_item_styles as s;
 use crate::theme::merge_classes;
 use crate::atoms::{EqIcon, IconSize};
+use crate::{PlaygroundEnum, playground};
 
 #[cfg(feature = "playground")]
 use crate::atoms::eq_icon_paths;
@@ -15,7 +16,7 @@ use crate::atoms::{EqText, TextVariant};
 use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
 
 /// Size variant for EqNavItem.
-#[derive(Clone, PartialEq, Default)]
+#[derive(Clone, PartialEq, Default, PlaygroundEnum)]
 pub enum NavItemSize {
     #[default]
     Sm,
@@ -49,6 +50,18 @@ pub enum NavItemSize {
 ///     },
 /// }
 /// ```
+#[playground(
+    category = Molecule,
+    description = "Navigation item pairing an optional icon with a text label. \
+                   Designed for use inside EqHeader nav or EqNavbar.",
+    examples = [
+        ("With icon", "EqNavItem {\n    icon: eq_icon_paths::MAGNIFYING_GLASS,\n    label: \"Search\",\n    href: \"/search\",\n}"),
+        ("Label only", "EqNavItem { label: \"About\", href: \"/about\" }"),
+        ("Active state", "EqNavItem {\n    icon: eq_icon_paths::CHECK,\n    label: \"Dashboard\",\n    href: \"/\",\n    active: true,\n}"),
+    ],
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqNavItem(
     /// SVG path data for the icon (from `eq_icon_paths` constants).
@@ -146,40 +159,6 @@ pub fn EqNavItem(
                 span { class: s::LABEL, "{label}" }
             }
         }
-    }
-}
-
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-nav-item",
-        name: "EqNavItem",
-        category: ComponentCategory::Molecule,
-        description: "Navigation item pairing an optional icon with a text label. \
-                      Designed for use inside EqHeader nav or EqNavbar.",
-        style_tokens: || s::catalog(),
-        usage_examples: || vec![
-            UsageExample {
-                label: "With icon",
-                code: "EqNavItem {\n    icon: eq_icon_paths::MAGNIFYING_GLASS,\n    label: \"Search\",\n    href: \"/search\",\n}".into(),
-            },
-            UsageExample {
-                label: "Label only",
-                code: "EqNavItem { label: \"About\", href: \"/about\" }".into(),
-            },
-            UsageExample {
-                label: "Active state",
-                code: "EqNavItem {\n    icon: eq_icon_paths::CHECK,\n    label: \"Dashboard\",\n    href: \"/\",\n    active: true,\n}".into(),
-            },
-            UsageExample {
-                label: "Router onclick",
-                code: "EqNavItem {\n    icon: eq_icon_paths::FUNNEL,\n    label: \"Settings\",\n    onclick: move |_| navigator().push(Route::AppSettings {}),\n}".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqNavItem {} },
-        render_gallery: || rsx! { GalleryEqNavItem {} },
     }
 }
 

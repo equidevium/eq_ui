@@ -1,6 +1,7 @@
 use dioxus::prelude::*;
 use super::eq_card_styles as s;
 use crate::theme::merge_classes;
+use crate::playground;
 
 #[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
@@ -12,8 +13,16 @@ use crate::atoms::{EqText, TextVariant};
 use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
 
 /// Card container molecule.
-///
-/// Use `class` to extend or replace the default styles .
+#[playground(
+    category = Molecule,
+    description = "Flexible card container with optional header, body, and footer sections.",
+    examples = [
+        ("Complete", "EqCard {\n    EqCardHeader { \"Card Title\" }\n    EqCardBody { \"Card content goes here.\" }\n    EqCardFooter { \"Footer content\" }\n}"),
+        ("Body only", "EqCard {\n    EqCardBody { \"Body only - no header or footer.\" }\n}"),
+    ],
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqCard(
     /// Optional class override - extend or replace default styles.
@@ -107,32 +116,7 @@ pub fn EqCardFooter(
     }
 }
 
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-card",
-        name: "EqCard",
-        category: ComponentCategory::Molecule,
-        description: "Flexible card container with optional header, body, and footer sections.",
-        style_tokens: || s::catalog(),
-        usage_examples: || vec![
-            UsageExample {
-                label: "Complete",
-                code: "EqCard {\n    EqCardHeader { \"Card Title\" }\n    EqCardBody { \"Card content goes here.\" }\n    EqCardFooter { \"Footer content\" }\n}".into(),
-            },
-            UsageExample {
-                label: "Body only",
-                code: "EqCard {\n    EqCardBody { \"Body only - no header or footer.\" }\n}".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqCard {} },
-        render_gallery: || rsx! { GalleryEqCard {} },
-    }
-}
-
-// ── Interactive demo ───────────────────────────────────────────────
+// ── Custom demo (sub-component composition) ──────────────────────
 
 #[cfg(feature = "playground")]
 #[component]

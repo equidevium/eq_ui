@@ -1,5 +1,6 @@
 use super::eq_accordion_styles as s;
 use crate::theme::merge_classes;
+use crate::{PlaygroundEnum, playground};
 use dioxus::document;
 use dioxus::prelude::*;
 
@@ -13,7 +14,7 @@ use crate::atoms::{EqText, TextVariant};
 use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
 
 /// Controls whether multiple panels can be open simultaneously.
-#[derive(Clone, Copy, PartialEq, Default)]
+#[derive(Clone, Copy, PartialEq, Default, PlaygroundEnum)]
 pub enum AccordionMode {
     /// Only one panel open at a time - opening a panel closes the others.
     #[default]
@@ -61,6 +62,17 @@ impl AccordionItem {
 /// [acc]: https://www.w3.org/WAI/ARIA/apg/patterns/accordion/
 ///
 /// Use `class` to extend or replace the default styles.
+#[playground(
+    category = Molecule,
+    description = "Collapsible accordion with single or multi-expand modes. Smooth height animation \
+                   powered by CSS grid-rows transition.",
+    examples = [
+        ("Single expand", "let items = vec![\n    AccordionItem::new(\n        \"panel-1\",\n        rsx! { \"First panel\" },\n        rsx! { \"Content for the first panel.\" },\n    ),\n];\n\nEqAccordion { items }"),
+        ("Multi expand", "EqAccordion {\n    items,\n    mode: AccordionMode::Multi,\n}"),
+    ],
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqAccordion(
     /// The panels to render.
@@ -246,32 +258,6 @@ pub fn EqAccordion(
                 }
             }
         }
-    }
-}
-
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-accordion",
-        name: "EqAccordion",
-        category: ComponentCategory::Molecule,
-        description: "Collapsible accordion with single or multi-expand modes. Smooth height animation \
-                      powered by CSS grid-rows transition.",
-        style_tokens: || s::catalog(),
-        usage_examples: || vec![
-            UsageExample {
-                label: "Single expand",
-                code: "let items = vec![\n    AccordionItem::new(\n        \"panel-1\",\n        rsx! { \"First panel\" },\n        rsx! { \"Content for the first panel.\" },\n    ),\n];\n\nEqAccordion { items }".into(),
-            },
-            UsageExample {
-                label: "Multi expand",
-                code: "EqAccordion {\n    items,\n    mode: AccordionMode::Multi,\n}".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqAccordion {} },
-        render_gallery: || rsx! { GalleryEqAccordion {} },
     }
 }
 

@@ -1,6 +1,7 @@
 use dioxus::prelude::*;
 use super::eq_footer_styles as s;
 use crate::theme::merge_classes;
+use crate::playground;
 
 #[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{CodeBlock, DemoSection, PropInput, PropSelect, StyleInfo, format_catalog};
@@ -54,6 +55,16 @@ fn default_link_groups() -> Vec<FooterLinkGroup> {
 }
 
 /// Footer component containing site-wide footer content
+#[playground(
+    category = Organism,
+    description = "Site-wide footer with link groups, copyright info, and customizable year/holder/tagline.",
+    examples = [
+        ("Basic", "EqFooter {}"),
+        ("Custom", "EqFooter {\n    copyright_holder: \"Acme Corp\",\n    year: 2026,\n    tagline: \"Innovate. Build. Ship.\",\n}"),
+    ],
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqFooter(
     #[props(default = "Equidevium")] copyright_holder: &'static str,
@@ -92,31 +103,6 @@ pub fn EqFooter(
                 }
             }
         }
-    }
-}
-
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-footer",
-        name: "EqFooter",
-        category: ComponentCategory::Organism,
-        description: "Site-wide footer with link groups, copyright info, and customizable year/holder/tagline.",
-        style_tokens: || s::catalog(),
-        usage_examples: || vec![
-            UsageExample {
-                label: "Basic",
-                code: "EqFooter {}".into(),
-            },
-            UsageExample {
-                label: "Custom",
-                code: "EqFooter {\n    copyright_holder: \"Acme Corp\",\n    year: 2026,\n    tagline: \"Innovate. Build. Ship.\",\n}".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqFooter {} },
-        render_gallery: || rsx! { GalleryEqFooter {} },
     }
 }
 
