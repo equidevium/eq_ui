@@ -68,3 +68,18 @@ pub mod eq_switch;
 pub mod eq_switch_styles;
 
 pub use eq_switch::{EqSwitch, SwitchSize};
+
+pub mod eq_slider;
+pub mod eq_slider_styles;
+
+pub use eq_slider::{EqSlider, SliderSize};
+
+pub mod eq_avatar;
+pub mod eq_avatar_styles;
+
+pub use eq_avatar::{EqAvatar, AvatarSize, AvatarStatus};
+
+pub mod eq_tooltip;
+pub mod eq_tooltip_styles;
+
+pub use eq_tooltip::{EqTooltip, TooltipPosition};
