@@ -25,3 +25,10 @@ pub mod eq_drawer;
 pub mod eq_drawer_styles;
 
 pub use eq_drawer::{EqDrawer, DrawerSide, DrawerSize};
+
+pub mod eq_file_picker;
+pub mod eq_file_picker_styles;
+
+pub use eq_file_picker::{
+    EqFilePicker, FilePickerMode, PickedFile, FilePickerBackend, WebFilePickerBackend,
+};

@@ -7,7 +7,7 @@
 
 ## What We Have Today
 
-### Atoms
+### Atoms (19)
 - `EqText` - Text rendering with variants (H1, H2, H3, Body, Muted, Caption, Emphasis, Mono)
 - `EqLabel` - Form labels
 - `EqLink` - Styled anchor links
@@ -23,21 +23,34 @@
 - `EqTab` - Tab bar with underline, pill, and card variants; badges; disabled state; WAI-ARIA tablist pattern with roving tabindex
 - `EqRadioGroup` - Radio button group with mutually exclusive selection, three sizes (Sm, Md, Lg), vertical/horizontal layout, WAI-ARIA radiogroup pattern with roving tabindex
 - `EqSwitch` - Toggle switch with pill track and sliding thumb, three sizes, WAI-ARIA switch role
+- `EqSlider` - Range slider with native `<input type="range">`, accent-color theming, three sizes (Sm, Md, Lg), optional value label, disabled state
+- `EqAvatar` - User avatar with image, initials fallback, icon fallback, four sizes (Sm, Md, Lg, Xl), online/offline/busy status dot, selection ring
+- `EqTooltip` - Hover/focus tooltip with four positions (Top, Bottom, Left, Right), pure CSS positioning, ARIA describedby, keyboard accessible
+- `EqSelect` - Styled dropdown select with search, placeholder, disabled options, keyboard navigation, WAI-ARIA combobox pattern, check mark on selected option
 
-### Molecules
+### Molecules (13)
 - `EqCard` - Card with header, body, footer slots
 - `EqImageCard` - Image card with caption modes (Below, Overlay)
 - `EqCarousel` - Generic content carousel with Default and Peek modes, WAI-ARIA carousel pattern
 - `EqTree` - Collapsible tree view with select, expand/collapse, child count, WAI-ARIA tree pattern with full keyboard navigation
 - `EqAccordion` - Collapsible panels with single-expand and multi-expand modes, smooth CSS grid animation, element headers, WAI-ARIA accordion pattern with keyboard navigation
+- `EqNavItem` - Navigation item with icon, label, active state, size variants
+- `EqCta` - Call-to-action section with title, description, action slot, and two layout modes (Inline, Centered)
+- `EqModal` - Modal dialog with backdrop, five size presets, close-on-backdrop/Escape, focus management, WAI-ARIA dialog pattern
+- `EqToastList` - Toast notification stack with four severity levels, auto-dismiss via JS setTimeout, six position anchors, manual close, WAI-ARIA status/alert pattern
+- `EqDropdown` - Dropdown menu with selectable items, separators, disabled state, keyboard navigation (arrows/Enter/Escape), two positions, close-on-outside-click
+- `EqDatePicker` - Date picker with calendar popup, month navigation, today highlight, formatted display, pure Rust date math, WAI-ARIA dialog pattern
+- `EqCalendar` - Standalone calendar with month & week views, event dots, timed events, month/year picker drill-down, WAI-ARIA grid pattern
+- `EqVirtualList` - High-performance windowed list rendering only visible items, fixed-size rows, overscan buffer, scroll-to-index, sticky section headers, vertical/horizontal modes
 
-### Organisms
+### Organisms (9)
 - `EqAppShell` - Full-page layout (header + main + footer)
 - `EqHeader` - Sticky header with nav slot and backdrop blur
 - `EqFooter` - Footer with link groups
 - `EqNavbar` - Navigation bar
 - `EqHeroShell` - Hero section with optional background image, overlay, custom title/subtitle colors, WAI-ARIA landmark region
 - `EqPageSection` - Content section with title and description
+- `EqDrawer` - Slide-in panel from any screen edge (Left, Right, Top, Bottom), four size presets, header/body/footer slots, backdrop overlay, close-on-Escape, WAI-ARIA dialog
 - `EqGrid` - Feature-rich, type-safe data grid organism with:
   - Sorting (multi-column, custom comparators)
   - Column filters (per-column text) and global quick filter
@@ -53,19 +66,20 @@
   - Loading overlay and empty state
   - Full WAI-ARIA table semantics (aria-sort, aria-selected, aria-rowcount/colcount, aria-busy, live region announcements for reorder)
   - Full theme integration via CSS variables
+- `EqFilePicker` - File/folder picker with drag-and-drop zone, single/multiple/folder modes, file type filter, max size validation, image thumbnails, upload progress, abstracted FilePickerBackend trait (web + native)
 
 ### Accessibility
-- **100% ARIA coverage** on all 29 implemented components (v0.4.0)
-- WAI-ARIA patterns: Tree View, Accordion, Tablist, Radiogroup, Carousel, Data Grid
+- **100% ARIA coverage** on all 41 implemented components (v0.4.2)
+- WAI-ARIA patterns: Tree View, Accordion, Tablist, Radiogroup, Carousel, Data Grid, Dialog, Combobox, Switch
 - Roving tabindex with keyboard navigation on all composite widgets
 - Decorative elements marked with `aria-hidden`
-- Live regions for dynamic content updates (pagination, drag-and-drop)
+- Live regions for dynamic content updates (pagination, drag-and-drop, toasts)
 
 ### Theming
 - `EqTheme` - Theme enum with custom CSS support
 - `EqThemeRenderer` - Runtime theme switcher using `document::Style`
 - Theme context via `use_theme_provider()` / `use_theme()` / `set_theme()`
-- Built-in themes (21): Unghosty, Burgundy, Gold, PurplePink, Monochrome, Watermelon, Sunset, Ocean, Spacetime, Gruvbox, Monokai, Hellas, Egypt, Dometrain, Catppuccin, Dracula, Nord, OneDark, RosePine, SolarizedDark, TokyoNight
+- Built-in themes (25): Unghosty, Burgundy, Gold, PurplePink, Monochrome, Watermelon, Sunset, Ocean, Spacetime, Gruvbox, Monokai, Hellas, Egypt, Dometrain, Catppuccin, Dracula, Nord, OneDark, RosePine, SolarizedDark, TokyoNight, Warcraft, SweetRush, Cloud, Limbotron (default)
 
 ### Infrastructure
 - Co-located `_styles.rs` pattern for all components
@@ -78,18 +92,16 @@
   - ComponentDescriptor pattern for extensible component registration
   - In-app Getting Started guide
   - Modular architecture (playground_helpers, playground_types)
-- Published on crates.io: `eq_ui` v0.4.0, `eq_ui_build` v0.1.0
+- Published on crates.io: `eq_ui` v0.4.2, `eq_ui_build` v0.1.0
 - Phosphor icon system with SVG path data constants and copy-on-demand workflow (ICON_REGISTRY.md)
 - `components.json` - single source of truth for component metadata, ARIA status, platform support, and Blitz tier
+- `eq_ui_macros` proc-macro crate with `#[playground(...)]` attribute and `PlaygroundEnum` derive
 
 ---
 
 ## Now - Active Development
 
 These are the items currently being worked on or immediately planned.
-
-### Components
-- [ ] **EqCTA** (Molecule) - Call-to-action section. A prominent banner with title, description, and action slot (typically an EqButton). Style tokens already exist in `theme.rs`. Needs its own component + `_styles.rs`.
 
 ### Platform
 - [ ] **Blitz renderer compatibility** - CSS gap analysis filed upstream on DioxusLabs/blitz. Awaiting resolution of `@media(hover: hover)` (issue #252) and CSS transition support. Refactor `document::eval()` usage to use `web-sys-x` when available.
@@ -107,14 +119,8 @@ These are the items currently being worked on or immediately planned.
 Items to tackle once the "Now" batch stabilizes.
 
 ### Components
-- [ ] **EqModal / Dialog** (Molecule) - Modal dialog with backdrop, configurable size, and close behavior. Via dioxus-primitives.
-- [ ] **EqToast / EqNotification** (Molecule) - Toast notifications with auto-dismiss, severity levels (info, success, warning, error). Via dioxus-primitives.
 - [ ] **EqSkeleton** (Atom) - Loading placeholder with shimmer animation.
-- [ ] **EqSlider** (Atom) - Range slider. Via dioxus-primitives.
 - [ ] **EqBadge** (Atom) - Small status indicator/label.
-- [ ] **EqAvatar** (Atom) - User avatar with image, initials fallback, and size variants.
-- [ ] **EqTooltip** (Atom/Molecule) - Hover tooltip. Via dioxus-primitives.
-- [ ] **EqDropdown** (Molecule) - Dropdown menu with selectable items. Via dioxus-primitives.
 
 ### Theming & Customization
 - [ ] **Dark/light mode toggle** - Allow themes to define both dark and light variants with a toggle mechanism.
@@ -135,10 +141,11 @@ Longer-term ideas and aspirations.
 - [ ] **EqSidebar** (Organism) - Collapsible sidebar navigation.
 - [ ] **EqBreadcrumb** (Molecule) - Navigation breadcrumb trail.
 - [ ] **EqStepper** (Molecule) - Multi-step progress indicator.
-- [ ] **EqDrawer** (Organism) - Slide-in panel from edge of screen.
 - [ ] **EqCommandPalette** (Organism) - Keyboard-driven command palette (Cmd+K style).
-- [ ] **EqSelect** (Atom) - Styled dropdown select with search. Via dioxus-primitives.
-- [ ] **EqDatePicker** (Molecule) - Date picker with calendar dropdown. Via dioxus-primitives.
+- [ ] **EqContextMenu** (Molecule) - Right-click context menu.
+- [ ] **EqHoverCard** (Molecule) - Hover card with rich content preview.
+- [ ] **EqRichTextEditor** (Organism) - Rich text editor via JS engine init.
+- [ ] **EqSignature** (Atom) - Canvas-based signature drawing.
 
 ### Platform
 - [ ] **Desktop-specific components** - Components optimized for Dioxus desktop (native menus, system tray integration).
@@ -158,7 +165,8 @@ Longer-term ideas and aspirations.
 
 | Version | Date | Highlights |
 |---------|------|------------|
-| v0.4.0 | April 2026 | Full ARIA accessibility, playground refactoring, EqRadioGroup, EqSwitch, 21 themes |
+| v0.4.2 | May 2026 | EqSlider, EqAvatar, EqTooltip, EqSelect, EqDropdown, EqDatePicker, EqCalendar, EqVirtualList, EqDrawer, EqFilePicker, 25 themes, 41 components |
+| v0.4.0 | April 2026 | Full ARIA accessibility, playground refactoring, EqRadioGroup, EqSwitch, EqModal, EqToast, EqCta, EqNavItem, 21 themes |
 | v0.3.0 | — | EqButton, EqGrid virtualization/reorder/export, EqCheckbox, multi-sort, themes |
 | v0.2.0 | — | Initial crates.io publish, EqGrid, mobile playground support, video component |
 | v0.1.1 | — | Initial release |
