@@ -69,6 +69,7 @@ pub fn all_component_descriptors() -> Vec<ComponentDescriptor> {
         molecules::eq_dropdown::descriptor(),
         molecules::eq_date_picker::descriptor(),
         molecules::eq_calendar::descriptor(),
+        molecules::eq_virtual_list::descriptor(),
         // Organisms
         organisms::eq_header::descriptor(),
         organisms::eq_footer::descriptor(),

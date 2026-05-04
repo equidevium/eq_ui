@@ -53,3 +53,8 @@ pub mod eq_calendar;
 pub mod eq_calendar_styles;
 
 pub use eq_calendar::{EqCalendar, CalendarEvent, CalendarMode, EventColor};
+
+pub mod eq_virtual_list;
+pub mod eq_virtual_list_styles;
+
+pub use eq_virtual_list::{EqVirtualList, VirtualListDirection, StickyHeader};

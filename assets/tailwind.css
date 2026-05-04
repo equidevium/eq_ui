@@ -1062,6 +1062,9 @@
   .overflow-y-auto {
     overflow-y: auto;
   }
+  .overflow-y-hidden {
+    overflow-y: hidden;
+  }
   .rounded {
     border-radius: 0.25rem;
   }
@@ -1158,6 +1161,12 @@
   }
   .border-\[var\(--color-card-border\)\] {
     border-color: var(--color-card-border);
+  }
+  .border-\[var\(--color-card-border\)\]\/20 {
+    border-color: var(--color-card-border);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in oklab, var(--color-card-border) 20%, transparent);
+    }
   }
   .border-\[var\(--color-card-border\)\]\/30 {
     border-color: var(--color-card-border);
@@ -1335,6 +1344,12 @@
   }
   .bg-\[var\(--color-primary-dark\)\] {
     background-color: var(--color-primary-dark);
+  }
+  .bg-\[var\(--color-primary-dark\)\]\/20 {
+    background-color: var(--color-primary-dark);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-primary-dark) 20%, transparent);
+    }
   }
   .bg-\[var\(--color-primary-dark\)\]\/30 {
     background-color: var(--color-primary-dark);
