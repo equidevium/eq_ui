@@ -20,3 +20,8 @@ pub use eq_header::EqHeader;
 pub use eq_hero_shell::EqHeroShell;
 pub use eq_navbar::EqNavbar;
 pub use eq_page_section::EqPageSection;
+
+pub mod eq_drawer;
+pub mod eq_drawer_styles;
+
+pub use eq_drawer::{EqDrawer, DrawerSide, DrawerSize};

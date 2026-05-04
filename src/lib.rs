@@ -55,6 +55,7 @@ pub fn all_component_descriptors() -> Vec<ComponentDescriptor> {
         atoms::eq_slider::descriptor(),
         atoms::eq_avatar::descriptor(),
         atoms::eq_tooltip::descriptor(),
+        atoms::eq_select::descriptor(),
         // Molecules
         molecules::eq_card::descriptor(),
         molecules::eq_image_card::descriptor(),
@@ -65,6 +66,9 @@ pub fn all_component_descriptors() -> Vec<ComponentDescriptor> {
         molecules::eq_cta::descriptor(),
         molecules::eq_modal::descriptor(),
         molecules::eq_toast::descriptor(),
+        molecules::eq_dropdown::descriptor(),
+        molecules::eq_date_picker::descriptor(),
+        molecules::eq_calendar::descriptor(),
         // Organisms
         organisms::eq_header::descriptor(),
         organisms::eq_footer::descriptor(),
@@ -72,6 +76,7 @@ pub fn all_component_descriptors() -> Vec<ComponentDescriptor> {
         organisms::eq_page_section::descriptor(),
         organisms::eq_app_shell::descriptor(),
         organisms::eq_navbar::descriptor(),
+        organisms::eq_drawer::descriptor(),
         organisms::eq_grid::grid::descriptor(),
         // Theming
         playground::theme_showcase::descriptor(),
