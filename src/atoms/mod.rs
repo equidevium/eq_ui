@@ -83,3 +83,8 @@ pub mod eq_tooltip;
 pub mod eq_tooltip_styles;
 
 pub use eq_tooltip::{EqTooltip, TooltipPosition};
+
+pub mod eq_select;
+pub mod eq_select_styles;
+
+pub use eq_select::{EqSelect, SelectOption, SelectPosition};
