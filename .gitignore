@@ -23,6 +23,13 @@ wasm-pack.log
 wasm-bindgen*
 
 # =========================
+# Node
+# =========================
+node_modules/
+package-lock.json
+package.json
+
+# =========================
 # Dev servers / hot reload
 # =========================
 

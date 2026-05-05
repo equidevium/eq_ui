@@ -27,7 +27,7 @@ pub enum IconSize {
 /// so color is controlled by the wrapper's text color class.
 ///
 /// ```rust,ignore
-/// EqIcon { path: eq_ui::atoms::icons::CARET_UP, size: IconSize::Sm }
+/// EqIcon { path: eq_ui::atoms::eq_icon_paths::CARET_UP, size: IconSize::Sm }
 /// ```
 ///
 /// **Children mode** - pass any element (custom SVG, `<img>`, etc.)
