@@ -65,12 +65,36 @@ pub fn EqCheckbox(
     let wrapper_base = if disabled { s::WRAPPER_DISABLED } else { s::WRAPPER };
     let wrapper_cls = merge_classes(wrapper_base, &class);
 
+    let aria_checked = match state {
+        CheckboxState::Checked => "true",
+        CheckboxState::Unchecked => "false",
+        CheckboxState::Indeterminate => "mixed",
+    };
+
     rsx! {
         span {
             class: "{wrapper_cls}",
+            role: "checkbox",
+            "aria-checked": "{aria_checked}",
+            "aria-disabled": "{disabled}",
+            tabindex: if disabled { "-1" } else { "0" },
             onclick: move |evt| {
                 evt.stop_propagation();
                 if !disabled {
+                    if let Some(ref handler) = on_change {
+                        let next = match state {
+                            CheckboxState::Checked => CheckboxState::Unchecked,
+                            _ => CheckboxState::Checked,
+                        };
+                        handler.call(next);
+                    }
+                }
+            },
+            onkeydown: move |evt: Event<KeyboardData>| {
+                if disabled { return; }
+                let key = evt.key();
+                if key == Key::Character(" ".into()) {
+                    evt.prevent_default();
                     if let Some(ref handler) = on_change {
                         let next = match state {
                             CheckboxState::Checked => CheckboxState::Unchecked,

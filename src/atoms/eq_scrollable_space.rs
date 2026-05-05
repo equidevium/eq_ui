@@ -24,6 +24,17 @@ pub fn EqScrollableSpace(
     /// When omitted, the container uses flex-1 to fill available height.
     #[props(into, default)]
     max_height: Option<String>,
+    /// Accessible label for screen readers. When set, the container is
+    /// announced as a named region (e.g. "sidebar", "message list").
+    /// Helps users with multiple scrollable areas on the same page.
+    #[props(into, default)]
+    aria_label: String,
+    /// Whether the container is keyboard-focusable (default true).
+    /// When true, keyboard users can Tab to the area and scroll with
+    /// arrow keys. Set to false if all content inside is already
+    /// focusable (e.g. a list of links).
+    #[props(default = true)]
+    focusable: bool,
     /// Optional class override - extend or replace default styles.
     #[props(into, default)]
     class: String,
@@ -32,9 +43,14 @@ pub fn EqScrollableSpace(
     let base = format!("{} {} {}", s::CONTAINER, s::SCROLLBAR, height_class);
     let cls = merge_classes(&base, &class);
 
+    let has_label = !aria_label.is_empty();
+
     rsx! {
         div {
             class: "{cls}",
+            role: if has_label { "region" } else { "" },
+            "aria-label": if has_label { "{aria_label}" } else { "" },
+            tabindex: if focusable { "0" } else { "-1" },
             {children}
         }
     }

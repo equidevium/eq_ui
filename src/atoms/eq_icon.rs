@@ -48,6 +48,12 @@ pub fn EqIcon(
     size: IconSize,
     #[props(default = false)]
     muted: bool,
+    /// Accessible label for standalone icons (e.g. icon-only buttons).
+    /// When set, the icon is announced by screen readers with this text.
+    /// When empty (default), the icon is treated as decorative and hidden
+    /// from assistive technology via `aria-hidden="true"`.
+    #[props(into, default)]
+    aria_label: String,
     /// Optional class override - extend or replace default styles.
     #[props(into, default)]
     class: String,
@@ -62,14 +68,21 @@ pub fn EqIcon(
     let base = format!("{} {} {}", s::WRAPPER, size_class, color_class);
     let cls = merge_classes(&base, &class);
 
+    let is_decorative = aria_label.is_empty();
+
     rsx! {
-        span { class: "{cls}",
+        span {
+            class: "{cls}",
+            "aria-hidden": if is_decorative { "true" } else { "" },
+            "aria-label": if !is_decorative { "{aria_label}" } else { "" },
+            role: if !is_decorative { "img" } else { "" },
             if !path.is_empty() {
                 svg {
                     xmlns: "http://www.w3.org/2000/svg",
                     view_box: "0 0 256 256",
                     fill: "currentColor",
                     class: "w-full h-full",
+                    "aria-hidden": "true",
                     path { d: "{path}" }
                 }
             } else if let Some(content) = children {

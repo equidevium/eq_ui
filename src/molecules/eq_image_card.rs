@@ -80,17 +80,26 @@ pub fn EqImageCard(
     /// Optional attribution / photo credit.
     #[props(into)]
     attribution: Option<String>,
+    /// Accessible label for screen readers. Provides a concise
+    /// description of the card as a whole (e.g. "Photo of Alpine Meadow
+    /// by Jane Doe"). When set, the card wrapper gets `role="figure"`
+    /// (overlay mode) or enhances the existing `<figure>` (below mode).
+    #[props(into, default)]
+    aria_label: String,
     /// Optional class override - extend or replace default wrapper styles.
     #[props(into, default)]
     class: String,
 ) -> Element {
     let has_caption = title.is_some() || description.is_some() || attribution.is_some();
+    let has_aria_label = !aria_label.is_empty();
 
     match mode {
         CaptionMode::Below => {
             let cls = merge_classes(s::CARD_WRAPPER, &class);
             rsx! {
-            figure { class: "{cls}",
+            figure {
+                class: "{cls}",
+                "aria-label": if has_aria_label { "{aria_label}" } else { "" },
                 EqImage { src, alt, size, aspect_ratio, object_fit, rounded }
                 if has_caption {
                     figcaption { class: s::FIGCAPTION,
@@ -106,11 +115,16 @@ pub fn EqImageCard(
         }},
         CaptionMode::Overlay => {
             let cls = merge_classes(s::OVERLAY_CONTAINER, &class);
+            let effective_label = if has_aria_label { aria_label.clone() } else { alt.clone() };
             rsx! {
-            div { class: "{cls}",
+            div {
+                class: "{cls}",
+                role: "figure",
+                "aria-label": "{effective_label}",
                 EqImage { src, alt, size, aspect_ratio, object_fit, rounded }
                 if has_caption {
                     div { class: s::OVERLAY_GRADIENT,
+                        "aria-hidden": "true",
                         div { class: s::OVERLAY_TEXT_WRAPPER,
                             CaptionContent {
                                 title_class: s::OVERLAY_TITLE,

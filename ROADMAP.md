@@ -19,20 +19,24 @@
 - `EqVideo` - Video atom with poster overlay (EqImage + play icon), autoplay, muted, loop, controls, aspect ratio
 - `EqCheckbox` - Themed checkbox with Checked, Unchecked, and Indeterminate states. Icon-based rendering using Phosphor square icons, optional label, disabled state, size variants
 - `EqButton` - Themed button atom with five variants (Primary, Ghost, Outline, Card, Danger) and three sizes (Sm, Md, Lg). Gradient variants animate via background-position shift on hover. Native `<button>` element for accessibility
+- `EqProgress` - Progress bar with determinate/indeterminate modes, 4 color variants, gradient fill, and shimmer animation
+- `EqTab` - Tab bar with underline, pill, and card variants; badges; disabled state; WAI-ARIA tablist pattern with roving tabindex
+- `EqRadioGroup` - Radio button group with mutually exclusive selection, three sizes (Sm, Md, Lg), vertical/horizontal layout, WAI-ARIA radiogroup pattern with roving tabindex
+- `EqSwitch` - Toggle switch with pill track and sliding thumb, three sizes, WAI-ARIA switch role
 
 ### Molecules
 - `EqCard` - Card with header, body, footer slots
 - `EqImageCard` - Image card with caption modes (Below, Overlay)
-- `EqCarousel` - Generic content carousel with Default and Peek modes
-- `EqTree` - Collapsible tree view with select, expand/collapse, and child count
-- `EqAccordion` - Collapsible panels with single-expand and multi-expand modes, smooth CSS grid animation, element headers
+- `EqCarousel` - Generic content carousel with Default and Peek modes, WAI-ARIA carousel pattern
+- `EqTree` - Collapsible tree view with select, expand/collapse, child count, WAI-ARIA tree pattern with full keyboard navigation
+- `EqAccordion` - Collapsible panels with single-expand and multi-expand modes, smooth CSS grid animation, element headers, WAI-ARIA accordion pattern with keyboard navigation
 
 ### Organisms
 - `EqAppShell` - Full-page layout (header + main + footer)
 - `EqHeader` - Sticky header with nav slot and backdrop blur
 - `EqFooter` - Footer with link groups
 - `EqNavbar` - Navigation bar
-- `EqHeroShell` - Hero section with optional background image, overlay, and custom title/subtitle colors
+- `EqHeroShell` - Hero section with optional background image, overlay, custom title/subtitle colors, WAI-ARIA landmark region
 - `EqPageSection` - Content section with title and description
 - `EqGrid` - Feature-rich, type-safe data grid organism with:
   - Sorting (multi-column, custom comparators)
@@ -47,7 +51,15 @@
   - GridNavigation enum (Standard, Paginate, Virtualize)
   - Density presets (Compact, Normal, Comfortable)
   - Loading overlay and empty state
+  - Full WAI-ARIA table semantics (aria-sort, aria-selected, aria-rowcount/colcount, aria-busy, live region announcements for reorder)
   - Full theme integration via CSS variables
+
+### Accessibility
+- **100% ARIA coverage** on all 29 implemented components (v0.4.0)
+- WAI-ARIA patterns: Tree View, Accordion, Tablist, Radiogroup, Carousel, Data Grid
+- Roving tabindex with keyboard navigation on all composite widgets
+- Decorative elements marked with `aria-hidden`
+- Live regions for dynamic content updates (pagination, drag-and-drop)
 
 ### Theming
 - `EqTheme` - Theme enum with custom CSS support
@@ -63,8 +75,12 @@
 - Tailwind CSS v4 with `@source` directives scanning `.rs` files
 - `class` prop on every component for style overrides via `merge_classes()`
 - EqPlayground - interactive component playground with prop controls, variant galleries, CSS documentation, and usage examples for every component
-- Published on crates.io: `eq_ui` v0.2.0, `eq_ui_build` v0.1.0
+  - ComponentDescriptor pattern for extensible component registration
+  - In-app Getting Started guide
+  - Modular architecture (playground_helpers, playground_types)
+- Published on crates.io: `eq_ui` v0.4.0, `eq_ui_build` v0.1.0
 - Phosphor icon system with SVG path data constants and copy-on-demand workflow (ICON_REGISTRY.md)
+- `components.json` - single source of truth for component metadata, ARIA status, platform support, and Blitz tier
 
 ---
 
@@ -74,6 +90,9 @@ These are the items currently being worked on or immediately planned.
 
 ### Components
 - [ ] **EqCTA** (Molecule) - Call-to-action section. A prominent banner with title, description, and action slot (typically an EqButton). Style tokens already exist in `theme.rs`. Needs its own component + `_styles.rs`.
+
+### Platform
+- [ ] **Blitz renderer compatibility** - CSS gap analysis filed upstream on DioxusLabs/blitz. Awaiting resolution of `@media(hover: hover)` (issue #252) and CSS transition support. Refactor `document::eval()` usage to use `web-sys-x` when available.
 
 ### Refactoring
 - [ ] **EqCard macro unification** - The four EqCard sub-components are structurally identical wrappers. Unify via a declarative macro to reduce duplication.
@@ -88,13 +107,14 @@ These are the items currently being worked on or immediately planned.
 Items to tackle once the "Now" batch stabilizes.
 
 ### Components
-- [ ] **EqModal** (Molecule) - Modal dialog with backdrop, configurable size, and close behavior.
-- [ ] **EqToast / EqNotification** (Molecule) - Toast notifications with auto-dismiss, severity levels (info, success, warning, error).
-- [ ] **EqTabs** (Molecule) - Tabbed content panels.
+- [ ] **EqModal / Dialog** (Molecule) - Modal dialog with backdrop, configurable size, and close behavior. Via dioxus-primitives.
+- [ ] **EqToast / EqNotification** (Molecule) - Toast notifications with auto-dismiss, severity levels (info, success, warning, error). Via dioxus-primitives.
+- [ ] **EqSkeleton** (Atom) - Loading placeholder with shimmer animation.
+- [ ] **EqSlider** (Atom) - Range slider. Via dioxus-primitives.
 - [ ] **EqBadge** (Atom) - Small status indicator/label.
-- [ ] **EqAvatar** (Atom) - User avatar with image, initials fallback, and size variants. Note: EqImage currently forces aspect ratios that don't work well for a circular profile crop - EqAvatar will need either a dedicated circular image mode or a raw `img` element with `rounded-full` + `object-cover` instead of going through EqImage.
-- [ ] **EqTooltip** (Atom/Molecule) - Hover tooltip.
-- [ ] **EqDropdown** (Molecule) - Dropdown menu with selectable items.
+- [ ] **EqAvatar** (Atom) - User avatar with image, initials fallback, and size variants.
+- [ ] **EqTooltip** (Atom/Molecule) - Hover tooltip. Via dioxus-primitives.
+- [ ] **EqDropdown** (Molecule) - Dropdown menu with selectable items. Via dioxus-primitives.
 
 ### Theming & Customization
 - [ ] **Dark/light mode toggle** - Allow themes to define both dark and light variants with a toggle mechanism.
@@ -117,18 +137,31 @@ Longer-term ideas and aspirations.
 - [ ] **EqStepper** (Molecule) - Multi-step progress indicator.
 - [ ] **EqDrawer** (Organism) - Slide-in panel from edge of screen.
 - [ ] **EqCommandPalette** (Organism) - Keyboard-driven command palette (Cmd+K style).
+- [ ] **EqSelect** (Atom) - Styled dropdown select with search. Via dioxus-primitives.
+- [ ] **EqDatePicker** (Molecule) - Date picker with calendar dropdown. Via dioxus-primitives.
 
 ### Platform
 - [ ] **Desktop-specific components** - Components optimized for Dioxus desktop (native menus, system tray integration).
 - [ ] **Mobile-responsive patterns** - Ensure all components work well on mobile viewports. Add mobile-specific organisms (bottom sheet, swipe gestures).
-- [ ] **Accessibility audit** - ARIA roles, keyboard navigation, screen reader support across all components.
 - [ ] **Animation system** - Shared transition/animation utilities for component enter/exit states.
+- [ ] **Blitz native rendering** - Full support once CSS gaps are resolved upstream.
 
 ### Ecosystem
 - [ ] **Documentation site** - Dedicated docs site built with eq_ui itself (dogfooding).
 - [ ] **Starter templates** - Project templates for web, desktop, and fullstack Dioxus apps using eq_ui.
 - [ ] **Community themes** - Allow third-party theme contributions with a standard format.
 - [ ] **EqPlayground public version** - Host EqPlayground as a public site where users can explore components, tweak props, and preview themes without cloning the repo.
+
+---
+
+## Release History
+
+| Version | Date | Highlights |
+|---------|------|------------|
+| v0.4.0 | April 2026 | Full ARIA accessibility, playground refactoring, EqRadioGroup, EqSwitch, 21 themes |
+| v0.3.0 | — | EqButton, EqGrid virtualization/reorder/export, EqCheckbox, multi-sort, themes |
+| v0.2.0 | — | Initial crates.io publish, EqGrid, mobile playground support, video component |
+| v0.1.1 | — | Initial release |
 
 ---
 

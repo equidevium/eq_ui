@@ -63,6 +63,16 @@ pub fn EqImage(
     /// Apply rounded corners.
     #[props(default = false)]
     rounded: bool,
+    /// Explicit ARIA label for screen readers. Overrides `alt` for
+    /// assistive technology when you need a more descriptive announcement
+    /// than the visual alt text.
+    #[props(into, default)]
+    aria_label: String,
+    /// Mark as decorative (hides from screen readers). When true, sets
+    /// `role="presentation"` and `aria-hidden="true"` so assistive
+    /// technology skips this image entirely.
+    #[props(default = false)]
+    decorative: bool,
     /// Optional class override - extend or replace default wrapper styles.
     #[props(into, default)]
     class: String,
@@ -89,13 +99,18 @@ pub fn EqImage(
     let wrapper_base = format!("{} {} {} {}", s::WRAPPER, size_class, ratio_class, rounded_class);
     let wrapper_cls = merge_classes(&wrapper_base, &class);
 
+    let effective_alt = if decorative { "" } else { &alt };
+
     rsx! {
         div { class: "{wrapper_cls}",
             img {
                 class: "{s::IMAGE_ELEMENT} {fit_class} {rounded_class}",
                 src: "{src}",
-                alt: "{alt}",
+                alt: "{effective_alt}",
                 loading: "lazy",
+                role: if decorative { "presentation" } else { "" },
+                "aria-hidden": if decorative { "true" } else { "" },
+                "aria-label": if !aria_label.is_empty() { "{aria_label}" } else { "" },
             }
         }
     }

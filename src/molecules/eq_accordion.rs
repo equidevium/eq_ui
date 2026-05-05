@@ -1,5 +1,6 @@
 use super::eq_accordion_styles as s;
 use crate::theme::merge_classes;
+use dioxus::document;
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
@@ -52,6 +53,13 @@ impl AccordionItem {
 /// Renders a vertical stack of panels, each with a clickable header
 /// that reveals or hides its body content with a smooth height transition.
 ///
+/// **Accessibility** – implements the WAI-ARIA [Accordion][acc] pattern:
+/// `aria-expanded` on header buttons, `aria-controls` / `aria-labelledby`
+/// linking headers to panels, `role="region"` on body panels, and keyboard
+/// navigation (Up / Down / Home / End to move between headers).
+///
+/// [acc]: https://www.w3.org/WAI/ARIA/apg/patterns/accordion/
+///
 /// Use `class` to extend or replace the default styles.
 #[component]
 pub fn EqAccordion(
@@ -60,21 +68,110 @@ pub fn EqAccordion(
     /// Expand behaviour.
     #[props(default)]
     mode: AccordionMode,
+    /// Accessible label for screen readers (e.g. "FAQ", "Settings").
+    #[props(into, default)]
+    aria_label: String,
     /// Optional class override on the root container.
     #[props(into, default)]
     class: String,
 ) -> Element {
+    // Stable unique prefix for DOM IDs.
+    let acc_prefix = use_hook(|| {
+        static COUNTER: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+        let id = COUNTER.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        format!("eq-acc-{id}")
+    });
+
     // Track which panels are currently open by id.
     let mut open_ids = use_signal(Vec::<String>::new);
 
     let cls = merge_classes(s::ACCORDION, &class);
+    let has_label = !aria_label.is_empty();
+
+    // Collect item IDs for keyboard navigation closure.
+    let item_ids: Vec<String> = items.iter().map(|it| it.id.clone()).collect();
+    let item_ids_kb = item_ids.clone();
+    let prefix_kb = acc_prefix.clone();
 
     rsx! {
-        div { class: "{cls}",
+        div {
+            class: "{cls}",
+            "aria-label": if has_label { "{aria_label}" } else { "" },
+
+            // ── Keyboard navigation between headers ──────────
+            onkeydown: move |evt: Event<KeyboardData>| {
+                let key = evt.key();
+                if key != Key::ArrowDown && key != Key::ArrowUp
+                    && key != Key::Home && key != Key::End
+                {
+                    return;
+                }
+
+                let len = item_ids_kb.len();
+                if len == 0 { return; }
+
+                // Find the currently focused header by checking active element id.
+                // Each header button has id "{prefix}-hdr-{item_id}".
+                // We can infer the index from the item_ids list.
+                // Fall back to first/last depending on key direction.
+                let cur_idx = {
+                    // Try to figure out which header is focused from focused_id
+                    // We don't store focused state — all buttons are natively
+                    // focusable, so we rely on document.activeElement.
+                    // For simplicity, just cycle from -1 (none).
+                    None::<usize> // will be resolved by JS; we use a simple approach below
+                };
+
+                let target_idx = if key == Key::ArrowDown {
+                    evt.prevent_default();
+                    // Move to next header (wrap). We ask JS for the current index.
+                    None // handled below via eval
+                } else if key == Key::ArrowUp {
+                    evt.prevent_default();
+                    None
+                } else if key == Key::Home {
+                    evt.prevent_default();
+                    Some(0usize)
+                } else if key == Key::End {
+                    evt.prevent_default();
+                    Some(len - 1)
+                } else {
+                    None
+                };
+
+                if let Some(idx) = target_idx {
+                    let hdr_id = format!("{}-hdr-{}", prefix_kb, item_ids_kb[idx]);
+                    document::eval(&format!(
+                        "document.getElementById('{hdr_id}')?.focus()"
+                    ));
+                } else {
+                    // Arrow up/down: build a JS snippet that finds the current
+                    // focused header index and moves to the next/previous.
+                    let ids_json: Vec<String> = item_ids_kb
+                        .iter()
+                        .map(|id| format!("'{}-hdr-{}'", prefix_kb, id))
+                        .collect();
+                    let ids_arr = format!("[{}]", ids_json.join(","));
+                    let delta = if key == Key::ArrowDown { 1i32 } else { -1i32 };
+                    document::eval(&format!(
+                        "(() => {{ \
+                            const ids = {ids_arr}; \
+                            const cur = document.activeElement?.id || ''; \
+                            const idx = ids.indexOf(cur); \
+                            const next = (idx + {delta} + ids.length) % ids.length; \
+                            document.getElementById(ids[next])?.focus(); \
+                        }})()"
+                    ));
+                }
+            },
+
             for item in items {
                 {
                     let id = item.id.clone();
                     let is_open = open_ids().contains(&id);
+
+                    let hdr_id = format!("{}-hdr-{}", acc_prefix, id);
+                    let panel_id = format!("{}-panel-{}", acc_prefix, id);
 
                     let toggle_id = id.clone();
                     let toggle_mode = mode;
@@ -114,7 +211,10 @@ pub fn EqAccordion(
 
                             // Header
                             button {
+                                id: "{hdr_id}",
                                 class: s::HEADER,
+                                "aria-expanded": if is_open { "true" } else { "false" },
+                                "aria-controls": "{panel_id}",
                                 onclick: onclick,
 
                                 div { class: s::HEADER_TEXT, {item.header} }
@@ -126,13 +226,17 @@ pub fn EqAccordion(
                                     view_box: "0 0 24 24",
                                     stroke_width: "2",
                                     stroke: "currentColor",
+                                    "aria-hidden": "true",
                                     path { d: "m19.5 8.25-7.5 7.5-7.5-7.5" }
                                 }
                             }
 
                             // Body - animated via CSS grid rows
                             div {
+                                id: "{panel_id}",
                                 class: "{body_grid}",
+                                role: "region",
+                                "aria-labelledby": "{hdr_id}",
                                 div { class: s::BODY_INNER,
                                     div { class: s::CONTENT, {item.body} }
                                 }

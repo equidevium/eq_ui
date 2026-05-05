@@ -38,6 +38,9 @@ pub(super) fn render_body<T: Clone + PartialEq + 'static>(
     mut reorder_from: Signal<Option<usize>>,
     mut reorder_over: Signal<Option<usize>>,
     on_reorder: &Option<EventHandler<(usize, usize)>>,
+    // ARIA move announcements.
+    announce_moves: bool,
+    mut move_announcement: Signal<String>,
 ) -> Element {
     let border_cls = if column_borders {
         "border-r border-[var(--color-grid-border)] last:border-r-0"
@@ -63,7 +66,7 @@ pub(super) fn render_body<T: Clone + PartialEq + 'static>(
             // Top spacer - pushes visible rows into their correct scroll position.
             // Height is set on the <td> (not <tr>) because browsers ignore height on <tr>.
             if top_spacer_height > 0.0 {
-                tr {
+                tr { "aria-hidden": "true",
                     td {
                         colspan: "{col_span}",
                         style: "height: {top_spacer_height:.0}px; padding: 0; border: none; line-height: 0;",
@@ -122,11 +125,14 @@ pub(super) fn render_body<T: Clone + PartialEq + 'static>(
 
                     let on_reorder_handler = on_reorder.clone();
 
+                    let has_selection = row_selection != RowSelection::None;
+
                     rsx! {
                         tr {
                             key: "{data_idx}",
                             class: "{row_cls}",
                             style: "{row_h_style}",
+                            "aria-selected": if has_selection { if is_selected { "true" } else { "false" } } else { "" },
                             draggable: if is_draggable { "true" } else { "false" },
                             ondragover: move |evt: Event<DragData>| {
                                 if reorderable && reorder_from().is_some() {
@@ -150,6 +156,13 @@ pub(super) fn render_body<T: Clone + PartialEq + 'static>(
                                         evt.stop_propagation();
                                         if let Some(from) = reorder_from() {
                                             if from != data_idx {
+                                                if announce_moves {
+                                                    move_announcement.set(format!(
+                                                        "Row moved from position {} to position {}",
+                                                        from + 1,
+                                                        data_idx + 1,
+                                                    ));
+                                                }
                                                 if let Some(ref handler) = on_reorder_handler {
                                                     handler.call((from, data_idx));
                                                 }
@@ -215,6 +228,12 @@ pub(super) fn render_body<T: Clone + PartialEq + 'static>(
                                     ondragstart: move |evt: Event<DragData>| {
                                         evt.stop_propagation();
                                         reorder_from.set(Some(data_idx));
+                                        if announce_moves {
+                                            move_announcement.set(format!(
+                                                "Grabbed row at position {}. Use drop to reorder.",
+                                                data_idx + 1,
+                                            ));
+                                        }
                                     },
                                     ondragend: move |_| {
                                         reorder_from.set(None);
@@ -302,7 +321,7 @@ pub(super) fn render_body<T: Clone + PartialEq + 'static>(
             }
             // Bottom spacer - fills remaining scroll height below visible rows.
             if bottom_spacer_height > 0.0 {
-                tr {
+                tr { "aria-hidden": "true",
                     td {
                         colspan: "{col_span}",
                         style: "height: {bottom_spacer_height:.0}px; padding: 0; border: none; line-height: 0;",

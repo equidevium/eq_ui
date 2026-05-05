@@ -1,6 +1,8 @@
 use super::eq_tree_styles as s;
 use crate::theme::merge_classes;
+use dioxus::document;
 use dioxus::prelude::*;
+use std::collections::HashSet;
 
 #[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
@@ -220,6 +222,41 @@ impl TreeNode {
 }
 
 // ---------------------------------------------------------------------------
+// ARIA helpers – visible-node collection & parent lookup
+// ---------------------------------------------------------------------------
+
+/// Collect all currently visible nodes (depth-first) given the set of expanded
+/// branch IDs. Returns `(node_id, depth, is_leaf)` tuples.
+fn collect_visible(
+    nodes: &[TreeNode],
+    expanded: &HashSet<String>,
+    depth: usize,
+    out: &mut Vec<(String, usize, bool)>,
+) {
+    for node in nodes {
+        let is_leaf = node.is_leaf();
+        out.push((node.id.clone(), depth, is_leaf));
+        if !is_leaf && expanded.contains(&node.id) {
+            collect_visible(&node.children, expanded, depth + 1, out);
+        }
+    }
+}
+
+/// Walk the tree to find the direct parent of `target`. Returns `None` for
+/// root-level nodes.
+fn find_parent_id(nodes: &[TreeNode], target: &str) -> Option<String> {
+    for node in nodes {
+        if node.children.iter().any(|c| c.id == target) {
+            return Some(node.id.clone());
+        }
+        if let Some(found) = find_parent_id(&node.children, target) {
+            return Some(found);
+        }
+    }
+    None
+}
+
+// ---------------------------------------------------------------------------
 // EqTree component
 // ---------------------------------------------------------------------------
 
@@ -227,6 +264,15 @@ impl TreeNode {
 ///
 /// Renders a list of `TreeNode`s with expand/collapse for branches
 /// and click-to-select for leaves.
+///
+/// **Accessibility** – implements the WAI-ARIA [Tree View][tv] pattern:
+/// `role="tree"` on the root, `role="treeitem"` on each node,
+/// `role="group"` on children containers, `aria-expanded` / `aria-selected`
+/// / `aria-level` / `aria-setsize` / `aria-posinset` on every item,
+/// roving `tabindex` with programmatic focus, and full keyboard navigation
+/// (Up / Down / Left / Right / Home / End / Enter / Space).
+///
+/// [tv]: https://www.w3.org/WAI/ARIA/apg/patterns/treeview/
 #[component]
 pub fn EqTree(
     /// The root-level nodes to display.
@@ -239,20 +285,151 @@ pub fn EqTree(
     /// When `true`, branch nodes show their direct child count, e.g. "Atoms (8)".
     #[props(default)]
     show_count: bool,
+    /// Accessible label for screen readers (e.g. "File browser",
+    /// "Component list"). Announced as "{label}, tree".
+    #[props(into, default = "Tree".to_string())]
+    aria_label: String,
     /// Optional class override - extend or replace default wrapper styles.
     #[props(into, default)]
     class: String,
 ) -> Element {
+    // Stable unique prefix so every DOM id is unique even with multiple trees.
+    let tree_id_prefix = use_hook(|| {
+        static COUNTER: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+        let id = COUNTER.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        format!("eq-tree-{id}")
+    });
+
+    // Shared expansion state — replaces per-branch `use_signal(|| false)`.
+    let mut expanded_set: Signal<HashSet<String>> = use_signal(|| HashSet::new());
+
+    // Roving tabindex: the focused node id.
+    let mut focused_id: Signal<String> = use_signal(|| String::new());
+
     let cls = merge_classes(s::TREE, &class);
+
+    // Pre-compute values needed by the keyboard closure and the rsx iterator.
+    let total_roots = nodes.len();
+    let first_id = nodes.first().map(|n| n.id.clone()).unwrap_or_default();
+
+    // Clone nodes for the keyboard handler closure (it needs its own copy).
+    let nodes_kb = nodes.clone();
+    let prefix_kb = tree_id_prefix.clone();
+
     rsx! {
-        div { class: "{cls}",
-            for node in nodes {
+        div {
+            class: "{cls}",
+            role: "tree",
+            "aria-label": "{aria_label}",
+
+            // ── Keyboard navigation ──────────────────────────────
+            onkeydown: move |evt: Event<KeyboardData>| {
+                let key = evt.key();
+                let expanded = expanded_set();
+                let mut visible: Vec<(String, usize, bool)> = Vec::new();
+                collect_visible(&nodes_kb, &expanded, 1, &mut visible);
+                if visible.is_empty() { return; }
+
+                let cur = focused_id();
+                let cur_idx = visible.iter().position(|(id, _, _)| *id == cur);
+
+                // Helper: focus a node by index in the visible list.
+                let mut focus = |idx: usize| {
+                    let target = &visible[idx].0;
+                    focused_id.set(target.clone());
+                    let dom_id = format!("{}-{}", prefix_kb, target);
+                    document::eval(&format!(
+                        "document.getElementById('{dom_id}')?.focus()"
+                    ));
+                };
+
+                if key == Key::ArrowDown {
+                    evt.prevent_default();
+                    match cur_idx {
+                        Some(i) if i + 1 < visible.len() => focus(i + 1),
+                        None => focus(0),
+                        _ => {}
+                    }
+                } else if key == Key::ArrowUp {
+                    evt.prevent_default();
+                    match cur_idx {
+                        Some(i) if i > 0 => focus(i - 1),
+                        None => focus(visible.len() - 1),
+                        _ => {}
+                    }
+                } else if key == Key::ArrowRight {
+                    evt.prevent_default();
+                    if let Some(i) = cur_idx {
+                        let (ref id, _, is_leaf) = visible[i];
+                        if !is_leaf {
+                            if !expanded.contains(id) {
+                                // Expand (focus stays on current node per WAI-ARIA).
+                                let mut set = expanded_set();
+                                set.insert(id.clone());
+                                expanded_set.set(set);
+                            } else if i + 1 < visible.len() && visible[i + 1].1 > visible[i].1 {
+                                // Already expanded — move to first child.
+                                focus(i + 1);
+                            }
+                        }
+                    }
+                } else if key == Key::ArrowLeft {
+                    evt.prevent_default();
+                    if let Some(i) = cur_idx {
+                        let (ref id, _, is_leaf) = visible[i];
+                        if !is_leaf && expanded.contains(id) {
+                            // Collapse (focus stays).
+                            let mut set = expanded_set();
+                            set.remove(id);
+                            expanded_set.set(set);
+                        } else {
+                            // Move to parent.
+                            if let Some(parent) = find_parent_id(&nodes_kb, id) {
+                                if let Some(pi) = visible.iter().position(|(pid, _, _)| *pid == parent) {
+                                    focus(pi);
+                                }
+                            }
+                        }
+                    }
+                } else if key == Key::Home {
+                    evt.prevent_default();
+                    focus(0);
+                } else if key == Key::End {
+                    evt.prevent_default();
+                    focus(visible.len() - 1);
+                } else if key == Key::Enter || key == Key::Character(" ".into()) {
+                    evt.prevent_default();
+                    if let Some(i) = cur_idx {
+                        let (ref id, _, is_leaf) = visible[i];
+                        if is_leaf {
+                            on_select.call(id.clone());
+                        } else {
+                            let mut set = expanded_set();
+                            if set.contains(id) {
+                                set.remove(id);
+                            } else {
+                                set.insert(id.clone());
+                            }
+                            expanded_set.set(set);
+                        }
+                    }
+                }
+            },
+
+            for (i, node) in nodes.into_iter().enumerate() {
                 TreeBranch {
                     key: "{node.id}",
                     node: node,
                     on_select: on_select,
                     selected: selected.clone(),
                     show_count: show_count,
+                    expanded_set: expanded_set,
+                    focused_id: focused_id,
+                    tree_id_prefix: tree_id_prefix.clone(),
+                    first_node_id: first_id.clone(),
+                    depth: 1,
+                    set_size: total_roots,
+                    pos_in_set: i + 1,
                 }
             }
         }
@@ -269,29 +446,70 @@ fn TreeBranch(
     on_select: EventHandler<String>,
     selected: Option<String>,
     show_count: bool,
+    /// Shared expansion state managed by EqTree.
+    expanded_set: Signal<HashSet<String>>,
+    /// Currently focused node id (roving tabindex).
+    focused_id: Signal<String>,
+    /// DOM-id prefix unique to this tree instance.
+    tree_id_prefix: String,
+    /// ID of the first root node (fallback focus target).
+    first_node_id: String,
+    /// 1-based depth for `aria-level`.
+    depth: usize,
+    /// Number of siblings at this level (`aria-setsize`).
+    set_size: usize,
+    /// 1-based position among siblings (`aria-posinset`).
+    pos_in_set: usize,
 ) -> Element {
     let is_leaf = node.is_leaf();
     let is_selected = selected.as_deref() == Some(node.id.as_str());
-    let mut expanded = use_signal(|| false);
+    let is_expanded = !is_leaf && expanded_set().contains(&node.id);
+
+    // Roving tabindex: the focused node gets 0, everything else -1.
+    // When nothing is focused yet the first root node wins.
+    let cur_focused = focused_id();
+    let is_focus_target = if cur_focused.is_empty() {
+        node.id == first_node_id
+    } else {
+        cur_focused == node.id
+    };
 
     let row_class = if is_selected { s::NODE_ACTIVE } else { s::NODE_ROW };
 
-    let node_id = node.id.clone();
+    let node_id_click = node.id.clone();
     let label = node.label.clone();
     let child_count = node.children.len();
-
-    let chevron_rotate = if expanded() { s::CHEVRON_EXPANDED } else { "" };
+    let chevron_rotate = if is_expanded { s::CHEVRON_EXPANDED } else { "" };
+    let dom_id = format!("{}-{}", tree_id_prefix, node.id);
+    let tab_idx = if is_focus_target { "0" } else { "-1" };
 
     rsx! {
         div {
-            // Node row
+            role: "treeitem",
+            id: "{dom_id}",
+            "aria-expanded": if !is_leaf { if is_expanded { "true" } else { "false" } } else { "" },
+            "aria-selected": if is_selected { "true" } else { "false" },
+            "aria-level": "{depth}",
+            "aria-setsize": "{set_size}",
+            "aria-posinset": "{pos_in_set}",
+            "aria-label": "{label}",
+            tabindex: "{tab_idx}",
+
+            // Node row (visual only — interaction handled by treeitem above via keyboard)
             div {
                 class: row_class,
                 onclick: move |_| {
+                    focused_id.set(node_id_click.clone());
                     if is_leaf {
-                        on_select.call(node_id.clone());
+                        on_select.call(node_id_click.clone());
                     } else {
-                        expanded.set(!expanded());
+                        let mut set = expanded_set();
+                        if set.contains(&node_id_click) {
+                            set.remove(&node_id_click);
+                        } else {
+                            set.insert(node_id_click.clone());
+                        }
+                        expanded_set.set(set);
                     }
                 },
 
@@ -304,10 +522,11 @@ fn TreeBranch(
                         view_box: "0 0 24 24",
                         stroke_width: "2",
                         stroke: "currentColor",
+                        "aria-hidden": "true",
                         path { d: "m9 5 7 7-7 7" }
                     }
                 } else {
-                    span { class: s::LEAF_SPACER }
+                    span { class: s::LEAF_SPACER, "aria-hidden": "true" }
                 }
 
                 // Label
@@ -315,20 +534,29 @@ fn TreeBranch(
 
                 // Direct child count for branches
                 if show_count && !is_leaf {
-                    span { class: s::COUNT, "({child_count})" }
+                    span { class: s::COUNT, "aria-hidden": "true", "({child_count})" }
                 }
             }
 
             // Children (shown when expanded)
-            if !is_leaf && expanded() {
-                div { class: s::CHILDREN,
-                    for child in node.children {
+            if !is_leaf && is_expanded {
+                div {
+                    class: s::CHILDREN,
+                    role: "group",
+                    for (i, child) in node.children.into_iter().enumerate() {
                         TreeBranch {
                             key: "{child.id}",
                             node: child,
                             on_select: on_select,
                             selected: selected.clone(),
                             show_count: show_count,
+                            expanded_set: expanded_set,
+                            focused_id: focused_id,
+                            tree_id_prefix: tree_id_prefix.clone(),
+                            first_node_id: first_node_id.clone(),
+                            depth: depth + 1,
+                            set_size: child_count,
+                            pos_in_set: i + 1,
                         }
                     }
                 }
