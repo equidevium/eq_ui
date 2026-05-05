@@ -174,7 +174,7 @@ Longer-term ideas and aspirations.
 - **MSRV:** Rust **1.85** (Rust 2024 edition, matches `edition = "2024"` in `Cargo.toml`). Bumping MSRV requires a minor version bump and a note in the release row below.
 - **Dioxus pin:** `dioxus = "=0.7.3"` is exact-pinned for now because Dioxus 0.7 is still moving. Loosen to a caret range only after a Dioxus minor without breaking changes.
 - **Changelog:** Each release adds a row to the table below at the time the version is tagged. No row, no release.
-- **Cut criteria for the next minor (v0.5):** CI green on `build` + `test` + `clippy -D warnings` + `fmt --check`; smoke tests passing for all registered components; integration guide published; EqCard macro unification merged. No new components ship until these are met.
+- **Cut criteria for v0.5:** Smoke tests cover every registered component (or have a documented reason to skip); integration guide (`docs/`) published; `cargo build --features playground` and `cargo test --lib` both green on the release commit; CHANGELOG row for v0.5.0 added. CI pipeline and EqCard macro unification slip to v0.5.x or v0.6.0.
 
 ## Release History
 
