@@ -8,6 +8,7 @@
 
 /// Tab list container - horizontal flex with accessible role.
 pub const CONTAINER: &str = "flex items-center gap-1";
+pub const CONTAINER_STRETCH: &str = "w-full justify-around";
 
 // ── Underline variant ─────────────────────────────────────────────
 
@@ -63,6 +64,11 @@ pub const CARD_ACTIVE: &str =
 /// Disabled tab - reduced opacity and no pointer events.
 pub const DISABLED: &str = "opacity-40 cursor-not-allowed pointer-events-none";
 
+// ── Stretch modifier ─────────────────────────────────────────────
+
+/// Stretch tab - fills available width and is equidistant.
+pub const STRETCH: &str = "flex-1 min-w-0";
+
 // ── Sizes ─────────────────────────────────────────────────────────
 
 /// Small - compact padding and smaller text.
@@ -91,6 +97,7 @@ pub const BADGE: &str =
 pub fn catalog() -> Vec<(&'static str, &'static str)> {
     vec![
         ("CONTAINER", CONTAINER),
+        ("CONTAINER_STRETCH", CONTAINER_STRETCH),
         ("CONTAINER_UNDERLINE", CONTAINER_UNDERLINE),
         ("UNDERLINE_BASE", UNDERLINE_BASE),
         ("UNDERLINE_ACTIVE", UNDERLINE_ACTIVE),
@@ -100,6 +107,7 @@ pub fn catalog() -> Vec<(&'static str, &'static str)> {
         ("CARD_BASE", CARD_BASE),
         ("CARD_ACTIVE", CARD_ACTIVE),
         ("DISABLED", DISABLED),
+        ("STRETCH", STRETCH),
         ("SM", SM),
         ("MD", MD),
         ("LG", LG),

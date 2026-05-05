@@ -110,6 +110,9 @@ pub fn EqTab(
     /// Size preset.
     #[props(default)]
     size: TabSize,
+    /// Stretch to fill available width space.
+    #[props(default)]
+    stretch: bool,
     /// Callback fired when the user clicks a non-disabled, non-active tab.
     /// Receives the new tab index.
     #[props(default)]
@@ -131,13 +134,14 @@ pub fn EqTab(
     };
 
     let container_base = format!("{} {}", s::CONTAINER, container_extra);
-    let container_cls = merge_classes(&container_base, &class);
+    let mut container_cls = merge_classes(&container_base, &class);
+    if stretch {
+        container_cls = merge_classes(&container_cls, s::CONTAINER_STRETCH);
+    }
 
     rsx! {
-        div {
-            class: "{container_cls}",
-            role: "tablist",
-            for (idx, tab) in tabs.iter().enumerate() {
+        div { class: "{container_cls}", role: "tablist",
+            for (idx , tab) in tabs.iter().enumerate() {
                 {
                     let is_active = idx == active;
                     let is_disabled = tab.disabled;
@@ -148,6 +152,9 @@ pub fn EqTab(
                     }
                     if is_disabled {
                         btn_cls = format!("{} {}", btn_cls, s::DISABLED);
+                    }
+                    if stretch {
+                        btn_cls = format!("{} {}", btn_cls, s::STRETCH);
                     }
 
                     let has_badge = tab.badge.is_some();
@@ -235,8 +242,12 @@ pub fn descriptor() -> ComponentDescriptor {
                        }".into(),
             },
         ],
-        render_demo: || rsx! { DemoEqTab {} },
-        render_gallery: || rsx! { GalleryEqTab {} },
+        render_demo: || rsx! {
+            DemoEqTab {}
+        },
+        render_gallery: || rsx! {
+            GalleryEqTab {}
+        },
     }
 }
 
@@ -319,12 +330,16 @@ fn DemoEqTab() -> Element {
 
             // Live preview
             div { class: "rounded-lg border border-dashed border-[var(--color-card-border)] p-6 space-y-4",
-                EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Preview" }
+                EqText {
+                    variant: TextVariant::Caption,
+                    class: "font-semibold uppercase tracking-wider",
+                    "Preview"
+                }
 
                 EqTab {
-                    tabs: tabs,
-                    variant: variant,
-                    size: size,
+                    tabs,
+                    variant,
+                    size,
                     active: active(),
                     on_change: move |idx: usize| active.set(idx),
                 }
@@ -336,7 +351,10 @@ fn DemoEqTab() -> Element {
             }
 
             // Style tokens
-            StyleInfo { file: "eq_tab_styles.rs", styles: format_catalog(&s::catalog()) }
+            StyleInfo {
+                file: "eq_tab_styles.rs",
+                styles: format_catalog(&s::catalog()),
+            }
 
             // Usage code
             CodeBlock { code }
@@ -372,7 +390,11 @@ fn GalleryEqTab() -> Element {
         div { class: "space-y-4",
             // Variant gallery
             div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-5",
-                EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Variant Gallery" }
+                EqText {
+                    variant: TextVariant::Caption,
+                    class: "font-semibold uppercase tracking-wider",
+                    "Variant Gallery"
+                }
 
                 div { class: "space-y-1",
                     EqText { variant: TextVariant::Muted, "Underline (default)" }
@@ -406,7 +428,11 @@ fn GalleryEqTab() -> Element {
 
             // Size gallery
             div { class: "rounded-lg border border-[var(--color-card-border)] p-4 space-y-5",
-                EqText { variant: TextVariant::Caption, class: "font-semibold uppercase tracking-wider", "Sizes" }
+                EqText {
+                    variant: TextVariant::Caption,
+                    class: "font-semibold uppercase tracking-wider",
+                    "Sizes"
+                }
 
                 div { class: "space-y-1",
                     EqText { variant: TextVariant::Muted, "Small" }
@@ -420,10 +446,7 @@ fn GalleryEqTab() -> Element {
 
                 div { class: "space-y-1",
                     EqText { variant: TextVariant::Muted, "Medium (default)" }
-                    EqTab {
-                        tabs: basic_tabs(),
-                        active: 1usize,
-                    }
+                    EqTab { tabs: basic_tabs(), active: 1usize }
                 }
 
                 div { class: "space-y-1",
