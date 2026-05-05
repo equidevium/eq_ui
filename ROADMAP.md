@@ -44,7 +44,7 @@
 - `EqVirtualList` - High-performance windowed list rendering only visible items, fixed-size rows, overscan buffer, scroll-to-index, sticky section headers, vertical/horizontal modes
 - `EqDeviceFrame` - Static iPhone 16 / 16 Pro chrome with Dynamic Island, status bar, home indicator, painted side buttons. Pure presentation wrapper for showcasing mobile-only components in the playground; no event callbacks. Tier 1 Blitz-ready (CSS + inline SVG only)
 
-### Organisms (9)
+### Organisms (12)
 - `EqAppShell` - Full-page layout (header + main + footer)
 - `EqHeader` - Sticky header with nav slot and backdrop blur
 - `EqFooter` - Footer with link groups
@@ -68,9 +68,12 @@
   - Full WAI-ARIA table semantics (aria-sort, aria-selected, aria-rowcount/colcount, aria-busy, live region announcements for reorder)
   - Full theme integration via CSS variables
 - `EqFilePicker` - File/folder picker with drag-and-drop zone, single/multiple/folder modes, file type filter, max size validation, image thumbnails, upload progress, abstracted FilePickerBackend trait (web + native)
+- `EqToolbar` - Mobile header with start / title / end slots and an optional secondary row for search, segmented controls, or a progress bar. Pure layout; consumer drives slot content
+- `EqBottomNav` - Bottom-anchored mobile tab bar with icon + label items, count or dot badges, disabled state, WAI-ARIA tablist pattern. Active state owned by the consumer
+- `EqMobileAppShell` - Three-region mobile layout (toolbar + scrollable body + bottom nav) with iOS safe-area padding via `env(safe-area-inset-*)`. Both fixed slots optional
 
 ### Accessibility
-- **100% ARIA coverage** on all 42 implemented components (v0.4.2 + EqDeviceFrame on `main`)
+- **100% ARIA coverage** on all 45 implemented components (v0.4.2 + EqDeviceFrame, EqToolbar, EqBottomNav, EqMobileAppShell on `main`)
 - WAI-ARIA patterns: Tree View, Accordion, Tablist, Radiogroup, Carousel, Data Grid, Dialog, Combobox, Switch
 - Roving tabindex with keyboard navigation on all composite widgets
 - Decorative elements marked with `aria-hidden`

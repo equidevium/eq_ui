@@ -1,6 +1,6 @@
 # eq_ui
 
-Dioxus 0.7 component library. Atomic design, pure Tailwind, 25 themes, 42 components.
+Dioxus 0.7 component library. Atomic design, pure Tailwind, 25 themes, 45 components.
 
 https://github.com/user-attachments/assets/4ea4f561-4581-481d-bc27-c2f5a2879998
 
@@ -52,6 +52,9 @@ https://github.com/user-attachments/assets/4ea4f561-4581-481d-bc27-c2f5a2879998
 | EqDrawer | Organism | full | Slide-in panel from any edge, four sizes, header/body/footer slots |
 | EqGrid | Organism | full | Data grid with sorting, filtering, pagination, virtualization, DnD, export |
 | EqFilePicker | Organism | full | File/folder picker with drag-drop, thumbnails, progress, backend trait |
+| EqToolbar | Organism | full | Mobile header with start/title/end slots and an optional secondary row |
+| EqBottomNav | Organism | full | Bottom-anchored mobile tab bar with icon+label items, badges, and active state |
+| EqMobileAppShell | Organism | full | Three-region mobile layout (toolbar + scrollable body + bottom nav) with iOS safe-area padding |
 | Getting Started Guide | Guide | - | In-app developer guide for the playground |
 | Theme Showcase | Theming | - | Theme color and gradient swatch viewer |
 
@@ -117,6 +120,9 @@ Tier 1 = works as-is, Tier 2 = needs small fix, Tier 3 = needs significant work.
 | EqDrawer | 2 | no | CSS transition degrades on Blitz |
 | EqGrid | 3 | yes | Full ARIA, virtualization, DnD all use eval |
 | EqFilePicker | 3 | yes | Uses document::eval for file input and drop handling |
+| EqToolbar | 1 | no | Pure layout, no JS |
+| EqBottomNav | 1 | no | Pure layout, no JS |
+| EqMobileAppShell | 1 | no | Pure layout, uses env(safe-area-inset-*) which Blitz may need to support |
 | Theme Showcase | 1 | no | Playground-only, feature-gated |
 
 <!-- COMPONENTS_END -->
@@ -221,6 +227,9 @@ use eq_ui::organisms::{
     ColumnAlign, ExportFormat, GridDragPayload,
     EqDrawer, DrawerSide, DrawerSize,
     EqFilePicker, FilePickerMode, PickedFile, FilePickerBackend, WebFilePickerBackend,
+    EqToolbar,
+    EqBottomNav, BottomNavItem, BottomNavBadge,
+    EqMobileAppShell,
 };
 use eq_ui::theme;  // shared constants like CONTAINER_LAYOUT, BTN_PRIMARY, etc.
 ```
@@ -468,6 +477,44 @@ EqDeviceFrame {
 }
 ```
 
+### Mobile shell
+
+The three mobile organisms compose together. `EqMobileAppShell` owns
+the layout; `EqToolbar` and `EqBottomNav` slot into it.
+
+```rust
+let mut active = use_signal(|| "home".to_string());
+
+let nav_items = vec![
+    BottomNavItem::new("home", "Home", rsx! { /* icon */ }),
+    BottomNavItem::new("inbox", "Inbox", rsx! { /* icon */ })
+        .badge(BottomNavBadge::Count(3)),
+    BottomNavItem::new("profile", "Profile", rsx! { /* icon */ }),
+];
+
+EqDeviceFrame {
+    model: DeviceModel::IPhone16,
+    EqMobileAppShell {
+        toolbar: rsx! {
+            EqToolbar {
+                title: rsx! { "Inbox" },
+                end: rsx! { EqButton { variant: ButtonVariant::Ghost, "Edit" } },
+            }
+        },
+        bottom_nav: rsx! {
+            EqBottomNav {
+                items: nav_items,
+                active: active(),
+                on_change: move |id| active.set(id),
+            }
+        },
+        div { class: "p-4",
+            // Page body scrolls independently
+        }
+    }
+}
+```
+
 ### Organisms
 
 Organisms take `Element` props instead of depending on a specific router, so they work across web, desktop, and mobile.
@@ -700,6 +747,9 @@ src/
     eq_navbar.rs      - horizontal nav bar
     eq_drawer.rs      - slide-in panel from any screen edge
     eq_file_picker.rs - file/folder picker with drag-drop and backend trait
+    eq_toolbar.rs     - mobile header with start/title/end slots and a secondary row
+    eq_bottom_nav.rs  - bottom-anchored mobile tab bar
+    eq_mobile_app_shell.rs - three-region mobile layout (toolbar + body + bottom nav)
     eq_grid/          - feature-rich data grid organism
       grid.rs         - main orchestration component
       types.rs        - shared enums (GridNavigation, RowSelection, GridDensity, etc.)
@@ -746,7 +796,7 @@ All existing components work cross-platform: web, desktop (Wry), mobile. See the
 
 ## Running the Playground
 
-Interactive playground for browsing and testing all 42 components. Enable with the `playground` feature:
+Interactive playground for browsing and testing all 45 components. Enable with the `playground` feature:
 
 ```bash
 dx serve --example playground --features playground --platform web
