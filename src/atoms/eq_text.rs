@@ -69,3 +69,30 @@ pub fn EqText(
         TextVariant::Mono     => rsx! { code   { class: "{cls}", {children} } },
     }
 }
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders_default() {
+        let mut dom = VirtualDom::new(|| rsx! { EqText { "hello" } });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn smoke_renders_h1() {
+        let mut dom = VirtualDom::new(|| {
+            rsx! { EqText { variant: TextVariant::H1, "Title" } }
+        });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_variant_is_body() {
+        let v: TextVariant = Default::default();
+        assert!(matches!(v, TextVariant::Body));
+    }
+}

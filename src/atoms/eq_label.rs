@@ -44,3 +44,24 @@ pub fn EqLabel(
         }
     }
 }
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| rsx! { EqLabel { "Email" } });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn smoke_renders_with_for_id() {
+        let mut dom = VirtualDom::new(|| {
+            rsx! { EqLabel { for_id: "email", "Email" } }
+        });
+        dom.rebuild_in_place();
+    }
+}
