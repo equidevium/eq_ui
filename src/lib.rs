@@ -1,7 +1,10 @@
 //! EqUI - Portable Dioxus UI component library.
 //!
 //! Atomic design building blocks (atoms, molecules, organisms) + theme.
-//! This crate has a single dependency: `dioxus`.
+//!
+//! Runtime dependencies: `dioxus`, `serde`, `serde_json`, and the
+//! workspace-local proc-macro crate `eq_ui_macros`. Build dependency:
+//! `eq_ui_build`.
 //!
 //! Enable the `playground` feature to access interactive component demos
 //! and the `EqPlayground` showcase.
@@ -70,6 +73,7 @@ pub fn all_component_descriptors() -> Vec<ComponentDescriptor> {
         molecules::eq_date_picker::descriptor(),
         molecules::eq_calendar::descriptor(),
         molecules::eq_virtual_list::descriptor(),
+        molecules::eq_device_frame::descriptor(),
         // Organisms
         organisms::eq_header::descriptor(),
         organisms::eq_footer::descriptor(),

@@ -28,7 +28,7 @@
 - `EqTooltip` - Hover/focus tooltip with four positions (Top, Bottom, Left, Right), pure CSS positioning, ARIA describedby, keyboard accessible
 - `EqSelect` - Styled dropdown select with search, placeholder, disabled options, keyboard navigation, WAI-ARIA combobox pattern, check mark on selected option
 
-### Molecules (13)
+### Molecules (14)
 - `EqCard` - Card with header, body, footer slots
 - `EqImageCard` - Image card with caption modes (Below, Overlay)
 - `EqCarousel` - Generic content carousel with Default and Peek modes, WAI-ARIA carousel pattern
@@ -42,6 +42,7 @@
 - `EqDatePicker` - Date picker with calendar popup, month navigation, today highlight, formatted display, pure Rust date math, WAI-ARIA dialog pattern
 - `EqCalendar` - Standalone calendar with month & week views, event dots, timed events, month/year picker drill-down, WAI-ARIA grid pattern
 - `EqVirtualList` - High-performance windowed list rendering only visible items, fixed-size rows, overscan buffer, scroll-to-index, sticky section headers, vertical/horizontal modes
+- `EqDeviceFrame` - Static iPhone 16 / 16 Pro chrome with Dynamic Island, status bar, home indicator, painted side buttons. Pure presentation wrapper for showcasing mobile-only components in the playground; no event callbacks. Tier 1 Blitz-ready (CSS + inline SVG only)
 
 ### Organisms (9)
 - `EqAppShell` - Full-page layout (header + main + footer)
@@ -69,7 +70,7 @@
 - `EqFilePicker` - File/folder picker with drag-and-drop zone, single/multiple/folder modes, file type filter, max size validation, image thumbnails, upload progress, abstracted FilePickerBackend trait (web + native)
 
 ### Accessibility
-- **100% ARIA coverage** on all 41 implemented components (v0.4.2)
+- **100% ARIA coverage** on all 42 implemented components (v0.4.2 + EqDeviceFrame on `main`)
 - WAI-ARIA patterns: Tree View, Accordion, Tablist, Radiogroup, Carousel, Data Grid, Dialog, Combobox, Switch
 - Roving tabindex with keyboard navigation on all composite widgets
 - Decorative elements marked with `aria-hidden`
@@ -103,6 +104,10 @@
 
 These are the items currently being worked on or immediately planned.
 
+### Quality (foundational, blocks v0.5)
+- [ ] **Automated testing** - At minimum, smoke tests that every component renders without panicking, plus snapshot/visual regression on a critical subset (EqGrid, EqCalendar, EqVirtualList, EqModal). 41 components on crates.io with zero tests is a defect, not a "next priority."
+- [ ] **CI/CD pipeline** - GitHub Actions running `cargo build`, `cargo test`, `cargo clippy -- -D warnings`, `cargo fmt --check`, and a playground build on every push and PR. Required before more components ship.
+
 ### Platform
 - [ ] **Blitz renderer compatibility** - CSS gap analysis filed upstream on DioxusLabs/blitz. Awaiting resolution of `@media(hover: hover)` (issue #252) and CSS transition support. Refactor `document::eval()` usage to use `web-sys-x` when available.
 
@@ -127,8 +132,7 @@ Items to tackle once the "Now" batch stabilizes.
 - [ ] **Theme creation guide** - Document how to create new built-in themes (CSS variable structure, naming conventions).
 
 ### Infrastructure
-- [ ] **Automated testing** - Component snapshot or visual regression tests.
-- [ ] **CI/CD pipeline** - GitHub Actions for build verification on push/PR.
+- [x] _Automated testing and CI/CD moved to **Now**. See the Quality section above._
 
 ---
 
@@ -161,11 +165,20 @@ Longer-term ideas and aspirations.
 
 ---
 
+## Release Policy
+
+- **Versioning:** Semver. While the crate is `0.x`, **minor bumps may include breaking changes** (per Cargo's interpretation of semver pre-1.0); patch bumps are bug fixes and additive-only.
+- **MSRV:** Rust **1.85** (Rust 2024 edition, matches `edition = "2024"` in `Cargo.toml`). Bumping MSRV requires a minor version bump and a note in the release row below.
+- **Dioxus pin:** `dioxus = "=0.7.3"` is exact-pinned for now because Dioxus 0.7 is still moving. Loosen to a caret range only after a Dioxus minor without breaking changes.
+- **Changelog:** Each release adds a row to the table below at the time the version is tagged. No row, no release.
+- **Cut criteria for the next minor (v0.5):** CI green on `build` + `test` + `clippy -D warnings` + `fmt --check`; smoke tests passing for all registered components; integration guide published; EqCard macro unification merged. No new components ship until these are met.
+
 ## Release History
 
 | Version | Date | Highlights |
 |---------|------|------------|
 | v0.4.2 | May 2026 | EqSlider, EqAvatar, EqTooltip, EqSelect, EqDropdown, EqDatePicker, EqCalendar, EqVirtualList, EqDrawer, EqFilePicker, 25 themes, 41 components |
+| v0.4.1 | — | _Skipped. No public release was cut between v0.4.0 and v0.4.2._ |
 | v0.4.0 | April 2026 | Full ARIA accessibility, playground refactoring, EqRadioGroup, EqSwitch, EqModal, EqToast, EqCta, EqNavItem, 21 themes |
 | v0.3.0 | — | EqButton, EqGrid virtualization/reorder/export, EqCheckbox, multi-sort, themes |
 | v0.2.0 | — | Initial crates.io publish, EqGrid, mobile playground support, video component |

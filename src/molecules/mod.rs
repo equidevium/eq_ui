@@ -58,3 +58,8 @@ pub mod eq_virtual_list;
 pub mod eq_virtual_list_styles;
 
 pub use eq_virtual_list::{EqVirtualList, VirtualListDirection, StickyHeader};
+
+pub mod eq_device_frame;
+pub mod eq_device_frame_styles;
+
+pub use eq_device_frame::{EqDeviceFrame, DeviceModel};

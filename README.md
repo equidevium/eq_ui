@@ -1,6 +1,6 @@
 # eq_ui
 
-Dioxus 0.7 component library. Atomic design, pure Tailwind, 25 themes, 41 components.
+Dioxus 0.7 component library. Atomic design, pure Tailwind, 25 themes, 42 components.
 
 https://github.com/user-attachments/assets/4ea4f561-4581-481d-bc27-c2f5a2879998
 
@@ -42,6 +42,7 @@ https://github.com/user-attachments/assets/4ea4f561-4581-481d-bc27-c2f5a2879998
 | EqDatePicker | Molecule | full | Date picker with calendar popup, month navigation, formatted display |
 | EqCalendar | Molecule | full | Calendar with month & week views, events, month/year drill-down |
 | EqVirtualList | Molecule | full | Windowed list rendering only visible items, sticky headers, scroll-to-index |
+| EqDeviceFrame | Molecule | full | Static iPhone 16 / 16 Pro chrome with Dynamic Island for showcasing mobile-only components |
 | EqHeader | Organism | native | Sticky header with brand, nav, and backdrop blur |
 | EqFooter | Organism | native | Footer with link groups and copyright |
 | EqHeroShell | Organism | full | Hero banner with background image, overlay, custom colors |
@@ -106,6 +107,7 @@ Tier 1 = works as-is, Tier 2 = needs small fix, Tier 3 = needs significant work.
 | EqDatePicker | 3 | yes | Uses document::eval for popup positioning |
 | EqCalendar | 1 | no |  |
 | EqVirtualList | 3 | yes | Uses document::eval for scroll-to-index |
+| EqDeviceFrame | 1 | no | Pure CSS + inline SVG, no JS |
 | EqHeader | 2 | no | backdrop-filter needs Blitz fallback |
 | EqFooter | 1 | no |  |
 | EqHeroShell | 2 | no | Decorative aria-hidden, optional role prop |
@@ -123,7 +125,9 @@ Tier 1 = works as-is, Tier 2 = needs small fix, Tier 3 = needs significant work.
 
 ## Quick start
 
-Add the crate to your `Cargo.toml`:
+Add the crate to your `Cargo.toml`. Check
+[crates.io/crates/eq_ui](https://crates.io/crates/eq_ui) for the
+current version before pinning; this README drifts.
 
 ```toml
 [dependencies]
@@ -209,6 +213,7 @@ use eq_ui::molecules::{
     EqDatePicker, DateValue, DatePickerPosition,
     EqCalendar, CalendarEvent, CalendarMode, EventColor,
     EqVirtualList, VirtualListDirection, StickyHeader,
+    EqDeviceFrame, DeviceModel,
 };
 use eq_ui::organisms::{
     EqAppShell, EqHeader, EqFooter, EqHeroShell, EqPageSection, EqNavbar,
@@ -452,6 +457,15 @@ EqVirtualList {
     viewport_size: 400.0,
     render_item: Callback::new(move |idx| rsx! { div { "Row {idx}" } }),
 }
+
+// iPhone device frame for showcasing mobile-only components
+EqDeviceFrame {
+    model: DeviceModel::IPhone16,
+    div { class: "p-6 text-center",
+        h1 { class: "text-xl font-semibold", "My Mobile App" }
+        p { class: "text-sm opacity-70", "Mobile-only content lives inside the frame." }
+    }
+}
 ```
 
 ### Organisms
@@ -675,6 +689,7 @@ src/
     eq_date_picker.rs - date picker with calendar popup
     eq_calendar.rs    - calendar with month & week views
     eq_virtual_list.rs - windowed list rendering with sticky headers
+    eq_device_frame.rs - static iPhone 16 / 16 Pro chrome for mobile-only previews
     *_styles.rs       - co-located style constants for each molecule
   organisms/
     eq_app_shell.rs   - full page layout (header + main + footer)
@@ -713,7 +728,13 @@ Colors use CSS custom properties (`--color-primary-dark`, `--color-label-primary
 
 ## Dependencies
 
-`dioxus = "0.7.3"`, `serde` + `serde_json` (for `document::eval` result parsing), `eq_ui_macros` (proc-macro crate, workspace member).
+Runtime: `dioxus = "=0.7.3"`, `serde` + `serde_json` (for `document::eval` result parsing), `eq_ui_macros` (proc-macro crate, workspace member).
+
+Build: `eq_ui_build` (workspace member).
+
+Dev (examples and playground only): `web-sys`, `wasm-bindgen`, `wasm-bindgen-futures`.
+
+The `dioxus` version is currently pinned with `=` because Dioxus 0.7 is still moving; loosen the pin once the upstream API stabilizes.
 
 ## Platform Compatibility
 
@@ -725,7 +746,7 @@ All existing components work cross-platform: web, desktop (Wry), mobile. See the
 
 ## Running the Playground
 
-Interactive playground for browsing and testing all 41 components. Enable with the `playground` feature:
+Interactive playground for browsing and testing all 42 components. Enable with the `playground` feature:
 
 ```bash
 dx serve --example playground --features playground --platform web

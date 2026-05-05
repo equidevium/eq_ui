@@ -89,3 +89,9 @@ coverage/
 *.db
 *.sqlite
 *.sqlite3
+
+# =========================
+# Working notes (not committed)
+# =========================
+
+updates.md
