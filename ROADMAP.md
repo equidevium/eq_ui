@@ -83,7 +83,7 @@
 - `EqTheme` - Theme enum with custom CSS support
 - `EqThemeRenderer` - Runtime theme switcher using `document::Style`
 - Theme context via `use_theme_provider()` / `use_theme()` / `set_theme()`
-- Built-in themes (25): Unghosty, Burgundy, Gold, PurplePink, Monochrome, Watermelon, Sunset, Ocean, Spacetime, Gruvbox, Monokai, Hellas, Egypt, Dometrain, Catppuccin, Dracula, Nord, OneDark, RosePine, SolarizedDark, TokyoNight, Warcraft, SweetRush, Cloud, Limbotron (default)
+- Built-in themes (26): Unghosty, Burgundy, Gold, PurplePink, Monochrome, Watermelon, Sunset, Ocean, Spacetime, Gruvbox, Monokai, Hellas, Egypt, Dometrain, Catppuccin, Dracula, Nord, OneDark, RosePine, SolarizedDark, TokyoNight, Warcraft, SweetRush, Cloud, Synthwave, Limbotron (default)
 
 ### Infrastructure
 - Co-located `_styles.rs` pattern for all components

@@ -1,0 +1,191 @@
+:root {
+
+    /* ============================================
+       THEME: Synthwave
+       Dark mode . Magenta accent . Cyan complement
+       Pill corners . 80s sunset gradients
+       ============================================ */
+
+    /* --- Core darks --- */
+    --color-primary-dark: #1a0d2e;
+    --color-secondary-dark: #b48fce;
+    --color-tertiary-dark: #281544;
+    --color-hover-button: #4a1f6b;
+    --color-card: #281544;
+    --color-card-border: #22d3ee;
+    --color-card-shadow: rgba(34, 211, 238, 0.30);
+    --color-background: #0a0518;
+
+    /* --- Labels / text --- */
+    --color-label-primary: #f5f0ff;
+    --color-label-secondary: #c0a8d6;
+    --color-label-bold: #ff2e88;
+    --color-label-muted: #8a6ca0;
+    --color-label-disabled: #4d3d61;
+
+    /* --- Gradients --- */
+    --color-gradient-default-start: #ff2e88;
+    --color-gradient-default-mid: #a855f7;
+    --color-gradient-default-end: #22d3ee;
+    --color-btn-hover-start: #ff5fa3;
+    --color-btn-hover-mid: #c084fc;
+    --color-btn-hover-end: #67e8f9;
+
+    --color-btn-default-start: #1a0d2e;
+    --color-btn-default-mid: #4a1f6b;
+    --color-btn-default-end: #ff2e88;
+
+    --gradient-primary-tricolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-start) 0%,
+            var(--color-gradient-default-mid) 50%,
+            var(--color-gradient-default-end) 100%
+    );
+
+    --gradient-primary-tricolor-hover: linear-gradient(
+            135deg,
+            var(--color-btn-hover-start) 0%,
+            var(--color-btn-hover-mid) 50%,
+            var(--color-btn-hover-end) 100%
+    );
+
+    --gradient-background: linear-gradient(
+            135deg,
+            #000000 0%,
+            #2a0d4d 100%
+    );
+
+    --gradient-primary-duocolor: linear-gradient(
+            135deg,
+            var(--color-gradient-default-end) 0%,
+            var(--color-gradient-default-start) 100%
+    );
+
+    /* --- Accent & interaction --- */
+    --color-accent-primary: #ff2e88;
+    --color-accent-secondary: #22d3ee;
+    --color-accent-muted: #4a1f6b;
+
+    /* --- State / feedback --- */
+    --color-success: #34d399;
+    --color-warning: #fbbf24;
+    --color-error: #f87171;
+    --color-info: #22d3ee;
+
+    /* --- Borders & dividers --- */
+    --color-border-default: #3a1f55;
+    --color-border-subtle: #281544;
+    --color-border-active: #ff2e88;
+
+    /* --- Input / form elements --- */
+    --color-input-bg: #1a0d2e;
+    --color-input-border: #3a1f55;
+    --color-input-focus: #ff2e88;
+    --color-input-placeholder: #8a6ca0;
+
+    /* --- Overlay & surface --- */
+    --color-surface-elevated: #281544;
+    --color-surface-overlay: rgba(0, 0, 0, 0.60);
+    --color-surface-tooltip: #3a1f55;
+
+    /* --- Code / terminal feel --- */
+    --color-code-bg: #0a0518;
+    --color-code-text: #67e8f9;
+    --color-code-comment: #8a6ca0;
+    --color-code-keyword: #ff2e88;
+    --color-code-string: #fb923c;
+
+    /* --- Buttons --- */
+    --btn-primary-bg: var(--gradient-primary-tricolor);
+    --btn-primary-bg-hover: var(--gradient-primary-tricolor-hover);
+    --btn-primary-bg-solid: var(--color-accent-primary);
+    --btn-primary-hover: #1a0d2e;
+    --btn-primary-text: #ffffff;
+    --btn-ghost-hover: #281544;
+    --btn-outline-border: var(--color-card-border);
+    --btn-outline-hover-border: #ff2e88;
+    --btn-outline-hover-bg: var(--gradient-primary-duocolor);
+    --btn-danger-bg: #f87171;
+
+    /* --- Interactive states --- */
+    --color-card-border-bright: #67e8f9;
+    --color-focus-ring: #ff2e88;
+    --color-shadow-glow: rgba(34, 211, 238, 0.30);
+    --color-primary: #ff2e88;
+
+    /* --- Transitions --- */
+    --transition-fast: 0.15s;
+    --transition-normal: 0.25s;
+
+    /* --- Scrollbar --- */
+    --color-scrollbar-thumb: rgba(192, 168, 214, 0.25);
+    --color-scrollbar-track: transparent;
+
+    /* --- Grid --- */
+    --color-grid-header-bg: #1a0d2e;
+    --color-grid-header-text: var(--color-label-primary);
+    --color-grid-border: var(--color-card-border);
+
+    /* --- Pill radius tokens --- */
+    --radius-pill: 9999px;
+    --radius-container: 1.25rem;
+    --radius-textarea: 1.25rem;
+}
+
+/* ============================================
+   Pill-everything corner overrides
+   (matches Limbotron / Cloud)
+   ============================================ */
+
+/* --- Buttons -> pill --- */
+button,
+.btn-primary,
+.btn-ghost,
+.btn-outline,
+.btn-card,
+.btn-danger,
+.btn-glass,
+[class*="btn-"] {
+    border-radius: var(--radius-pill) !important;
+}
+
+/* --- Inputs & form controls -> pill --- */
+input,
+select {
+    border-radius: var(--radius-pill) !important;
+}
+textarea {
+    border-radius: var(--radius-textarea) !important;
+}
+
+/* --- Cards, sections, containers -> generous rounding --- */
+.rounded-xl,
+[class*="rounded-xl"] {
+    border-radius: var(--radius-container) !important;
+}
+.rounded-lg,
+[class*="rounded-lg"] {
+    border-radius: var(--radius-container) !important;
+}
+.rounded-md,
+[class*="rounded-md"] {
+    border-radius: var(--radius-container) !important;
+}
+
+/* --- Tabs (underline variant top rounding) --- */
+[class*="rounded-t-lg"] {
+    border-radius: var(--radius-container) var(--radius-container) 0 0 !important;
+}
+
+/* --- Header -> generous rounding --- */
+header {
+    border-radius: var(--radius-container) !important;
+}
+
+/* --- Grid header cells -> match container rounding at edges --- */
+th:first-child {
+    border-top-left-radius: var(--radius-container) !important;
+}
+th:last-child {
+    border-top-right-radius: var(--radius-container) !important;
+}

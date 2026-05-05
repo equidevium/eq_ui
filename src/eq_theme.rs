@@ -27,6 +27,7 @@ pub enum EqTheme {
     Warcraft,
     SweetRush,
     Cloud,
+    Synthwave,
     #[default]
     Limbotron,
     /// User-provided CSS injected at runtime.
@@ -60,6 +61,7 @@ impl EqTheme {
             EqTheme::Warcraft   => Some(include_str!("../assets/theme/warcraft.css")),
             EqTheme::SweetRush  => Some(include_str!("../assets/theme/sweet_rush.css")),
             EqTheme::Cloud      => Some(include_str!("../assets/theme/cloud.css")),
+            EqTheme::Synthwave  => Some(include_str!("../assets/theme/synthwave.css")),
             EqTheme::Limbotron   => Some(include_str!("../assets/theme/limbotron.css")),
             EqTheme::Custom(_)  => None,
         }
@@ -98,6 +100,7 @@ impl EqTheme {
             ("Warcraft", EqTheme::Warcraft),
             ("SweetRush", EqTheme::SweetRush),
             ("Cloud", EqTheme::Cloud),
+            ("Synthwave", EqTheme::Synthwave),
             ("Limbotron", EqTheme::Limbotron),
         ]
     }
