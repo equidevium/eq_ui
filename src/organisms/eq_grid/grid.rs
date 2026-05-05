@@ -1399,3 +1399,35 @@ fn GalleryEqGrid() -> Element {
         }
     }
 }
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders_empty() {
+        let mut dom = VirtualDom::new(|| {
+            let cols: Vec<EqColumnDef<String>> = vec![
+                EqColumnDef::new("name", "Name", |s: &String| s.clone()),
+            ];
+            let data: Vec<String> = vec![];
+            rsx! { EqGrid { data, columns: cols } }
+        });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn column_def_builder_sets_fields() {
+        let col = EqColumnDef::<String>::new("id", "ID", |s: &String| s.clone())
+            .sortable(false)
+            .filterable(true)
+            .width(120);
+        assert_eq!(col.id, "id");
+        assert_eq!(col.header, "ID");
+        assert!(!col.sortable);
+        assert!(col.filterable);
+        assert_eq!(col.width, Some(120));
+    }
+}

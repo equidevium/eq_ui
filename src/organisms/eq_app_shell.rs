@@ -87,3 +87,24 @@ fn GalleryEqAppShell() -> Element {
         }
     }
 }
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| {
+            rsx! {
+                EqAppShell {
+                    header: rsx! { div { "h" } },
+                    footer: rsx! { div { "f" } },
+                    "body"
+                }
+            }
+        });
+        dom.rebuild_in_place();
+    }
+}

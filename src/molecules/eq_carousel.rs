@@ -423,3 +423,24 @@ fn GalleryEqCarousel() -> Element {
         }
     }
 }
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| {
+            rsx! { EqCarousel { slides: vec![rsx! { div { "one" } }] } }
+        });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_mode_is_default() {
+        let m: CarouselMode = Default::default();
+        assert!(matches!(m, CarouselMode::Default));
+    }
+}

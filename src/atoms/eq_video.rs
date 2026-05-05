@@ -271,3 +271,18 @@ fn GalleryEqVideo() -> Element {
         }
     }
 }
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| {
+            rsx! { EqVideo { src: "video.mp4" } }
+        });
+        dom.rebuild_in_place();
+    }
+}

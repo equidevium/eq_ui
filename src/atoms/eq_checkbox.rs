@@ -289,3 +289,22 @@ fn GalleryEqCheckbox() -> Element {
         }
     }
 }
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| rsx! { EqCheckbox {} });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_state_is_unchecked() {
+        let s: CheckboxState = Default::default();
+        assert!(matches!(s, CheckboxState::Unchecked));
+    }
+}

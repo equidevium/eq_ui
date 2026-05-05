@@ -15,7 +15,17 @@ use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory
 /// Atomic form label component.
 /// Renders a `<label>` element with consistent styling.
 ///
-/// Use `class` to extend or replace the default styles .
+/// Use `class` to extend or replace the default styles.
+///
+/// # Example
+///
+/// ```no_run
+/// use eq_ui::prelude::*;
+///
+/// let _: Element = rsx! {
+///     EqLabel { for_id: "email", "Email" }
+/// };
+/// ```
 #[playground(
     category = Atom,
     description = "Form label component with consistent styling. Associates with \

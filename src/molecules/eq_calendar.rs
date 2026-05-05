@@ -4,14 +4,19 @@
 //! single-date selection, today highlight, and optional min/max
 //! date constraints. Pure Rust date math, no external dependencies.
 //!
-//! ```rust,ignore
-//! use eq_ui::molecules::eq_date_picker::DateValue;
+//! ```no_run
+//! use eq_ui::prelude::*;
+//! use eq_ui::molecules::{EqCalendar, DateValue};
 //!
-//! let mut selected = use_signal(|| None::<DateValue>);
+//! fn app() -> Element {
+//!     let mut selected = use_signal(|| None::<DateValue>);
 //!
-//! EqCalendar {
-//!     selected: selected(),
-//!     on_select: move |d| selected.set(Some(d)),
+//!     rsx! {
+//!         EqCalendar {
+//!             selected: selected(),
+//!             on_select: move |d| selected.set(Some(d)),
+//!         }
+//!     }
 //! }
 //! ```
 
@@ -1064,5 +1069,52 @@ fn GalleryEqCalendar() -> Element {
                 }
             }
         }
+    }
+}
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| rsx! { EqCalendar {} });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_mode_is_month() {
+        let m: CalendarMode = Default::default();
+        assert!(matches!(m, CalendarMode::Month));
+    }
+
+    #[test]
+    fn default_event_color_is_default() {
+        let c: EventColor = Default::default();
+        assert!(matches!(c, EventColor::Default));
+    }
+
+    #[test]
+    fn calendar_event_new_is_all_day() {
+        let e = CalendarEvent::new(DateValue::new(2026, 5, 1), "Holiday");
+        assert!(!e.is_timed());
+        assert_eq!(e.label, "Holiday");
+        assert_eq!(e.time_display(), "All day");
+    }
+
+    #[test]
+    fn calendar_event_timed_sets_hours() {
+        let e = CalendarEvent::timed(DateValue::new(2026, 5, 1), "Meeting", 9, 30, 10, 45);
+        assert!(e.is_timed());
+        assert_eq!(e.time_display(), "09:30 – 10:45");
+    }
+
+    #[test]
+    fn calendar_event_color_builder() {
+        let e = CalendarEvent::new(DateValue::new(2026, 5, 1), "x")
+            .color(EventColor::Success);
+        assert!(matches!(e.color, EventColor::Success));
     }
 }

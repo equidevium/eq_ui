@@ -271,3 +271,36 @@ fn GalleryEqImage() -> Element {
         }
     }
 }
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| {
+            rsx! { EqImage { src: "x.jpg", alt: "x" } }
+        });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_size_is_md() {
+        let s: AtomImageSize = Default::default();
+        assert!(matches!(s, AtomImageSize::Md));
+    }
+
+    #[test]
+    fn default_aspect_ratio_is_free() {
+        let r: AspectRatio = Default::default();
+        assert!(matches!(r, AspectRatio::Free));
+    }
+
+    #[test]
+    fn default_object_fit_is_cover() {
+        let f: ObjectFit = Default::default();
+        assert!(matches!(f, ObjectFit::Cover));
+    }
+}

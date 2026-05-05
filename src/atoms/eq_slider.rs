@@ -3,16 +3,23 @@
 //! A themed wrapper around `<input type="range">` with size variants,
 //! optional value label, disabled state, and full accessibility.
 //!
-//! ```rust,ignore
-//! let mut volume = use_signal(|| 50.0);
+//! ```no_run
+//! use eq_ui::prelude::*;
+//! use eq_ui::atoms::EqSlider;
 //!
-//! EqSlider {
-//!     value: volume(),
-//!     on_change: move |v| volume.set(v),
-//!     min: 0.0,
-//!     max: 100.0,
-//!     step: 1.0,
-//!     show_label: true,
+//! fn app() -> Element {
+//!     let mut volume = use_signal(|| 50.0);
+//!
+//!     rsx! {
+//!         EqSlider {
+//!             value: volume(),
+//!             on_change: move |v| volume.set(v),
+//!             min: 0.0,
+//!             max: 100.0,
+//!             step: 1.0,
+//!             show_label: true,
+//!         }
+//!     }
 //! }
 //! ```
 
@@ -336,5 +343,24 @@ fn GalleryEqSlider() -> Element {
                 }
             }
         }
+    }
+}
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| rsx! { EqSlider {} });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_size_is_md() {
+        let s: SliderSize = Default::default();
+        assert!(matches!(s, SliderSize::Md));
     }
 }

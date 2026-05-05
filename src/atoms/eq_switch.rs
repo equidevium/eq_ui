@@ -153,3 +153,22 @@ pub fn EqSwitch(
     }
 }
 
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| rsx! { EqSwitch {} });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_size_is_md() {
+        let s: SwitchSize = Default::default();
+        assert!(matches!(s, SwitchSize::Md));
+    }
+}

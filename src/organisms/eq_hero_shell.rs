@@ -212,3 +212,18 @@ fn GalleryEqHeroShell() -> Element {
         }
     }
 }
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| {
+            rsx! { EqHeroShell { title: "Hello" } }
+        });
+        dom.rebuild_in_place();
+    }
+}

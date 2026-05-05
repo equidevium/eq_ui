@@ -45,3 +45,18 @@ pub fn EqLink(
         }
     }
 }
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| {
+            rsx! { EqLink { href: "#".to_string(), "Click" } }
+        });
+        dom.rebuild_in_place();
+    }
+}

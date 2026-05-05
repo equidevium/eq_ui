@@ -11,20 +11,27 @@
 //!
 //! [dlg]: https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/
 //!
-//! ```rust,ignore
-//! let mut open = use_signal(|| false);
+//! ```no_run
+//! use eq_ui::prelude::*;
+//! use eq_ui::molecules::EqModal;
 //!
-//! EqButton { on_click: move |_| open.set(true), "Open Modal" }
+//! fn app() -> Element {
+//!     let mut open = use_signal(|| false);
 //!
-//! EqModal {
-//!     open: open(),
-//!     on_close: move |_| open.set(false),
-//!     title: "Confirm action",
-//!     body: rsx! { "Are you sure you want to proceed?" },
-//!     footer: rsx! {
-//!         EqButton { variant: ButtonVariant::Ghost, on_click: move |_| open.set(false), "Cancel" }
-//!         EqButton { variant: ButtonVariant::Primary, "Confirm" }
-//!     },
+//!     rsx! {
+//!         EqButton { on_click: move |_| open.set(true), "Open Modal" }
+//!
+//!         EqModal {
+//!             open: open(),
+//!             on_close: move |_| open.set(false),
+//!             title: "Confirm action",
+//!             body: rsx! { "Are you sure you want to proceed?" },
+//!             footer: rsx! {
+//!                 EqButton { variant: ButtonVariant::Ghost, on_click: move |_| open.set(false), "Cancel" }
+//!                 EqButton { variant: ButtonVariant::Primary, "Confirm" }
+//!             },
+//!         }
+//!     }
 //! }
 //! ```
 
@@ -445,5 +452,26 @@ fn GalleryEqModal() -> Element {
                 },
             }
         }
+    }
+}
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| {
+            rsx! { EqModal { on_close: move |_| {} } }
+        });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_size_is_md() {
+        let s: ModalSize = Default::default();
+        assert!(matches!(s, ModalSize::Md));
     }
 }

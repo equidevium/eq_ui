@@ -4,21 +4,28 @@
 //! Supports searchable options, placeholder text, disabled state,
 //! keyboard navigation, and full WAI-ARIA combobox pattern.
 //!
-//! ```rust,ignore
-//! let options = vec![
-//!     SelectOption::new("rust", "Rust"),
-//!     SelectOption::new("python", "Python"),
-//!     SelectOption::new("typescript", "TypeScript"),
-//! ];
+//! ```no_run
+//! use eq_ui::prelude::*;
+//! use eq_ui::atoms::{EqSelect, SelectOption};
 //!
-//! let mut lang = use_signal(|| None::<String>);
+//! fn app() -> Element {
+//!     let options = vec![
+//!         SelectOption::new("rust", "Rust"),
+//!         SelectOption::new("python", "Python"),
+//!         SelectOption::new("typescript", "TypeScript"),
+//!     ];
 //!
-//! EqSelect {
-//!     options,
-//!     selected: lang(),
-//!     placeholder: "Choose a language",
-//!     searchable: true,
-//!     on_select: move |id| lang.set(Some(id)),
+//!     let mut lang = use_signal(|| None::<String>);
+//!
+//!     rsx! {
+//!         EqSelect {
+//!             options,
+//!             selected: lang(),
+//!             placeholder: "Choose a language",
+//!             searchable: true,
+//!             on_select: move |id| lang.set(Some(id)),
+//!         }
+//!     }
 //! }
 //! ```
 
@@ -558,5 +565,34 @@ fn GalleryEqSelect() -> Element {
                 }
             }
         }
+    }
+}
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| {
+            rsx! { EqSelect { options: vec![SelectOption::new("a", "A")] } }
+        });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_position_is_bottom() {
+        let p: SelectPosition = Default::default();
+        assert!(matches!(p, SelectPosition::Bottom));
+    }
+
+    #[test]
+    fn select_option_builder_sets_disabled() {
+        let opt = SelectOption::new("k", "Label").disabled();
+        assert_eq!(opt.id, "k");
+        assert_eq!(opt.label, "Label");
+        assert!(opt.disabled);
     }
 }

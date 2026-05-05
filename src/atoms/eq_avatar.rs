@@ -10,15 +10,36 @@
 //! Supports four sizes, an optional online/offline/busy status dot,
 //! and an optional selection ring.
 //!
-//! ```rust,ignore
-//! // Image avatar
-//! EqAvatar { src: "https://example.com/photo.jpg", name: "Jane Doe" }
+//! Image avatar:
 //!
-//! // Initials fallback
-//! EqAvatar { name: "Jane Doe", size: AvatarSize::Lg }
+//! ```no_run
+//! use eq_ui::prelude::*;
 //!
-//! // With status indicator
-//! EqAvatar { name: "John", status: AvatarStatus::Online }
+//! let _: Element = rsx! {
+//!     EqAvatar { src: "https://example.com/photo.jpg", name: "Jane Doe" }
+//! };
+//! ```
+//!
+//! Initials fallback:
+//!
+//! ```no_run
+//! use eq_ui::prelude::*;
+//! use eq_ui::atoms::AvatarSize;
+//!
+//! let _: Element = rsx! {
+//!     EqAvatar { name: "Jane Doe", size: AvatarSize::Lg }
+//! };
+//! ```
+//!
+//! With status indicator:
+//!
+//! ```no_run
+//! use eq_ui::prelude::*;
+//! use eq_ui::atoms::AvatarStatus;
+//!
+//! let _: Element = rsx! {
+//!     EqAvatar { name: "John", status: AvatarStatus::Online }
+//! };
 //! ```
 
 use super::eq_avatar_styles as s;
@@ -400,5 +421,51 @@ fn GalleryEqAvatar() -> Element {
                 }
             }
         }
+    }
+}
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| rsx! { EqAvatar {} });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_size_is_md() {
+        let s: AvatarSize = Default::default();
+        assert!(matches!(s, AvatarSize::Md));
+    }
+
+    #[test]
+    fn default_status_is_none() {
+        let s: AvatarStatus = Default::default();
+        assert!(matches!(s, AvatarStatus::None));
+    }
+
+    #[test]
+    fn extract_initials_two_words() {
+        assert_eq!(extract_initials("Jane Doe"), "JD");
+    }
+
+    #[test]
+    fn extract_initials_single_word() {
+        assert_eq!(extract_initials("Alice"), "A");
+    }
+
+    #[test]
+    fn extract_initials_empty() {
+        assert_eq!(extract_initials(""), "");
+    }
+
+    #[test]
+    fn extract_initials_caps_three_words() {
+        // Should cap to two letters.
+        assert_eq!(extract_initials("alpha bravo charlie"), "AB");
     }
 }

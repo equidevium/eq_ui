@@ -480,3 +480,41 @@ fn GalleryEqRadioGroup() -> Element {
         }
     }
 }
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| {
+            rsx! { EqRadioGroup { items: vec![RadioItem::new("a", "A")] } }
+        });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_size_is_md() {
+        let s: RadioSize = Default::default();
+        assert!(matches!(s, RadioSize::Md));
+    }
+
+    #[test]
+    fn default_layout_is_vertical() {
+        let l: RadioLayout = Default::default();
+        assert!(matches!(l, RadioLayout::Vertical));
+    }
+
+    #[test]
+    fn radio_item_builder_sets_fields() {
+        let item = RadioItem::new("k", "Label")
+            .description("Some desc")
+            .disabled(true);
+        assert_eq!(item.value, "k");
+        assert_eq!(item.label, "Label");
+        assert_eq!(item.description.as_deref(), Some("Some desc"));
+        assert!(item.disabled);
+    }
+}

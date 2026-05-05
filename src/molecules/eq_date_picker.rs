@@ -4,13 +4,20 @@
 //! Pure Rust date math (no external crate dependencies), keyboard
 //! navigation, today highlight, and WAI-ARIA dialog pattern.
 //!
-//! ```rust,ignore
-//! let mut date = use_signal(|| None::<DateValue>);
+//! ```no_run
+//! use eq_ui::prelude::*;
+//! use eq_ui::molecules::{EqDatePicker, DateValue};
 //!
-//! EqDatePicker {
-//!     value: date(),
-//!     placeholder: "Pick a date",
-//!     on_change: move |d| date.set(Some(d)),
+//! fn app() -> Element {
+//!     let mut date = use_signal(|| None::<DateValue>);
+//!
+//!     rsx! {
+//!         EqDatePicker {
+//!             value: date(),
+//!             placeholder: "Pick a date",
+//!             on_change: move |d| date.set(Some(d)),
+//!         }
+//!     }
 //! }
 //! ```
 
@@ -595,5 +602,57 @@ fn GalleryEqDatePicker() -> Element {
                 }
             }
         }
+    }
+}
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| rsx! { EqDatePicker {} });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_position_is_bottom() {
+        let p: DatePickerPosition = Default::default();
+        assert!(matches!(p, DatePickerPosition::Bottom));
+    }
+
+    #[test]
+    fn date_value_format() {
+        let d = DateValue::new(2026, 5, 9);
+        assert_eq!(d.format(), "2026-05-09");
+    }
+
+    #[test]
+    fn date_value_format_display() {
+        let d = DateValue::new(2026, 1, 1);
+        assert_eq!(d.format_display(), "Jan 1, 2026");
+    }
+
+    #[test]
+    fn leap_year_2024() {
+        assert!(is_leap(2024));
+        assert!(!is_leap(2023));
+        assert!(is_leap(2000));
+        assert!(!is_leap(1900));
+    }
+
+    #[test]
+    fn days_in_february_leap() {
+        assert_eq!(days_in_month(2024, 2), 29);
+        assert_eq!(days_in_month(2023, 2), 28);
+    }
+
+    #[test]
+    fn days_in_other_months() {
+        assert_eq!(days_in_month(2026, 1), 31);
+        assert_eq!(days_in_month(2026, 4), 30);
+        assert_eq!(days_in_month(2026, 12), 31);
     }
 }

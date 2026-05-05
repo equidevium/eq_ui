@@ -4,11 +4,16 @@
 //! keyboard focus. Pure CSS positioning (no JS), four placement options,
 //! and optional delay.
 //!
-//! ```rust,ignore
-//! EqTooltip {
-//!     text: "Save your changes",
-//!     EqButton { on_click: move |_| {}, "Save" }
-//! }
+//! ```no_run
+//! use eq_ui::prelude::*;
+//! use eq_ui::atoms::EqTooltip;
+//!
+//! let _: Element = rsx! {
+//!     EqTooltip {
+//!         text: "Save your changes",
+//!         EqButton { on_click: move |_| {}, "Save" }
+//!     }
+//! };
 //! ```
 
 use super::eq_tooltip_styles as s;
@@ -234,5 +239,26 @@ fn GalleryEqTooltip() -> Element {
                 }
             }
         }
+    }
+}
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| {
+            rsx! { EqTooltip { text: "Save".to_string(), "Save" } }
+        });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_position_is_top() {
+        let p: TooltipPosition = Default::default();
+        assert!(matches!(p, TooltipPosition::Top));
     }
 }

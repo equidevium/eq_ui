@@ -309,3 +309,24 @@ fn GalleryEqImageCard() -> Element {
         }
     }
 }
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| {
+            rsx! { EqImageCard { src: "x.jpg", alt: "x" } }
+        });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_caption_mode_is_below() {
+        let m: CaptionMode = Default::default();
+        assert!(matches!(m, CaptionMode::Below));
+    }
+}

@@ -4,21 +4,28 @@
 //! Supports single selection, disabled items, separators, keyboard
 //! navigation, and close-on-Escape / close-on-outside-click.
 //!
-//! ```rust,ignore
-//! let items = vec![
-//!     DropdownItem::new("edit", "Edit"),
-//!     DropdownItem::new("duplicate", "Duplicate"),
-//!     DropdownItem::separator(),
-//!     DropdownItem::new("delete", "Delete").disabled(),
-//! ];
+//! ```no_run
+//! use eq_ui::prelude::*;
+//! use eq_ui::molecules::{EqDropdown, DropdownItem};
 //!
-//! let mut selected = use_signal(|| None::<String>);
+//! fn app() -> Element {
+//!     let items = vec![
+//!         DropdownItem::new("edit", "Edit"),
+//!         DropdownItem::new("duplicate", "Duplicate"),
+//!         DropdownItem::separator(),
+//!         DropdownItem::new("delete", "Delete").disabled(),
+//!     ];
 //!
-//! EqDropdown {
-//!     label: "Actions",
-//!     items,
-//!     selected: selected(),
-//!     on_select: move |id: String| selected.set(Some(id)),
+//!     let mut selected = use_signal(|| None::<String>);
+//!
+//!     rsx! {
+//!         EqDropdown {
+//!             label: "Actions",
+//!             items,
+//!             selected: selected(),
+//!             on_select: move |id: String| selected.set(Some(id)),
+//!         }
+//!     }
 //! }
 //! ```
 
@@ -463,5 +470,48 @@ fn GalleryEqDropdown() -> Element {
                 }
             }
         }
+    }
+}
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| {
+            rsx! {
+                EqDropdown {
+                    label: "Menu".to_string(),
+                    items: vec![DropdownItem::new("a", "Alpha")],
+                }
+            }
+        });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_position_is_bottom() {
+        let p: DropdownPosition = Default::default();
+        assert!(matches!(p, DropdownPosition::Bottom));
+    }
+
+    #[test]
+    fn dropdown_item_builder_sets_fields() {
+        let item = DropdownItem::new("k", "Label").disabled();
+        assert_eq!(item.id, "k");
+        assert_eq!(item.label, "Label");
+        assert!(item.disabled);
+        assert!(!item.is_separator);
+    }
+
+    #[test]
+    fn dropdown_item_separator_sets_flag() {
+        let sep = DropdownItem::separator();
+        assert!(sep.is_separator);
+        assert!(sep.id.is_empty());
+        assert!(sep.label.is_empty());
     }
 }

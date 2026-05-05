@@ -4,17 +4,24 @@
 //! overlay. Supports four sides, four size presets, optional header/footer
 //! slots, close-on-backdrop, close-on-Escape, and WAI-ARIA dialog pattern.
 //!
-//! ```rust,ignore
-//! let mut open = use_signal(|| false);
+//! ```no_run
+//! use eq_ui::prelude::*;
+//! use eq_ui::organisms::{EqDrawer, DrawerSide};
 //!
-//! EqButton { on_click: move |_| open.set(true), "Open drawer" }
+//! fn app() -> Element {
+//!     let mut open = use_signal(|| false);
 //!
-//! EqDrawer {
-//!     open: open(),
-//!     on_close: move |_| open.set(false),
-//!     title: "Settings",
-//!     side: DrawerSide::Right,
-//!     body: rsx! { p { "Drawer content here." } },
+//!     rsx! {
+//!         EqButton { on_click: move |_| open.set(true), "Open drawer" }
+//!
+//!         EqDrawer {
+//!             open: open(),
+//!             on_close: move |_| open.set(false),
+//!             title: "Settings",
+//!             side: DrawerSide::Right,
+//!             body: rsx! { p { "Drawer content here." } },
+//!         }
+//!     }
 //! }
 //! ```
 
@@ -456,5 +463,38 @@ fn GalleryEqDrawer() -> Element {
                 },
             }
         }
+    }
+}
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| rsx! { EqDrawer {} });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_side_is_right() {
+        let s: DrawerSide = Default::default();
+        assert!(matches!(s, DrawerSide::Right));
+    }
+
+    #[test]
+    fn default_size_is_md() {
+        let s: DrawerSize = Default::default();
+        assert!(matches!(s, DrawerSize::Md));
+    }
+
+    #[test]
+    fn is_horizontal_classifies_sides() {
+        assert!(is_horizontal(DrawerSide::Left));
+        assert!(is_horizontal(DrawerSide::Right));
+        assert!(!is_horizontal(DrawerSide::Top));
+        assert!(!is_horizontal(DrawerSide::Bottom));
     }
 }

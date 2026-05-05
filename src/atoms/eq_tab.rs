@@ -5,17 +5,24 @@
 //! let you match the tab style to context. Each tab can carry an optional
 //! badge count and disabled state.
 //!
-//! ```rust,ignore
-//! let mut active = use_signal(|| 0usize);
+//! ```no_run
+//! use eq_ui::prelude::*;
+//! use eq_ui::atoms::{EqTab, TabItem};
 //!
-//! EqTab {
-//!     tabs: vec![
-//!         TabItem::new("Overview"),
-//!         TabItem::new("Details").badge(3),
-//!         TabItem::new("Settings"),
-//!     ],
-//!     active: active(),
-//!     on_change: move |idx| active.set(idx),
+//! fn app() -> Element {
+//!     let mut active = use_signal(|| 0usize);
+//!
+//!     rsx! {
+//!         EqTab {
+//!             tabs: vec![
+//!                 TabItem::new("Overview"),
+//!                 TabItem::new("Details").badge(3),
+//!                 TabItem::new("Settings"),
+//!             ],
+//!             active: active(),
+//!             on_change: move |idx| active.set(idx),
+//!         }
+//!     }
 //! }
 //! ```
 
@@ -471,5 +478,40 @@ fn GalleryEqTab() -> Element {
                 }
             }
         }
+    }
+}
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| {
+            rsx! { EqTab { tabs: vec![TabItem::new("One")] } }
+        });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_variant_is_underline() {
+        let v: TabVariant = Default::default();
+        assert!(matches!(v, TabVariant::Underline));
+    }
+
+    #[test]
+    fn default_size_is_md() {
+        let s: TabSize = Default::default();
+        assert!(matches!(s, TabSize::Md));
+    }
+
+    #[test]
+    fn tab_item_builder_sets_fields() {
+        let item = TabItem::new("Inbox").badge(7).disabled(true);
+        assert_eq!(item.label, "Inbox");
+        assert_eq!(item.badge, Some(7));
+        assert!(item.disabled);
     }
 }

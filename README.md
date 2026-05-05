@@ -820,6 +820,40 @@ rsx! { EqPlayground { descriptors: descs } }
 
 See [playground.md](./playground.md) for the full architecture specification.
 
+## Testing
+
+A Rust crate has three test pools, and `cargo test` routes to them via flags. Each pool tests a different thing in eq_ui.
+
+```bash
+cargo test                  # everything: unit + integration + doctests
+cargo test --lib            # only the per-component smoke tests under src/*.rs
+cargo test --tests          # only unit + integration tests, no doctests
+cargo test --doc            # only the runnable code examples in /// and //! comments
+```
+
+What each pool covers here:
+
+- **Unit tests** live in `#[cfg(test)] mod tests` blocks inside every component file. One smoke test per registered component plus pure-function tests on enums, builders, and formatters where they exist. Fast.
+- **Integration tests** under a top-level `tests/` folder. None at the moment; planned for future releases.
+- **Doctests** are the `no_run` examples inside `///` and `//!` doc comments. Each compiles into its own tiny binary, so doctests are slower per-test than unit tests. Catches API drift in the documentation when prop names or types change.
+
+For day-to-day work `cargo test --lib` is fastest. Before tagging a release, run plain `cargo test` (or the full pre-publish checklist in [ROADMAP.md](./ROADMAP.md)).
+
+If you add a new component, add a smoke test in the same file using the established pattern:
+
+```rust
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| rsx! { EqYourComponent { /* required props */ } });
+        dom.rebuild_in_place();
+    }
+}
+```
+
 ## Roadmap
 
 See [ROADMAP.md](./ROADMAP.md) for what's coming next.

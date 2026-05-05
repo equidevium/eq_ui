@@ -441,3 +441,38 @@ fn GalleryEqAccordion() -> Element {
         }
     }
 }
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| {
+            rsx! {
+                EqAccordion {
+                    items: vec![AccordionItem::new(
+                        "p1",
+                        rsx! { "Header" },
+                        rsx! { "Body" },
+                    )],
+                }
+            }
+        });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_mode_is_single() {
+        let m: AccordionMode = Default::default();
+        assert!(matches!(m, AccordionMode::Single));
+    }
+
+    #[test]
+    fn accordion_item_new_sets_id() {
+        let item = AccordionItem::new("foo", rsx! { "h" }, rsx! { "b" });
+        assert_eq!(item.id, "foo");
+    }
+}

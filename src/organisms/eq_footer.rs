@@ -186,3 +186,39 @@ fn GalleryEqFooter() -> Element {
         }
     }
 }
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| rsx! { EqFooter {} });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn footer_link_struct_literal() {
+        let link = FooterLink { label: "Docs", href: "/docs" };
+        assert_eq!(link.label, "Docs");
+        assert_eq!(link.href, "/docs");
+    }
+
+    #[test]
+    fn footer_link_group_struct_literal() {
+        let group = FooterLinkGroup {
+            title: "Resources",
+            links: vec![FooterLink { label: "Docs", href: "/docs" }],
+        };
+        assert_eq!(group.title, "Resources");
+        assert_eq!(group.links.len(), 1);
+    }
+
+    #[test]
+    fn default_link_groups_has_three() {
+        let groups = default_link_groups();
+        assert_eq!(groups.len(), 3);
+    }
+}

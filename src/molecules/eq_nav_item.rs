@@ -28,18 +28,27 @@ pub enum NavItemSize {
 ///
 /// Designed to live inside EqHeader's `nav` prop, wrapped in `<li>`.
 ///
-/// ```rust,ignore
+/// Plain links (no router):
+///
+/// ```no_run
+/// use eq_ui::prelude::*;
 /// use eq_ui::atoms::eq_icon_paths;
+/// use eq_ui::molecules::EqNavItem;
 ///
-/// // Plain links (no router):
-/// EqHeader {
-///     nav: rsx! {
-///         li { EqNavItem { icon: eq_icon_paths::MAGNIFYING_GLASS, label: "Search", href: "/search" } }
-///         li { EqNavItem { label: "About", href: "/about" } }
-///     },
-/// }
+/// let _: Element = rsx! {
+///     EqHeader {
+///         nav: rsx! {
+///             li { EqNavItem { icon: eq_icon_paths::MAGNIFYING_GLASS, label: "Search", href: "/search" } }
+///             li { EqNavItem { label: "About", href: "/about" } }
+///         },
+///     }
+/// };
+/// ```
 ///
-/// // With Dioxus Router (use onclick + navigator):
+/// With Dioxus Router (use `onclick` + `navigator()`; requires a `Route` enum
+/// defined in your app, so this snippet is shown for reference only):
+///
+/// ```ignore
 /// EqHeader {
 ///     nav: rsx! {
 ///         li { EqNavItem {
@@ -294,5 +303,26 @@ fn GalleryEqNavItem() -> Element {
                 }
             }
         }
+    }
+}
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| {
+            rsx! { EqNavItem { label: "Home" } }
+        });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_size_is_sm() {
+        let s: NavItemSize = Default::default();
+        assert!(matches!(s, NavItemSize::Sm));
     }
 }

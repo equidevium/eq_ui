@@ -11,18 +11,25 @@
 //! this to the bottom of a mobile layout, or wrap it yourself with
 //! `position: sticky` / `position: fixed` for a standalone app.
 //!
-//! ```rust,ignore
-//! let mut active = use_signal(|| "home".to_string());
+//! ```no_run
+//! use eq_ui::prelude::*;
+//! use eq_ui::organisms::{EqBottomNav, BottomNavItem, BottomNavBadge};
 //!
-//! EqBottomNav {
-//!     items: vec![
-//!         BottomNavItem::new("home", "Home", rsx! { /* icon */ }),
-//!         BottomNavItem::new("inbox", "Inbox", rsx! { /* icon */ })
-//!             .badge(BottomNavBadge::Count(3)),
-//!         BottomNavItem::new("profile", "Profile", rsx! { /* icon */ }),
-//!     ],
-//!     active: active(),
-//!     on_change: move |id| active.set(id),
+//! fn app() -> Element {
+//!     let mut active = use_signal(|| "home".to_string());
+//!
+//!     rsx! {
+//!         EqBottomNav {
+//!             items: vec![
+//!                 BottomNavItem::new("home", "Home", rsx! { /* icon */ }),
+//!                 BottomNavItem::new("inbox", "Inbox", rsx! { /* icon */ })
+//!                     .badge(BottomNavBadge::Count(3)),
+//!                 BottomNavItem::new("profile", "Profile", rsx! { /* icon */ }),
+//!             ],
+//!             active: active(),
+//!             on_change: move |id| active.set(id),
+//!         }
+//!     }
 //! }
 //! ```
 

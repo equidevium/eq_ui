@@ -4,15 +4,20 @@
 //! buffer), enabling smooth scrolling over tens of thousands of rows
 //! with minimal DOM footprint.
 //!
-//! ```rust,ignore
-//! EqVirtualList {
-//!     item_count: 10_000,
-//!     item_size: 40.0,
-//!     viewport_size: 400.0,
-//!     render_item: move |idx: usize| rsx! {
-//!         div { "Row {idx}" }
-//!     },
-//! }
+//! ```no_run
+//! use eq_ui::prelude::*;
+//! use eq_ui::molecules::EqVirtualList;
+//!
+//! let _: Element = rsx! {
+//!     EqVirtualList {
+//!         item_count: 10_000,
+//!         item_size: 40.0,
+//!         viewport_size: 400.0,
+//!         render_item: move |idx: usize| rsx! {
+//!             div { "Row {idx}" }
+//!         },
+//!     }
+//! };
 //! ```
 
 use super::eq_virtual_list_styles as s;
@@ -474,5 +479,40 @@ fn GalleryEqVirtualList() -> Element {
                 }
             }
         }
+    }
+}
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| {
+            rsx! {
+                EqVirtualList {
+                    item_count: 0,
+                    item_size: 40.0,
+                    viewport_size: 200.0,
+                    render_item: move |idx: usize| rsx! { div { "{idx}" } },
+                }
+            }
+        });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_direction_is_vertical() {
+        let d: VirtualListDirection = Default::default();
+        assert!(matches!(d, VirtualListDirection::Vertical));
+    }
+
+    #[test]
+    fn sticky_header_new_sets_fields() {
+        let h = StickyHeader::new(5, "Section");
+        assert_eq!(h.at_index, 5);
+        assert_eq!(h.label, "Section");
     }
 }

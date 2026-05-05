@@ -11,13 +11,18 @@
 //! Use the built-in [`WebFilePickerBackend`] for WASM/browser targets,
 //! or implement the trait for native dialogs (e.g. `rfd`).
 //!
-//! ```rust,ignore
-//! EqFilePicker {
-//!     mode: FilePickerMode::Multiple,
-//!     accept: ".png,.jpg,.pdf",
-//!     max_size_bytes: 10 * 1024 * 1024,
-//!     on_files_changed: move |files: Vec<PickedFile>| { /* handle */ },
-//! }
+//! ```no_run
+//! use eq_ui::prelude::*;
+//! use eq_ui::organisms::{EqFilePicker, FilePickerMode, PickedFile};
+//!
+//! let _: Element = rsx! {
+//!     EqFilePicker {
+//!         mode: FilePickerMode::Multiple,
+//!         accept: ".png,.jpg,.pdf",
+//!         max_size_bytes: 10 * 1024 * 1024,
+//!         on_files_changed: move |files: Vec<PickedFile>| { /* handle */ },
+//!     }
+//! };
 //! ```
 
 use super::eq_file_picker_styles as s;
@@ -813,5 +818,60 @@ fn GalleryEqFilePicker() -> Element {
                 }
             }
         }
+    }
+}
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| rsx! { EqFilePicker {} });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_mode_is_single() {
+        let m: FilePickerMode = Default::default();
+        assert!(matches!(m, FilePickerMode::Single));
+    }
+
+    #[test]
+    fn picked_file_new_sets_fields() {
+        let f = PickedFile::new("doc.pdf", 1024, "application/pdf");
+        assert_eq!(f.name, "doc.pdf");
+        assert_eq!(f.size, 1024);
+        assert_eq!(f.mime, "application/pdf");
+        assert!(f.data_url.is_none());
+        assert!(f.progress.is_none());
+        assert!(f.error.is_none());
+    }
+
+    #[test]
+    fn picked_file_builders() {
+        let f = PickedFile::new("a", 0, "")
+            .with_data_url("data:...")
+            .with_progress(0.5)
+            .with_error("oops");
+        assert_eq!(f.data_url.as_deref(), Some("data:..."));
+        assert_eq!(f.progress, Some(0.5));
+        assert_eq!(f.error.as_deref(), Some("oops"));
+    }
+
+    #[test]
+    fn picked_file_is_image() {
+        let img = PickedFile::new("a.png", 0, "image/png");
+        assert!(img.is_image());
+        let pdf = PickedFile::new("a.pdf", 0, "application/pdf");
+        assert!(!pdf.is_image());
+    }
+
+    #[test]
+    fn picked_file_size_display() {
+        assert_eq!(PickedFile::new("a", 500, "").size_display(), "500 B");
+        assert_eq!(PickedFile::new("a", 2048, "").size_display(), "2.0 KB");
     }
 }

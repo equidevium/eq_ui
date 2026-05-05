@@ -11,19 +11,29 @@
 //! padding is applied regardless of slot content so children never
 //! render under the status bar or home indicator.
 //!
-//! ```rust,ignore
-//! EqMobileAppShell {
-//!     toolbar: rsx! {
-//!         EqToolbar { title: rsx! { "Inbox" } }
-//!     },
-//!     bottom_nav: rsx! {
-//!         EqBottomNav {
-//!             items: nav_items,
-//!             active: active(),
-//!             on_change: move |id| active.set(id),
+//! ```no_run
+//! use eq_ui::prelude::*;
+//! use eq_ui::organisms::{EqMobileAppShell, EqToolbar, EqBottomNav, BottomNavItem};
+//!
+//! fn app() -> Element {
+//!     let mut active = use_signal(|| "home".to_string());
+//!     let nav_items: Vec<BottomNavItem> = vec![];
+//!
+//!     rsx! {
+//!         EqMobileAppShell {
+//!             toolbar: rsx! {
+//!                 EqToolbar { title: rsx! { "Inbox" } }
+//!             },
+//!             bottom_nav: rsx! {
+//!                 EqBottomNav {
+//!                     items: nav_items,
+//!                     active: active(),
+//!                     on_change: move |id| active.set(id),
+//!                 }
+//!             },
+//!             div { class: "p-4", "Page body here" }
 //!         }
-//!     },
-//!     div { class: "p-4", "Page body here" }
+//!     }
 //! }
 //! ```
 
@@ -306,5 +316,20 @@ fn demo_icon_user() -> Element {
             circle { cx: "12", cy: "8", r: "4" }
             path { d: "M4 21a8 8 0 0 1 16 0" }
         }
+    }
+}
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| {
+            rsx! { EqMobileAppShell { "body" } }
+        });
+        dom.rebuild_in_place();
     }
 }

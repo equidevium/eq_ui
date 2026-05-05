@@ -20,11 +20,16 @@
 //! - iPhone 16 Pro: 402 x 874
 //! - Dynamic Island pill: ~125 x 37
 //!
-//! ```rust,ignore
-//! EqDeviceFrame {
-//!     model: DeviceModel::IPhone16,
-//!     div { class: "p-6", "Mobile-only content here" }
-//! }
+//! ```no_run
+//! use eq_ui::prelude::*;
+//! use eq_ui::molecules::{EqDeviceFrame, DeviceModel};
+//!
+//! let _: Element = rsx! {
+//!     EqDeviceFrame {
+//!         model: DeviceModel::IPhone16,
+//!         div { class: "p-6", "Mobile-only content here" }
+//!     }
+//! };
 //! ```
 
 use super::eq_device_frame_styles as s;
@@ -39,14 +44,12 @@ use crate::playground::playground_helpers::{
     CodeBlock, DemoSection, PropSelect, PropToggle, StyleInfo, format_catalog,
 };
 #[cfg(feature = "playground")]
-use crate::playground::playground_types::{
-    ComponentCategory, ComponentDescriptor, UsageExample,
-};
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 /// iPhone model variants supported by `EqDeviceFrame`.
 ///
 /// Both render with the Dynamic Island; only the screen size differs.
-#[derive(Clone, Copy, PartialEq, Default, PlaygroundEnum)]
+#[derive(Clone, Copy, PartialEq, Default, Debug, PlaygroundEnum)]
 pub enum DeviceModel {
     /// iPhone 16. 393 x 852 CSS px, 6.1" display.
     #[default]
@@ -139,15 +142,25 @@ pub fn EqDeviceFrame(
             "aria-label": "{aria_label}",
 
             // Painted side buttons (decorative).
-            div { class: "{s::SIDE_BUTTON_BASE} {s::ACTION_BUTTON}", "aria-hidden": "true" }
-            div { class: "{s::SIDE_BUTTON_BASE} {s::VOLUME_UP}", "aria-hidden": "true" }
-            div { class: "{s::SIDE_BUTTON_BASE} {s::VOLUME_DOWN}", "aria-hidden": "true" }
-            div { class: "{s::SIDE_BUTTON_BASE} {s::POWER_BUTTON}", "aria-hidden": "true" }
+            div {
+                class: "{s::SIDE_BUTTON_BASE} {s::ACTION_BUTTON}",
+                "aria-hidden": "true",
+            }
+            div {
+                class: "{s::SIDE_BUTTON_BASE} {s::VOLUME_UP}",
+                "aria-hidden": "true",
+            }
+            div {
+                class: "{s::SIDE_BUTTON_BASE} {s::VOLUME_DOWN}",
+                "aria-hidden": "true",
+            }
+            div {
+                class: "{s::SIDE_BUTTON_BASE} {s::POWER_BUTTON}",
+                "aria-hidden": "true",
+            }
 
             // Screen surface.
-            div {
-                class: "{s::SCREEN}",
-                style: "{screen_inline_style}",
+            div { class: "{s::SCREEN}", style: "{screen_inline_style}",
 
                 // Dynamic Island.
                 div {
@@ -164,9 +177,7 @@ pub fn EqDeviceFrame(
                 }
 
                 // Children area.
-                div { class: "{s::BODY}",
-                    {children}
-                }
+                div { class: "{s::BODY}", {children} }
 
                 // Home indicator.
                 if show_home_indicator {
@@ -184,9 +195,7 @@ pub fn EqDeviceFrame(
 #[component]
 fn DefaultStatusBar() -> Element {
     rsx! {
-        div {
-            class: "{s::STATUS_BAR}",
-            "aria-hidden": "true",
+        div { class: "{s::STATUS_BAR}", "aria-hidden": "true",
 
             span { class: "{s::STATUS_BAR_TIME}", "9:41" }
 
@@ -198,10 +207,34 @@ fn DefaultStatusBar() -> Element {
                     height: "12",
                     view_box: "0 0 18 12",
                     fill: "currentColor",
-                    rect { x: "0",  y: "8", width: "3", height: "4",  rx: "0.5" }
-                    rect { x: "5",  y: "5", width: "3", height: "7",  rx: "0.5" }
-                    rect { x: "10", y: "2", width: "3", height: "10", rx: "0.5" }
-                    rect { x: "15", y: "0", width: "3", height: "12", rx: "0.5" }
+                    rect {
+                        x: "0",
+                        y: "8",
+                        width: "3",
+                        height: "4",
+                        rx: "0.5",
+                    }
+                    rect {
+                        x: "5",
+                        y: "5",
+                        width: "3",
+                        height: "7",
+                        rx: "0.5",
+                    }
+                    rect {
+                        x: "10",
+                        y: "2",
+                        width: "3",
+                        height: "10",
+                        rx: "0.5",
+                    }
+                    rect {
+                        x: "15",
+                        y: "0",
+                        width: "3",
+                        height: "12",
+                        rx: "0.5",
+                    }
                 }
                 // Wifi arcs.
                 svg {
@@ -290,6 +323,7 @@ mod tests {
     #[test]
     fn default_model_is_iphone16() {
         let m: DeviceModel = Default::default();
+
         assert_eq!(m, DeviceModel::IPhone16);
     }
 
@@ -306,7 +340,11 @@ mod tests {
     fn dynamic_island_size_nonzero() {
         for m in [DeviceModel::IPhone16, DeviceModel::IPhone16Pro] {
             let (w, h) = m.dynamic_island_size();
-            assert!(w > 0 && h > 0, "DI size must be non-zero for {:?}", m.label());
+            assert!(
+                w > 0 && h > 0,
+                "DI size must be non-zero for {:?}",
+                m.label()
+            );
         }
     }
 }
@@ -359,20 +397,15 @@ fn DemoEqDeviceFrame() -> Element {
             }
 
             div { class: "flex justify-center p-6",
-                EqDeviceFrame {
-                    model,
-                    show_home_indicator: show_home(),
+                EqDeviceFrame { model, show_home_indicator: show_home(),
                     div { class: "p-6 space-y-3 text-center",
-                        h1 {
-                            class: "text-xl font-semibold text-[var(--color-label-primary)]",
+                        h1 { class: "text-xl font-semibold text-[var(--color-label-primary)]",
                             "My Mobile App"
                         }
-                        p {
-                            class: "text-sm text-[var(--color-label-secondary)]",
+                        p { class: "text-sm text-[var(--color-label-secondary)]",
                             "Mobile-only components live here."
                         }
-                        p {
-                            class: "text-xs text-[var(--color-label-secondary)] mt-8 opacity-70",
+                        p { class: "text-xs text-[var(--color-label-secondary)] mt-8 opacity-70",
                             "Resolution: {w} × {h}"
                         }
                     }
@@ -403,19 +436,15 @@ fn GalleryEqDeviceFrame() -> Element {
                 }
             }
 
-            div {
-                class: "flex flex-wrap items-start gap-8 justify-center p-4",
+            div { class: "flex flex-wrap items-start gap-8 justify-center p-4",
 
                 div { class: "flex flex-col items-center gap-2",
-                    EqDeviceFrame {
-                        model: DeviceModel::IPhone16,
+                    EqDeviceFrame { model: DeviceModel::IPhone16,
                         div { class: "p-6 text-center",
-                            p {
-                                class: "text-lg font-semibold text-[var(--color-label-primary)]",
+                            p { class: "text-lg font-semibold text-[var(--color-label-primary)]",
                                 "iPhone 16"
                             }
-                            p {
-                                class: "text-xs text-[var(--color-label-secondary)] mt-2",
+                            p { class: "text-xs text-[var(--color-label-secondary)] mt-2",
                                 "393 × 852"
                             }
                         }
@@ -424,15 +453,12 @@ fn GalleryEqDeviceFrame() -> Element {
                 }
 
                 div { class: "flex flex-col items-center gap-2",
-                    EqDeviceFrame {
-                        model: DeviceModel::IPhone16Pro,
+                    EqDeviceFrame { model: DeviceModel::IPhone16Pro,
                         div { class: "p-6 text-center",
-                            p {
-                                class: "text-lg font-semibold text-[var(--color-label-primary)]",
+                            p { class: "text-lg font-semibold text-[var(--color-label-primary)]",
                                 "iPhone 16 Pro"
                             }
-                            p {
-                                class: "text-xs text-[var(--color-label-secondary)] mt-2",
+                            p { class: "text-xs text-[var(--color-label-secondary)] mt-2",
                                 "402 × 874"
                             }
                         }

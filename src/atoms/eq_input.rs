@@ -101,3 +101,24 @@ pub fn EqInput(
         }
     }
 }
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| {
+            rsx! { EqInput { oninput: move |_| {} } }
+        });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_kind_is_text() {
+        let k: InputKind = Default::default();
+        assert!(matches!(k, InputKind::Text));
+    }
+}

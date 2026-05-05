@@ -375,3 +375,28 @@ fn GalleryEqButton() -> Element {
         }
     }
 }
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| rsx! { EqButton { "Click" } });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_variant_is_primary() {
+        let v: ButtonVariant = Default::default();
+        assert!(matches!(v, ButtonVariant::Primary));
+    }
+
+    #[test]
+    fn default_size_is_md() {
+        let s: ButtonSize = Default::default();
+        assert!(matches!(s, ButtonSize::Md));
+    }
+}

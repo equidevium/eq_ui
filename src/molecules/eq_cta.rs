@@ -5,12 +5,17 @@
 //! the action beside the text on wider viewports; `Centered` stacks
 //! everything vertically with centred alignment.
 //!
-//! ```rust,ignore
-//! EqCta {
-//!     title: "Ready to get started?",
-//!     description: "Sign up in seconds.",
-//!     action: rsx! { EqButton { "Get Started" } },
-//! }
+//! ```no_run
+//! use eq_ui::prelude::*;
+//! use eq_ui::molecules::EqCta;
+//!
+//! let _: Element = rsx! {
+//!     EqCta {
+//!         title: "Ready to get started?",
+//!         description: "Sign up in seconds.",
+//!         action: rsx! { EqButton { "Get Started" } },
+//!     }
+//! };
 //! ```
 
 use super::eq_cta_styles as s;
@@ -237,5 +242,26 @@ fn GalleryEqCta() -> Element {
                 }
             }
         }
+    }
+}
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| {
+            rsx! { EqCta { title: "Hello".to_string() } }
+        });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_layout_is_inline() {
+        let l: CtaLayout = Default::default();
+        assert!(matches!(l, CtaLayout::Inline));
     }
 }

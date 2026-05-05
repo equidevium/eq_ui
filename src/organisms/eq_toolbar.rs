@@ -9,15 +9,20 @@
 //! All slots are optional. The component does not own state; the
 //! consumer drives whatever lives in each slot.
 //!
-//! ```rust,ignore
-//! EqToolbar {
-//!     start: rsx! { EqButton { variant: ButtonVariant::Ghost, "Back" } },
-//!     title: rsx! { "Inbox" },
-//!     end: rsx! { EqButton { variant: ButtonVariant::Ghost, "Edit" } },
-//!     secondary: rsx! {
-//!         EqInput { placeholder: "Search", kind: InputKind::Text, oninput: move |_| {} }
-//!     },
-//! }
+//! ```no_run
+//! use eq_ui::prelude::*;
+//! use eq_ui::organisms::EqToolbar;
+//!
+//! let _: Element = rsx! {
+//!     EqToolbar {
+//!         start: rsx! { EqButton { variant: ButtonVariant::Ghost, "Back" } },
+//!         title: rsx! { "Inbox" },
+//!         end: rsx! { EqButton { variant: ButtonVariant::Ghost, "Edit" } },
+//!         secondary: rsx! {
+//!             EqInput { placeholder: "Search", kind: InputKind::Text, oninput: move |_| {} }
+//!         },
+//!     }
+//! };
 //! ```
 
 use super::eq_toolbar_styles as s;
@@ -259,5 +264,18 @@ fn GalleryEqToolbar() -> Element {
                 }
             }
         }
+    }
+}
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| rsx! { EqToolbar {} });
+        dom.rebuild_in_place();
     }
 }

@@ -706,3 +706,56 @@ fn GalleryEqTree() -> Element {
         }
     }
 }
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| {
+            rsx! {
+                EqTree {
+                    nodes: vec![TreeNode::new("a", "Alpha")],
+                    on_select: move |_| {},
+                }
+            }
+        });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn tree_node_new_is_leaf() {
+        let n = TreeNode::new("a", "Alpha");
+        assert_eq!(n.id, "a");
+        assert_eq!(n.label, "Alpha");
+        assert!(n.is_leaf());
+        assert_eq!(n.leaf_count(), 1);
+    }
+
+    #[test]
+    fn tree_node_with_children_sets_parent_id() {
+        let root = TreeNode::new_with_children(
+            "root",
+            "Root",
+            vec![TreeNode::new("a", "A"), TreeNode::new("b", "B")],
+        );
+        assert_eq!(root.children.len(), 2);
+        assert_eq!(root.children[0].parent_id.as_deref(), Some("root"));
+        assert_eq!(root.children[1].parent_id.as_deref(), Some("root"));
+        assert_eq!(root.leaf_count(), 2);
+    }
+
+    #[test]
+    fn tree_find_by_id() {
+        let root = TreeNode::new_with_children(
+            "root",
+            "Root",
+            vec![TreeNode::new("a", "A")],
+        );
+        assert!(root.find_by_id("a").is_some());
+        assert!(root.find_by_id("missing").is_none());
+    }
+}

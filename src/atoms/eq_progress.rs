@@ -6,10 +6,28 @@
 //! variants set the fill colour. Gradient fill reuses the
 //! theme's button gradient palette by default.
 //!
-//! ```rust,ignore
-//! EqProgress { value: 0.65 }
-//! EqProgress { value: 0.3, variant: ProgressVariant::Warning, label: true }
-//! EqProgress { indeterminate: true, size: ProgressSize::Lg }
+//! ```no_run
+//! use eq_ui::prelude::*;
+//!
+//! let _: Element = rsx! { EqProgress { value: 0.65 } };
+//! ```
+//!
+//! ```no_run
+//! use eq_ui::prelude::*;
+//! use eq_ui::atoms::ProgressVariant;
+//!
+//! let _: Element = rsx! {
+//!     EqProgress { value: 0.3, variant: ProgressVariant::Warning, label: true }
+//! };
+//! ```
+//!
+//! ```no_run
+//! use eq_ui::prelude::*;
+//! use eq_ui::atoms::ProgressSize;
+//!
+//! let _: Element = rsx! {
+//!     EqProgress { indeterminate: true, size: ProgressSize::Lg }
+//! };
 //! ```
 
 use super::eq_progress_styles as s;
@@ -345,5 +363,30 @@ fn GalleryEqProgress() -> Element {
                 }
             }
         }
+    }
+}
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| rsx! { EqProgress {} });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_variant_is_default() {
+        let v: ProgressVariant = Default::default();
+        assert!(matches!(v, ProgressVariant::Default));
+    }
+
+    #[test]
+    fn default_size_is_md() {
+        let s: ProgressSize = Default::default();
+        assert!(matches!(s, ProgressSize::Md));
     }
 }

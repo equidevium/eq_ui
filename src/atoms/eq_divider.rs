@@ -121,3 +121,22 @@ pub fn EqDivider(
         }
     }
 }
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| rsx! { EqDivider {} });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_variant_is_solid() {
+        let v: DividerVariant = Default::default();
+        assert!(matches!(v, DividerVariant::Solid));
+    }
+}

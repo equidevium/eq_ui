@@ -23,6 +23,7 @@ pub mod molecules;
 pub mod organisms;
 pub mod eq_theme;
 pub mod playground_enum_trait;
+pub mod prelude;
 
 pub use eq_ui_macros::{playground, PlaygroundEnum};
 

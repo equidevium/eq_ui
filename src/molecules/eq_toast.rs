@@ -9,17 +9,24 @@
 //! The caller manages a `Signal<Vec<ToastData>>` and pushes new entries.
 //! `EqToastList` handles rendering and cleanup.
 //!
-//! ```rust,ignore
-//! let mut toasts = use_signal(Vec::<ToastData>::new);
+//! ```no_run
+//! use eq_ui::prelude::*;
+//! use eq_ui::molecules::{EqToastList, ToastData};
 //!
-//! EqButton {
-//!     on_click: move |_| toasts.write().push(
-//!         ToastData::success("Saved", "Your changes were saved.")
-//!     ),
-//!     "Show Toast"
+//! fn app() -> Element {
+//!     let mut toasts = use_signal(Vec::<ToastData>::new);
+//!
+//!     rsx! {
+//!         EqButton {
+//!             on_click: move |_| toasts.write().push(
+//!                 ToastData::success("Saved", "Your changes were saved.")
+//!             ),
+//!             "Show Toast"
+//!         }
+//!
+//!         EqToastList { toasts }
+//!     }
 //! }
-//!
-//! EqToastList { toasts }
 //! ```
 
 use super::eq_toast_styles as s;
@@ -431,5 +438,65 @@ fn GalleryEqToastList() -> Element {
 
             EqToastList { toasts }
         }
+    }
+}
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| {
+            let toasts = use_signal(Vec::<ToastData>::new);
+            rsx! { EqToastList { toasts } }
+        });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_severity_is_info() {
+        let s: ToastSeverity = Default::default();
+        assert!(matches!(s, ToastSeverity::Info));
+    }
+
+    #[test]
+    fn default_position_is_top_right() {
+        let p: ToastPosition = Default::default();
+        assert!(matches!(p, ToastPosition::TopRight));
+    }
+
+    #[test]
+    fn toast_data_info_sets_severity() {
+        let t = ToastData::info("Title", "Body");
+        assert!(matches!(t.severity, ToastSeverity::Info));
+        assert_eq!(t.title, "Title");
+        assert_eq!(t.message, "Body");
+    }
+
+    #[test]
+    fn toast_data_success_sets_severity() {
+        let t = ToastData::success("ok", "saved");
+        assert!(matches!(t.severity, ToastSeverity::Success));
+    }
+
+    #[test]
+    fn toast_data_warning_sets_severity() {
+        let t = ToastData::warning("careful", "proceed");
+        assert!(matches!(t.severity, ToastSeverity::Warning));
+    }
+
+    #[test]
+    fn toast_data_error_sets_severity() {
+        let t = ToastData::error("oops", "failed");
+        assert!(matches!(t.severity, ToastSeverity::Error));
+    }
+
+    #[test]
+    fn toast_data_duration_builder() {
+        let t = ToastData::info("a", "b").duration(0);
+        assert_eq!(t.duration_ms, 0);
     }
 }
