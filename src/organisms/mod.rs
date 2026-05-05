@@ -9,6 +9,10 @@ pub mod eq_hero_shell_styles;
 pub mod eq_navbar;
 pub mod eq_page_section;
 pub mod eq_page_section_styles;
+pub mod eq_top_bar;
+pub mod eq_top_bar_styles;
+pub mod eq_bottom_bar;
+pub mod eq_bottom_bar_styles;
 
 pub use eq_app_shell::EqAppShell;
 pub use eq_footer::{EqFooter, FooterLink, FooterLinkGroup};
@@ -20,3 +24,5 @@ pub use eq_header::EqHeader;
 pub use eq_hero_shell::EqHeroShell;
 pub use eq_navbar::EqNavbar;
 pub use eq_page_section::EqPageSection;
+pub use eq_top_bar::EqTopBar;
+pub use eq_bottom_bar::EqBottomBar;

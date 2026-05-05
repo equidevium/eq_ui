@@ -60,6 +60,8 @@ pub fn all_component_descriptors() -> Vec<ComponentDescriptor> {
         organisms::eq_page_section::descriptor(),
         organisms::eq_app_shell::descriptor(),
         organisms::eq_navbar::descriptor(),
+        organisms::eq_top_bar::descriptor(),
+        organisms::eq_bottom_bar::descriptor(),
         organisms::eq_grid::grid::descriptor(),
         // Theming
         playground::theme_showcase::descriptor(),
