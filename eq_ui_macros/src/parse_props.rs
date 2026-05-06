@@ -115,15 +115,13 @@ fn classify_type(name: &Ident, ty: &Type) -> PropKind {
 
     // If none of the above, assume it's an enum type.
     // Extract the ident from the type.
-    if let Type::Path(tp) = ty {
-        if let Some(seg) = tp.path.segments.last() {
-            let ident = &seg.ident;
-            let ident_str = ident.to_string();
-            // Skip common non-enum types
-            if !["Option", "Vec", "Box", "Rc", "Arc", "Element"].contains(&ident_str.as_str()) {
-                return PropKind::Enum(ident.clone());
-            }
-        }
+    let Type::Path(tp) = ty else { return PropKind::Unknown; };
+    let Some(seg) = tp.path.segments.last() else { return PropKind::Unknown; };
+    let ident = &seg.ident;
+    let ident_str = ident.to_string();
+    // Skip common non-enum types
+    if !["Option", "Vec", "Box", "Rc", "Arc", "Element"].contains(&ident_str.as_str()) {
+        return PropKind::Enum(ident.clone());
     }
 
     PropKind::Unknown
@@ -147,19 +145,17 @@ fn extract_default_value(attrs: &[Attribute]) -> Option<Expr> {
                 syn::punctuated::Punctuated::<syn::Meta, syn::Token![,]>::parse_terminated,
             ) {
                 for m in &nested {
-                    if let syn::Meta::NameValue(nv) = m {
-                        if nv.path.is_ident("default") {
-                            return Some(nv.value.clone());
-                        }
+                    let syn::Meta::NameValue(nv) = m else { continue; };
+                    if nv.path.is_ident("default") {
+                        return Some(nv.value.clone());
                     }
                 }
             }
             continue;
         };
-        if let syn::Meta::NameValue(nv) = meta {
-            if nv.path.is_ident("default") {
-                return Some(nv.value);
-            }
+        let syn::Meta::NameValue(nv) = meta else { continue; };
+        if nv.path.is_ident("default") {
+            return Some(nv.value);
         }
     }
     None

@@ -117,9 +117,6 @@ pub fn expand(attr: TokenStream, item: TokenStream) -> Result<TokenStream> {
     // Kebab-case ID: "EqSwitch" → "eq-switch"
     let id_str = to_kebab_case(&comp_name_str);
 
-    // Snake-case for styles file display name
-    let styles_file_display = format!("{}_styles.rs", to_snake_case(&comp_name_str));
-
     // Category ident: Atom → ComponentCategory::Atom
     let category = &attr.category;
     let description = &attr.description;

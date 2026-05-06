@@ -145,7 +145,7 @@ pub fn EqSelect(
     class: String,
 ) -> Element {
     let mut open = use_signal(|| false);
-    let mut search = use_signal(|| String::new());
+    let mut search = use_signal(String::new);
     let mut focused_idx = use_signal(|| None::<usize>);
 
     let wrapper_cls = merge_classes(s::WRAPPER, &class);
@@ -313,18 +313,15 @@ pub fn EqSelect(
                             focused_idx.set(Some(next));
                         }
                         Key::Enter => {
-                            if let Some(idx) = focused_idx() {
-                                if let Some(opt) = options.get(idx) {
-                                    if !opt.disabled {
-                                        if let Some(handler) = &on_select {
-                                            handler.call(opt.id.clone());
-                                        }
-                                        open.set(false);
-                                        search.set(String::new());
-                                        focused_idx.set(None);
-                                    }
-                                }
+                            let Some(idx) = focused_idx() else { return; };
+                            let Some(opt) = options.get(idx) else { return; };
+                            if opt.disabled { return; }
+                            if let Some(handler) = &on_select {
+                                handler.call(opt.id.clone());
                             }
+                            open.set(false);
+                            search.set(String::new());
+                            focused_idx.set(None);
                         }
                         _ => {}
                     }

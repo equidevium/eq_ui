@@ -252,11 +252,9 @@ pub fn EqRadioGroup(
                             tabindex: "{tab_idx}",
                             onclick: move |evt| {
                                 evt.stop_propagation();
-                                if !is_disabled {
-                                    if let Some(ref handler) = on_change {
-                                        handler.call(value.clone());
-                                    }
-                                }
+                                if is_disabled { return; }
+                                let Some(ref handler) = on_change else { return; };
+                                handler.call(value.clone());
                             },
                             // Visual circle
                             span { class: "{circle_border}",

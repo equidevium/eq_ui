@@ -155,8 +155,6 @@ impl FilePickerBackend for WebFilePickerBackend {
         callback: Callback<Vec<PickedFile>>,
     ) {
         let accept = accept.to_string();
-        let multiple = multiple;
-        let folder = folder;
 
         spawn(async move {
             let multi_attr = if multiple { "input.multiple = true;" } else { "" };
@@ -369,10 +367,9 @@ pub fn EqFilePicker(
     // Handle newly picked files (from click or drop).
     let handle_new_files = {
         let current = files.clone();
-        let is_multiple = is_multiple;
-        let validate = validate_file.clone();
+        let validate = validate_file;
         move |new_files: Vec<PickedFile>| {
-            let validated: Vec<PickedFile> = new_files.into_iter().map(|f| validate(f)).collect();
+            let validated: Vec<PickedFile> = new_files.into_iter().map(&validate).collect();
             let result = if is_multiple {
                 let mut merged = current.clone();
                 merged.extend(validated);
@@ -560,7 +557,7 @@ pub fn EqFilePicker(
                             let progress_pct = format!("{:.0}%", progress_val * 100.0);
 
                             let files_for_remove = files.clone();
-                            let on_change = on_files_changed.clone();
+                            let on_change = on_files_changed;
 
                             rsx! {
                                 div {
@@ -686,8 +683,8 @@ fn DemoEqFilePicker() -> Element {
     let mut files = use_signal(Vec::<PickedFile>::new);
     let mut multi = use_signal(|| false);
     let mut folder_mode = use_signal(|| false);
-    let mut accept_str = use_signal(|| String::new());
-    let mut max_size_str = use_signal(|| String::new());
+    let mut accept_str = use_signal(String::new);
+    let mut max_size_str = use_signal(String::new);
     let mut show_disabled = use_signal(|| false);
 
     let mode = if folder_mode() {

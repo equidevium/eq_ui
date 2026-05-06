@@ -8,7 +8,7 @@ use crate::playground::playground_helpers::{
     CodeBlock, DemoSection, PropSelect, PropInput, StyleInfo, format_catalog,
 };
 #[cfg(feature = "playground")]
-use crate::atoms::{EqText, TextVariant, AtomImageSize, AspectRatio, ObjectFit};
+use crate::atoms::{EqText, TextVariant, AtomImageSize, AspectRatio};
 #[cfg(feature = "playground")]
 use crate::molecules::eq_image_card::{EqImageCard, CaptionMode};
 #[cfg(feature = "playground")]

@@ -145,11 +145,9 @@ pub fn EqSlider(
                 "aria-valuemax": "{max}",
                 "aria-valuenow": "{value}",
                 oninput: move |evt: Event<FormData>| {
-                    if let Some(handler) = &on_change {
-                        if let Ok(v) = evt.value().parse::<f64>() {
-                            handler.call(v);
-                        }
-                    }
+                    let Some(handler) = &on_change else { return; };
+                    let Ok(v) = evt.value().parse::<f64>() else { return; };
+                    handler.call(v);
                 },
             }
             if show_label {

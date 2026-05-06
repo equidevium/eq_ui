@@ -191,8 +191,8 @@ fn build_calendar(
             month: prev_month,
             day: d,
             is_current_month: false,
-            is_today: today.year == prev_year as i32 && today.month == prev_month && today.day == d,
-            is_selected: selected.as_ref().map_or(false, |s| s.year == prev_year as i32 && s.month == prev_month && s.day == d),
+            is_today: today.year == prev_year && today.month == prev_month && today.day == d,
+            is_selected: selected.as_ref().is_some_and(|s| s.year == prev_year && s.month == prev_month && s.day == d),
         });
     }
 
@@ -203,8 +203,8 @@ fn build_calendar(
             month: view_month,
             day: d,
             is_current_month: true,
-            is_today: today.year == view_year as i32 && today.month == view_month && today.day == d,
-            is_selected: selected.as_ref().map_or(false, |s| s.year == view_year as i32 && s.month == view_month && s.day == d),
+            is_today: today.year == view_year && today.month == view_month && today.day == d,
+            is_selected: selected.as_ref().is_some_and(|s| s.year == view_year && s.month == view_month && s.day == d),
         });
     }
 
@@ -216,8 +216,8 @@ fn build_calendar(
             month: next_month,
             day: d,
             is_current_month: false,
-            is_today: today.year == next_year as i32 && today.month == next_month && today.day == d,
-            is_selected: selected.as_ref().map_or(false, |s| s.year == next_year as i32 && s.month == next_month && s.day == d),
+            is_today: today.year == next_year && today.month == next_month && today.day == d,
+            is_selected: selected.as_ref().is_some_and(|s| s.year == next_year && s.month == next_month && s.day == d),
         });
     }
 
@@ -268,7 +268,7 @@ pub fn EqDatePicker(
     #[props(into, default)]
     class: String,
 ) -> Element {
-    let today = use_hook(|| fallback_today());
+    let today = use_hook(fallback_today);
 
     // View state: which month/year the calendar is showing.
     let mut view_year = use_signal(|| {
@@ -324,17 +324,14 @@ pub fn EqDatePicker(
                 "aria-expanded": "{open()}",
                 "aria-haspopup": "dialog",
                 onclick: move |_| {
-                    if !disabled {
-                        let next = !open();
-                        open.set(next);
-                        // Reset view to selected date or today when opening.
-                        if next {
-                            if let Some(d) = &value {
-                                view_year.set(d.year);
-                                view_month.set(d.month);
-                            }
-                        }
-                    }
+                    if disabled { return; }
+                    let next = !open();
+                    open.set(next);
+                    // Reset view to selected date or today when opening.
+                    if !next { return; }
+                    let Some(d) = &value else { return; };
+                    view_year.set(d.year);
+                    view_month.set(d.month);
                 },
                 onkeydown: move |evt: KeyboardEvent| {
                     if evt.key() == Key::Escape {

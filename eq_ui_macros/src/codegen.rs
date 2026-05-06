@@ -80,7 +80,7 @@ fn find_bool_handler_pairs(props: &[PropInfo]) -> Vec<(Ident, Ident)> {
             .unwrap_or(&handler_name);
 
         // Look for a bool prop with matching name
-        let matched = bools.iter().find(|b| b.name.to_string() == target_name);
+        let matched = bools.iter().find(|b| b.name == target_name);
 
         if let Some(bool_prop) = matched {
             pairs.push((handler.name.clone(), bool_prop.name.clone()));
@@ -413,7 +413,7 @@ pub fn gen_demo(
         let second_bool = &bool_props[1];
         let b1 = &first_bool.name;
         let b2 = &second_bool.name;
-        let b1_label = capitalize_first(&first_bool.name.to_string());
+        let _b1_label = capitalize_first(&first_bool.name.to_string());
         let b2_label = capitalize_first(&second_bool.name.to_string());
 
         let label_prop_tokens = string_props.first().map(|p| {
@@ -425,8 +425,8 @@ pub fn gen_demo(
         let noop_ref = &noop_handlers;
         let make_instance = |v1: bool, v2: bool| -> TokenStream {
             let label_text = match (v1, v2) {
-                (false, false) => format!("Default off"),
-                (true, false) => format!("Default on"),
+                (false, false) => "Default off".to_string(),
+                (true, false) => "Default on".to_string(),
                 (false, true) => format!("{} off", b2_label),
                 (true, true) => format!("{} on", b2_label),
             };
@@ -514,7 +514,7 @@ pub fn gen_demo(
     // show a small gallery of instances with different sample content
     let children_examples_section = if has_children && enum_props.is_empty() && bool_props.is_empty() {
         // Build 3 sample instances with varied children text
-        let samples = vec![
+        let samples = [
             format!("First {}", comp_label),
             format!("Second {}", comp_label),
             format!("Third {}", comp_label),

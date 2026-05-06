@@ -48,9 +48,9 @@ pub fn expand(input: DeriveInput) -> Result<TokenStream> {
     // Default arm uses the default variant
     let default_ident = variants
         .iter()
-        .find(|v| v.ident.to_string() == default_variant)
+        .find(|v| v.ident == default_variant)
         .map(|v| &v.ident)
-        .unwrap_or(&variant_idents[0]);
+        .unwrap_or(variant_idents[0]);
 
     Ok(quote! {
         impl crate::playground_enum_trait::PlaygroundEnumInfo for #name {

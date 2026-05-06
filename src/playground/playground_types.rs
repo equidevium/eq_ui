@@ -59,7 +59,14 @@ pub struct UsageExample {
 ///
 /// External users write their own `descriptor()` for custom components
 /// and pass them alongside the built-in ones.
-#[derive(Clone, PartialEq)]
+///
+/// `PartialEq` is implemented manually below to compare only the data
+/// fields. Function pointers (`style_tokens`, `usage_examples`,
+/// `render_demo`, `render_gallery`) are intentionally excluded because
+/// function-pointer addresses are not guaranteed to be unique across
+/// codegen units, so deriving `PartialEq` on them produces unreliable
+/// comparisons.
+#[derive(Clone)]
 pub struct ComponentDescriptor {
     /// URL-safe identifier for routing (e.g. "button", "progress").
     pub id: &'static str,
@@ -84,4 +91,16 @@ pub struct ComponentDescriptor {
     /// when this is set, so consumers can find mobile-tested
     /// components at a glance.
     pub mobile_friendly: bool,
+}
+
+impl PartialEq for ComponentDescriptor {
+    /// Equality compares only the data fields. The function-pointer
+    /// fields are intentionally excluded; see the type docs.
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+            && self.name == other.name
+            && self.category == other.category
+            && self.description == other.description
+            && self.mobile_friendly == other.mobile_friendly
+    }
 }

@@ -3,7 +3,7 @@ members = ["eq_ui_build", "eq_ui_macros"]
 
 [package]
 name = "eq_ui"
-version = "0.4.2"
+version = "0.5.0"
 edition = "2024"
 description = "Portable Dioxus UI component library - atoms, molecules, organisms + theme"
 license = "MIT OR Apache-2.0"

@@ -181,9 +181,8 @@ Longer-term ideas and aspirations.
 
 | Version | Date | Highlights |
 |---------|------|------------|
-| v0.4.2 | May 2026 | EqSlider, EqAvatar, EqTooltip, EqSelect, EqDropdown, EqDatePicker, EqCalendar, EqVirtualList, EqDrawer, EqFilePicker, 25 themes, 41 components |
-| v0.4.1 | — | _Skipped. No public release was cut between v0.4.0 and v0.4.2._ |
-| v0.4.0 | April 2026 | Full ARIA accessibility, playground refactoring, EqRadioGroup, EqSwitch, EqModal, EqToast, EqCta, EqNavItem, 21 themes |
+| v0.5.0 | May 2026 | Mobile suite (EqDeviceFrame, EqToolbar, EqBottomNav, EqMobileAppShell), 11 new components total, Synthwave theme, `eq_ui::prelude`, smoke tests on every component, runnable doctests, 5-file integration guide in `docs/`, manual `PartialEq` on `ComponentDescriptor`, 26 themes, 45 components. Full notes: [release-notes-0.5.0.md](./releaseDocs/release-notes-0.5.0.md) |
+| v0.4.0 | April 2026 | Full ARIA accessibility, playground refactoring, EqRadioGroup, EqSwitch, 21 themes. Full notes: [release-notes-0.4.0.md](./releaseDocs/release-notes-0.4.0.md) |
 | v0.3.0 | — | EqButton, EqGrid virtualization/reorder/export, EqCheckbox, multi-sort, themes |
 | v0.2.0 | — | Initial crates.io publish, EqGrid, mobile playground support, video component |
 | v0.1.1 | — | Initial release |

@@ -158,7 +158,7 @@ fn DemoEqButton() -> Element {
     let mut gradient = use_signal(|| true);
     let mut animate = use_signal(|| true);
     let mut angle_str = use_signal(|| "90".to_string());
-    let mut color_str = use_signal(|| String::new());
+    let mut color_str = use_signal(String::new);
     let mut click_count = use_signal(|| 0usize);
 
     let variant = match variant_str().as_str() {

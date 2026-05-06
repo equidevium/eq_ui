@@ -273,7 +273,7 @@ fn DemoEqAccordion() -> Element {
         "Multi" => AccordionMode::Multi,
         _ => AccordionMode::Single,
     };
-    let panel_count: usize = panel_count_str().parse().unwrap_or(3).min(6).max(1);
+    let panel_count: usize = panel_count_str().parse().unwrap_or(3).clamp(1, 6);
 
     let sample_panels: Vec<(&str, &str, &str)> = vec![
         (

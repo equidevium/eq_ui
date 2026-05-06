@@ -112,8 +112,8 @@ pub fn EqHeroShell(
 fn DemoEqHeroShell() -> Element {
     let mut title = use_signal(|| "Hero Shell Title".to_string());
     let mut subtitle = use_signal(|| "A tagline or subtitle goes here.".to_string());
-    let mut title_color = use_signal(|| String::new());
-    let mut subtitle_color = use_signal(|| String::new());
+    let mut title_color = use_signal(String::new);
+    let mut subtitle_color = use_signal(String::new);
     let mut show_bg = use_signal(|| false);
 
     let title_c_val = title_color();

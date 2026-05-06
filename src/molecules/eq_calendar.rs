@@ -273,19 +273,21 @@ fn build_calendar(
     };
 
     let is_disabled = |y: i32, m: u32, d: u32| -> bool {
-        if let Some(min) = min_date {
-            if y < min.year || (y == min.year && m < min.month)
+        let before_min = min_date.as_ref().is_some_and(|min| {
+            y < min.year
+                || (y == min.year && m < min.month)
                 || (y == min.year && m == min.month && d < min.day)
-            {
-                return true;
-            }
+        });
+        if before_min {
+            return true;
         }
-        if let Some(max) = max_date {
-            if y > max.year || (y == max.year && m > max.month)
+        let after_max = max_date.as_ref().is_some_and(|max| {
+            y > max.year
+                || (y == max.year && m > max.month)
                 || (y == max.year && m == max.month && d > max.day)
-            {
-                return true;
-            }
+        });
+        if after_max {
+            return true;
         }
         false
     };
@@ -299,7 +301,7 @@ fn build_calendar(
             year: prev_year, month: prev_month, day: d,
             is_current_month: false,
             is_today: today.year == prev_year && today.month == prev_month && today.day == d,
-            is_selected: selected.as_ref().map_or(false, |s| s.year == prev_year && s.month == prev_month && s.day == d),
+            is_selected: selected.as_ref().is_some_and(|s| s.year == prev_year && s.month == prev_month && s.day == d),
             is_disabled: is_disabled(prev_year, prev_month, d),
             event_colors: events_for_date(events, prev_year, prev_month, d),
         });
@@ -311,7 +313,7 @@ fn build_calendar(
             year: view_year, month: view_month, day: d,
             is_current_month: true,
             is_today: today.year == view_year && today.month == view_month && today.day == d,
-            is_selected: selected.as_ref().map_or(false, |s| s.year == view_year && s.month == view_month && s.day == d),
+            is_selected: selected.as_ref().is_some_and(|s| s.year == view_year && s.month == view_month && s.day == d),
             is_disabled: is_disabled(view_year, view_month, d),
             event_colors: events_for_date(events, view_year, view_month, d),
         });
@@ -324,7 +326,7 @@ fn build_calendar(
             year: next_year, month: next_month, day: d,
             is_current_month: false,
             is_today: today.year == next_year && today.month == next_month && today.day == d,
-            is_selected: selected.as_ref().map_or(false, |s| s.year == next_year && s.month == next_month && s.day == d),
+            is_selected: selected.as_ref().is_some_and(|s| s.year == next_year && s.month == next_month && s.day == d),
             is_disabled: is_disabled(next_year, next_month, d),
             event_colors: events_for_date(events, next_year, next_month, d),
         });

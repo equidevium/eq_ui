@@ -12,6 +12,8 @@ use std::collections::{HashMap, HashSet};
 ///
 /// Iterates `visible_indices` (already sorted and paginated) and
 /// renders one `<tr>` per row with optional selection highlighting.
+// Internal helper with deliberately many parameters; refactor to a struct is out of scope.
+#[allow(clippy::too_many_arguments)]
 pub(super) fn render_body<T: Clone + PartialEq + 'static>(
     data: &[T],
     columns: &[EqColumnDef<T>],
@@ -99,31 +101,36 @@ pub(super) fn render_body<T: Clone + PartialEq + 'static>(
                             cls.push_str(s::TR_SELECTED);
                         }
                         // Reorder insertion indicator
-                        if reorderable {
-                            if let Some(over_idx) = reorder_over() {
-                                if over_idx == data_idx {
-                                    if let Some(from_idx) = reorder_from() {
-                                        if from_idx < data_idx {
-                                            cls.push(' ');
-                                            cls.push_str(s::REORDER_INSERT_BELOW);
-                                        } else if from_idx > data_idx {
-                                            cls.push(' ');
-                                            cls.push_str(s::REORDER_INSERT_ABOVE);
-                                        }
+                        let insert_cls = if reorderable {
+                            reorder_over()
+                                .filter(|&over_idx| over_idx == data_idx)
+                                .and_then(|_| reorder_from())
+                                .and_then(|from_idx| {
+                                    if from_idx < data_idx {
+                                        Some(s::REORDER_INSERT_BELOW)
+                                    } else if from_idx > data_idx {
+                                        Some(s::REORDER_INSERT_ABOVE)
+                                    } else {
+                                        None
                                     }
-                                }
-                            }
+                                })
+                        } else {
+                            None
+                        };
+                        if let Some(extra) = insert_cls {
+                            cls.push(' ');
+                            cls.push_str(extra);
                         }
                         cls
                     };
 
-                    let on_click = on_row_click.clone();
-                    let on_sel = on_selection_change.clone();
+                    let on_click = *on_row_click;
+                    let on_sel = *on_selection_change;
                     let measure_this = vi == 0 && row_measure.is_some();
 
                     let is_draggable = row_draggable && is_selected;
 
-                    let on_reorder_handler = on_reorder.clone();
+                    let on_reorder_handler = *on_reorder;
 
                     let has_selection = row_selection != RowSelection::None;
 
@@ -149,43 +156,38 @@ pub(super) fn render_body<T: Clone + PartialEq + 'static>(
                                 }
                             },
                             ondrop: {
-                                let on_reorder_handler = on_reorder_handler.clone();
                                 move |evt: Event<DragData>| {
-                                    if reorderable {
-                                        evt.prevent_default();
-                                        evt.stop_propagation();
-                                        if let Some(from) = reorder_from() {
-                                            if from != data_idx {
-                                                if announce_moves {
-                                                    move_announcement.set(format!(
-                                                        "Row moved from position {} to position {}",
-                                                        from + 1,
-                                                        data_idx + 1,
-                                                    ));
-                                                }
-                                                if let Some(ref handler) = on_reorder_handler {
-                                                    handler.call((from, data_idx));
-                                                }
-                                            }
-                                        }
-                                        reorder_from.set(None);
-                                        reorder_over.set(None);
+                                    if !reorderable { return; }
+                                    evt.prevent_default();
+                                    evt.stop_propagation();
+                                    let from = reorder_from();
+                                    reorder_from.set(None);
+                                    reorder_over.set(None);
+                                    let Some(from) = from else { return; };
+                                    if from == data_idx { return; }
+                                    if announce_moves {
+                                        move_announcement.set(format!(
+                                            "Row moved from position {} to position {}",
+                                            from + 1,
+                                            data_idx + 1,
+                                        ));
+                                    }
+                                    if let Some(ref handler) = on_reorder_handler {
+                                        handler.call((from, data_idx));
                                     }
                                 }
                             },
                             onmounted: move |evt: MountedEvent| {
-                                if measure_this {
-                                    if let Some(mut sig) = row_measure {
-                                        spawn(async move {
-                                            if let Ok(rect) = evt.get_client_rect().await {
-                                                let h = rect.height();
-                                                if h > 0.0 && (h - sig()).abs() > 1.0 {
-                                                    sig.set(h);
-                                                }
-                                            }
-                                        });
+                                if !measure_this { return; }
+                                let Some(mut sig) = row_measure else { return; };
+                                spawn(async move {
+                                    if let Ok(rect) = evt.get_client_rect().await {
+                                        let h = rect.height();
+                                        if h > 0.0 && (h - sig()).abs() > 1.0 {
+                                            sig.set(h);
+                                        }
                                     }
-                                }
+                                });
                             },
                             onclick: move |_| {
                                 match row_selection {
@@ -254,7 +256,6 @@ pub(super) fn render_body<T: Clone + PartialEq + 'static>(
                                     EqCheckbox {
                                         state: if is_selected { CheckboxState::Checked } else { CheckboxState::Unchecked },
                                         on_change: {
-                                            let on_sel = on_sel.clone();
                                             move |_new: CheckboxState| {
                                                 let mut set = selected_rows.write();
                                                 if set.contains(&data_idx) {

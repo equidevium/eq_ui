@@ -52,6 +52,8 @@ fn sort_feedback(direction: SortDirection) -> Element {
 ///
 /// Resets the current page to 0 on every sort change. Renders per-column
 /// filter inputs for columns with `filterable: true`.
+// Internal helper with deliberately many parameters; refactor to a struct is out of scope.
+#[allow(clippy::too_many_arguments)]
 pub(super) fn render_header<T: Clone + PartialEq + 'static>(
     columns: &[EqColumnDef<T>],
     mut sort_state: Signal<Vec<SortState>>,
@@ -78,7 +80,7 @@ pub(super) fn render_header<T: Clone + PartialEq + 'static>(
 
     // Copy visible indices for the closure (can't capture slice).
     let vis = visible_indices.to_vec();
-    let on_sel = on_selection_change.clone();
+    let on_sel = *on_selection_change;
 
     rsx! {
         thead { class: s::THEAD,
@@ -283,7 +285,6 @@ pub(super) fn render_header<T: Clone + PartialEq + 'static>(
                                         // Prevent sort click from firing when starting a resize.
                                         onclick: move |evt: Event<MouseData>| { evt.stop_propagation(); },
                                         onmousedown: {
-                                            let column_widths = column_widths;
                                             move |evt: Event<MouseData>| {
                                                 evt.stop_propagation();
                                                 let current_w = {

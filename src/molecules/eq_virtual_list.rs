@@ -168,9 +168,9 @@ pub fn EqVirtualList(
     let offset_px = win_start as f64 * item_size;
 
     // ── Sticky header: find the active one ───────────────────────
-    let active_sticky: Option<&StickyHeader> = sticky_headers.iter()
-        .filter(|h| h.at_index <= first_visible)
-        .last();
+    let active_sticky: Option<&StickyHeader> = sticky_headers
+        .iter()
+        .rfind(|h| h.at_index <= first_visible);
 
     // ── Styles ───────────────────────────────────────────────────
     let viewport_base = if is_horizontal { s::VIEWPORT_HORIZONTAL } else { s::VIEWPORT };
@@ -288,7 +288,7 @@ fn DemoEqVirtualList() -> Element {
     let mut overscan_str = use_signal(|| "3".to_string());
     let mut horizontal = use_signal(|| false);
     let mut show_sticky = use_signal(|| false);
-    let mut scroll_idx_str = use_signal(|| String::new());
+    let mut scroll_idx_str = use_signal(String::new);
 
     let count: usize = count_str().parse().unwrap_or(10_000).max(1);
     let row_h: f64 = row_height_str().parse().unwrap_or(40.0_f64).max(10.0);
@@ -389,7 +389,7 @@ fn DemoEqVirtualList() -> Element {
                     scroll_to_index: scroll_idx,
                     sticky_headers,
                     render_item: move |idx: usize| {
-                        let bg = if idx % 2 == 0 { "bg-[var(--color-primary-dark)]/20" } else { "" };
+                        let bg = if idx.is_multiple_of(2) { "bg-[var(--color-primary-dark)]/20" } else { "" };
                         rsx! {
                             div {
                                 class: "px-4 flex items-center text-sm \

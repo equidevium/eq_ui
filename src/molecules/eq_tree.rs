@@ -207,16 +207,16 @@ impl TreeNode {
             return false;
         }
         // Check the node being moved doesn't contain the target parent (cycle)
-        if let Some(node) = self.find_by_id(node_id) {
-            if node.find_by_id(new_parent_id).is_some() {
-                return false;
-            }
+        let cycle = self
+            .find_by_id(node_id)
+            .is_some_and(|node| node.find_by_id(new_parent_id).is_some());
+        if cycle {
+            return false;
         }
         // Remove the node first, then insert under the new parent
-        if let Some(removed) = self.remove_node(node_id) {
-            if self.add_child_to(new_parent_id, removed).is_ok() {
-                return true;
-            }
+        let Some(removed) = self.remove_node(node_id) else { return false; };
+        if self.add_child_to(new_parent_id, removed).is_ok() {
+            return true;
         }
         false
     }
@@ -313,10 +313,10 @@ pub fn EqTree(
     });
 
     // Shared expansion state — replaces per-branch `use_signal(|| false)`.
-    let mut expanded_set: Signal<HashSet<String>> = use_signal(|| HashSet::new());
+    let mut expanded_set: Signal<HashSet<String>> = use_signal(HashSet::new);
 
     // Roving tabindex: the focused node id.
-    let mut focused_id: Signal<String> = use_signal(|| String::new());
+    let mut focused_id: Signal<String> = use_signal(String::new);
 
     let cls = merge_classes(s::TREE, &class);
 
@@ -396,10 +396,11 @@ pub fn EqTree(
                             expanded_set.set(set);
                         } else {
                             // Move to parent.
-                            if let Some(parent) = find_parent_id(&nodes_kb, id) {
-                                if let Some(pi) = visible.iter().position(|(pid, _, _)| *pid == parent) {
-                                    focus(pi);
-                                }
+                            let parent = find_parent_id(&nodes_kb, id);
+                            if let Some(pi) = parent
+                                .and_then(|p| visible.iter().position(|(pid, _, _)| *pid == p))
+                            {
+                                focus(pi);
                             }
                         }
                     }

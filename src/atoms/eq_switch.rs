@@ -116,11 +116,9 @@ pub fn EqSwitch(
             "aria-disabled": "{disabled}",
             tabindex: if disabled { "-1" } else { "0" },
             onclick: move |_| {
-                if !disabled {
-                    if let Some(ref handler) = on_change {
-                        handler.call(!checked);
-                    }
-                }
+                if disabled { return; }
+                let Some(ref handler) = on_change else { return; };
+                handler.call(!checked);
             },
             onkeydown: move |evt: Event<KeyboardData>| {
                 if disabled { return; }

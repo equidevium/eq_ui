@@ -38,7 +38,6 @@ use dioxus::prelude::*;
 #[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
     CodeBlock, DemoSection, PropSelect, PropToggle, StyleInfo, format_catalog,
-    PROP_ROW, PROP_LABEL, PROP_CONTROL,
 };
 #[cfg(feature = "playground")]
 use crate::atoms::{EqText, TextVariant};

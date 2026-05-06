@@ -284,17 +284,14 @@ pub fn EqDropdown(
                             focused_idx.set(Some(next));
                         }
                         Key::Enter => {
-                            if let Some(idx) = focused_idx() {
-                                if let Some(item) = items.get(idx) {
-                                    if !item.disabled && !item.is_separator {
-                                        if let Some(handler) = &on_select {
-                                            handler.call(item.id.clone());
-                                        }
-                                        open.set(false);
-                                        focused_idx.set(None);
-                                    }
-                                }
+                            let Some(idx) = focused_idx() else { return; };
+                            let Some(item) = items.get(idx) else { return; };
+                            if item.disabled || item.is_separator { return; }
+                            if let Some(handler) = &on_select {
+                                handler.call(item.id.clone());
                             }
+                            open.set(false);
+                            focused_idx.set(None);
                         }
                         _ => {}
                     }

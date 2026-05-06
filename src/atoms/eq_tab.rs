@@ -246,7 +246,7 @@ pub fn EqTab(
 
                     let badge_val = tab.badge;
                     let label = tab.label.clone();
-                    let on_change = on_change.clone();
+                    let on_change = on_change;
 
                     // Roving tabindex: only the active tab is in the tab order
                     let tab_idx = if is_active { "0" } else { "-1" };
@@ -263,11 +263,9 @@ pub fn EqTab(
                             tabindex: "{tab_idx}",
                             disabled: is_disabled,
                             onclick: move |_| {
-                                if !is_active && !is_disabled {
-                                    if let Some(ref handler) = on_change {
-                                        handler.call(idx);
-                                    }
-                                }
+                                if is_active || is_disabled { return; }
+                                let Some(ref handler) = on_change else { return; };
+                                handler.call(idx);
                             },
                             "{label}"
                             if let Some(count) = badge_val {

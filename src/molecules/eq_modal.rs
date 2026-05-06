@@ -147,7 +147,7 @@ pub fn EqModal(
     use_effect(move || {
         if open {
             // Focus the dialog panel itself so keyboard events are captured.
-            let dom_id = format!("{panel_id_focus}");
+            let dom_id = panel_id_focus.to_string();
             document::eval(&format!(
                 "setTimeout(() => document.getElementById('{dom_id}')?.focus(), 50)"
             ));

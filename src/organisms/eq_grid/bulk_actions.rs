@@ -51,13 +51,13 @@ pub(super) fn render_bulk_actions<T: Clone + PartialEq + 'static>(
 
     // Clone data needed by closures.
     let mut selected_rows = selected_rows;
-    let del_handler = on_delete.clone();
+    let del_handler = *on_delete;
     let del_indices = indices.clone();
 
-    let exp_handler = on_export.clone();
-    let clip_handler = on_clipboard.clone();
+    let exp_handler = *on_export;
+    let clip_handler = *on_clipboard;
 
-    let status_handler = on_status_change.clone();
+    let status_handler = *on_status_change;
 
     // Build aggregation data if any aggregation columns are specified.
     let agg_data: Vec<(&'static str, String)> = if !aggregation_columns.is_empty() {
@@ -229,10 +229,10 @@ fn render_export_dropdown<T: Clone + PartialEq + 'static>(
     let txt_content = export::export_txt(columns, data, &indices);
     let ods_content = export::export_ods(columns, data, &indices);
 
-    let handler_csv = on_export.clone();
-    let handler_json = on_export.clone();
-    let handler_txt = on_export.clone();
-    let handler_ods = on_export.clone();
+    let handler_csv = *on_export;
+    let handler_json = *on_export;
+    let handler_txt = *on_export;
+    let handler_ods = *on_export;
 
     rsx! {
         div { class: s::BULK_DROPDOWN,
@@ -299,8 +299,8 @@ fn render_clipboard_dropdown<T: Clone + PartialEq + 'static>(
     let csv_content = export::export_csv(columns, data, &indices);
     let txt_content = export::export_txt(columns, data, &indices);
 
-    let handler_csv = on_clipboard.clone();
-    let handler_txt = on_clipboard.clone();
+    let handler_csv = *on_clipboard;
+    let handler_txt = *on_clipboard;
 
     rsx! {
         div { class: s::BULK_DROPDOWN,
@@ -348,7 +348,7 @@ fn render_status_dropdown(
             for option in status_options.iter() {
                 {
                     let opt = option.clone();
-                    let handler = on_status_change.clone();
+                    let handler = *on_status_change;
                     let idx = indices.clone();
                     rsx! {
                         button {

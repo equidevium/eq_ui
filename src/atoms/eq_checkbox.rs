@@ -92,15 +92,13 @@ pub fn EqCheckbox(
             tabindex: if disabled { "-1" } else { "0" },
             onclick: move |evt| {
                 evt.stop_propagation();
-                if !disabled {
-                    if let Some(ref handler) = on_change {
-                        let next = match state {
-                            CheckboxState::Checked => CheckboxState::Unchecked,
-                            _ => CheckboxState::Checked,
-                        };
-                        handler.call(next);
-                    }
-                }
+                if disabled { return; }
+                let Some(ref handler) = on_change else { return; };
+                let next = match state {
+                    CheckboxState::Checked => CheckboxState::Unchecked,
+                    _ => CheckboxState::Checked,
+                };
+                handler.call(next);
             },
             onkeydown: move |evt: Event<KeyboardData>| {
                 if disabled { return; }
@@ -132,7 +130,7 @@ fn DemoEqCheckbox() -> Element {
     let mut state_idx = use_signal(|| 0usize); // 0=Unchecked, 1=Checked, 2=Indeterminate
     let mut disabled = use_signal(|| false);
     let mut size_str = use_signal(|| "Sm".to_string());
-    let mut label_text = use_signal(|| String::new());
+    let mut label_text = use_signal(String::new);
 
     let state = match state_idx() {
         1 => CheckboxState::Checked,
