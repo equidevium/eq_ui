@@ -19,6 +19,7 @@ struct PlaygroundAttr {
     no_variant_gallery: bool,
     custom_demo: bool,
     custom_gallery: bool,
+    mobile_friendly: bool,
 }
 
 impl Parse for PlaygroundAttr {
@@ -30,6 +31,7 @@ impl Parse for PlaygroundAttr {
         let mut no_variant_gallery = false;
         let mut custom_demo = false;
         let mut custom_gallery = false;
+        let mut mobile_friendly = false;
 
         while !input.is_empty() {
             let key: Ident = input.parse()?;
@@ -70,6 +72,9 @@ impl Parse for PlaygroundAttr {
                 "custom_gallery" => {
                     custom_gallery = true;
                 }
+                "mobile_friendly" => {
+                    mobile_friendly = true;
+                }
                 other => {
                     return Err(syn::Error::new(
                         key.span(),
@@ -95,6 +100,7 @@ impl Parse for PlaygroundAttr {
             no_variant_gallery,
             custom_demo,
             custom_gallery,
+            mobile_friendly,
         })
     }
 }
@@ -117,6 +123,7 @@ pub fn expand(attr: TokenStream, item: TokenStream) -> Result<TokenStream> {
     // Category ident: Atom → ComponentCategory::Atom
     let category = &attr.category;
     let description = &attr.description;
+    let mobile_friendly = attr.mobile_friendly;
 
     // Parse props from function signature
     let props = parse_props::extract_props(&func.sig)?;
@@ -206,6 +213,7 @@ pub fn expand(attr: TokenStream, item: TokenStream) -> Result<TokenStream> {
                 usage_examples: || vec![#(#example_tokens),*],
                 render_demo: #render_demo,
                 render_gallery: #render_gallery,
+                mobile_friendly: #mobile_friendly,
             }
         }
 
