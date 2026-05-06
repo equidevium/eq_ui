@@ -29,6 +29,7 @@ pub fn descriptor() -> ComponentDescriptor {
         ],
         render_demo: || rsx! { DemoThemeShowcase {} },
         render_gallery: || rsx! { DemoThemeShowcase {} },
+        mobile_friendly: false,
     }
 }
 

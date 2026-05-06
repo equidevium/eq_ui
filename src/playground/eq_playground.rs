@@ -106,7 +106,16 @@ fn build_tree_from_descriptors(descriptors: &[ComponentDescriptor]) -> Vec<TreeN
             let children: Vec<TreeNode> = descriptors
                 .iter()
                 .filter(|d| d.category == cat)
-                .map(|d| TreeNode::new(d.id, d.name))
+                .map(|d| {
+                    // Mark mobile-friendly components with a phone icon
+                    // so users can scan the tree for them at a glance.
+                    let label = if d.mobile_friendly {
+                        format!("{}  \u{1F4F1}", d.name)
+                    } else {
+                        d.name.to_string()
+                    };
+                    TreeNode::new(d.id, label)
+                })
                 .collect();
             TreeNode::new_with_children(
                 // Use category label as branch ID (lowercase)

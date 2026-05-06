@@ -97,6 +97,7 @@ impl DeviceModel {
     ],
     custom_demo,
     custom_gallery,
+    mobile_friendly,
 )]
 #[component]
 pub fn EqDeviceFrame(

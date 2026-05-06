@@ -43,6 +43,7 @@ pub fn descriptor() -> ComponentDescriptor {
         ],
         render_demo: || rsx! { GuideContent {} },
         render_gallery: || rsx! { GuideContent {} },
+        mobile_friendly: false,
     }
 }
 
@@ -164,6 +165,7 @@ pub fn descriptor() -> ComponentDescriptor {
         ],
         render_demo: || rsx! { DemoEqMyWidget {} },
         render_gallery: || rsx! { GalleryEqMyWidget {} },
+        mobile_friendly: false,
     }
 }"#;
 

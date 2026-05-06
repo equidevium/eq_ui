@@ -712,6 +712,7 @@ pub fn descriptor() -> ComponentDescriptor {
         ],
         render_demo: || rsx! { DemoEqGrid {} },
         render_gallery: || rsx! { GalleryEqGrid {} },
+        mobile_friendly: false,
     }
 }
 

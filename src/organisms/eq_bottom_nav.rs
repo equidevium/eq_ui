@@ -120,6 +120,7 @@ impl BottomNavItem {
     ],
     custom_demo,
     custom_gallery,
+    mobile_friendly,
 )]
 #[component]
 pub fn EqBottomNav(

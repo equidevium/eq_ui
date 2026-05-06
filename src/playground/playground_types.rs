@@ -78,4 +78,10 @@ pub struct ComponentDescriptor {
     pub render_demo: fn() -> Element,
     /// Renders a static gallery of all variants.
     pub render_gallery: fn() -> Element,
+    /// `true` if the component has been verified inside `EqDeviceFrame`
+    /// (its playground demo includes a device-frame preview). The
+    /// playground tree renders a small mobile icon next to the name
+    /// when this is set, so consumers can find mobile-tested
+    /// components at a glance.
+    pub mobile_friendly: bool,
 }

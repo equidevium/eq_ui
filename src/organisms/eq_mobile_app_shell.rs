@@ -69,6 +69,7 @@ use crate::playground::playground_types::{
     ],
     custom_demo,
     custom_gallery,
+    mobile_friendly,
 )]
 #[component]
 pub fn EqMobileAppShell(
