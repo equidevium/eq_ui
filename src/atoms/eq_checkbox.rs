@@ -5,6 +5,7 @@ use super::eq_checkbox_styles as s;
 use super::eq_icon_paths;
 use super::{EqIcon, IconSize};
 use crate::theme::merge_classes;
+use crate::{PlaygroundEnum, playground};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
@@ -17,7 +18,7 @@ use crate::atoms::{EqText, TextVariant};
 use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
 
 /// Visual state of the checkbox.
-#[derive(Clone, Copy, PartialEq, Default)]
+#[derive(Clone, Copy, PartialEq, Default, PlaygroundEnum)]
 pub enum CheckboxState {
     /// Empty square.
     #[default]
@@ -33,6 +34,17 @@ pub enum CheckboxState {
 /// Can be used standalone or composed inside other components (e.g. EqGrid
 /// row selection). The component renders an icon-based checkbox - no native
 /// `<input type="checkbox">` - for full theme control.
+#[playground(
+    category = Atom,
+    description = "Themed checkbox with checked, unchecked, and indeterminate states. \
+                   Icon-based rendering for full theme control.",
+    examples = [
+        ("Basic checkbox", "let mut agreed = use_signal(|| CheckboxState::Unchecked);\n\nEqCheckbox {\n    state: agreed(),\n    label: \"I agree\",\n    on_change: move |next| agreed.set(next),\n}"),
+        ("Indeterminate", "EqCheckbox {\n    state: CheckboxState::Indeterminate,\n    label: \"Select all\",\n    on_change: move |_| { /* select all */ },\n}"),
+    ],
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqCheckbox(
     /// Current visual state.
@@ -80,15 +92,13 @@ pub fn EqCheckbox(
             tabindex: if disabled { "-1" } else { "0" },
             onclick: move |evt| {
                 evt.stop_propagation();
-                if !disabled {
-                    if let Some(ref handler) = on_change {
-                        let next = match state {
-                            CheckboxState::Checked => CheckboxState::Unchecked,
-                            _ => CheckboxState::Checked,
-                        };
-                        handler.call(next);
-                    }
-                }
+                if disabled { return; }
+                let Some(ref handler) = on_change else { return; };
+                let next = match state {
+                    CheckboxState::Checked => CheckboxState::Unchecked,
+                    _ => CheckboxState::Checked,
+                };
+                handler.call(next);
             },
             onkeydown: move |evt: Event<KeyboardData>| {
                 if disabled { return; }
@@ -112,33 +122,7 @@ pub fn EqCheckbox(
     }
 }
 
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-checkbox",
-        name: "EqCheckbox",
-        category: ComponentCategory::Atom,
-        description: "Themed checkbox with checked, unchecked, and indeterminate states. \
-                      Icon-based rendering for full theme control, supports optional labels and disabled state.",
-        style_tokens: || s::catalog(),
-        usage_examples: || vec![
-            UsageExample {
-                label: "Basic checkbox",
-                code: "let mut agreed = use_signal(|| CheckboxState::Unchecked);\n\nEqCheckbox {\n    state: agreed(),\n    label: \"I agree\",\n    on_change: move |next| agreed.set(next),\n}".into(),
-            },
-            UsageExample {
-                label: "Indeterminate (select all)",
-                code: "EqCheckbox {\n    state: CheckboxState::Indeterminate,\n    label: \"Select all\",\n    on_change: move |_| { /* select all items */ },\n}".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqCheckbox {} },
-        render_gallery: || rsx! { GalleryEqCheckbox {} },
-    }
-}
-
-// ── Interactive demo ───────────────────────────────────────────────
+// ── Custom demo (three-state cycling needs manual wiring) ─────────
 
 #[cfg(feature = "playground")]
 #[component]
@@ -146,7 +130,7 @@ fn DemoEqCheckbox() -> Element {
     let mut state_idx = use_signal(|| 0usize); // 0=Unchecked, 1=Checked, 2=Indeterminate
     let mut disabled = use_signal(|| false);
     let mut size_str = use_signal(|| "Sm".to_string());
-    let mut label_text = use_signal(|| String::new());
+    let mut label_text = use_signal(String::new);
 
     let state = match state_idx() {
         1 => CheckboxState::Checked,
@@ -301,5 +285,24 @@ fn GalleryEqCheckbox() -> Element {
                 EqCheckbox { state: CheckboxState::Indeterminate, label: "Partial selection" }
             }
         }
+    }
+}
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| rsx! { EqCheckbox {} });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_state_is_unchecked() {
+        let s: CheckboxState = Default::default();
+        assert!(matches!(s, CheckboxState::Unchecked));
     }
 }

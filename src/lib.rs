@@ -1,7 +1,10 @@
 //! EqUI - Portable Dioxus UI component library.
 //!
 //! Atomic design building blocks (atoms, molecules, organisms) + theme.
-//! This crate has a single dependency: `dioxus`.
+//!
+//! Runtime dependencies: `dioxus`, `serde`, `serde_json`, and the
+//! workspace-local proc-macro crate `eq_ui_macros`. Build dependency:
+//! `eq_ui_build`.
 //!
 //! Enable the `playground` feature to access interactive component demos
 //! and the `EqPlayground` showcase.
@@ -19,6 +22,10 @@ pub mod atoms;
 pub mod molecules;
 pub mod organisms;
 pub mod eq_theme;
+pub mod playground_enum_trait;
+pub mod prelude;
+
+pub use eq_ui_macros::{playground, PlaygroundEnum};
 
 #[cfg(feature = "playground")]
 pub use playground::{ComponentDescriptor, ComponentCategory, UsageExample, EqPlayground};
@@ -49,12 +56,25 @@ pub fn all_component_descriptors() -> Vec<ComponentDescriptor> {
         atoms::eq_tab::descriptor(),
         atoms::eq_radio_group::descriptor(),
         atoms::eq_switch::descriptor(),
+        atoms::eq_slider::descriptor(),
+        atoms::eq_avatar::descriptor(),
+        atoms::eq_tooltip::descriptor(),
+        atoms::eq_select::descriptor(),
         // Molecules
         molecules::eq_card::descriptor(),
         molecules::eq_image_card::descriptor(),
         molecules::eq_carousel::descriptor(),
         molecules::eq_tree::descriptor(),
         molecules::eq_accordion::descriptor(),
+        molecules::eq_nav_item::descriptor(),
+        molecules::eq_cta::descriptor(),
+        molecules::eq_modal::descriptor(),
+        molecules::eq_toast::descriptor(),
+        molecules::eq_dropdown::descriptor(),
+        molecules::eq_date_picker::descriptor(),
+        molecules::eq_calendar::descriptor(),
+        molecules::eq_virtual_list::descriptor(),
+        molecules::eq_device_frame::descriptor(),
         // Organisms
         organisms::eq_header::descriptor(),
         organisms::eq_footer::descriptor(),
@@ -62,7 +82,12 @@ pub fn all_component_descriptors() -> Vec<ComponentDescriptor> {
         organisms::eq_page_section::descriptor(),
         organisms::eq_app_shell::descriptor(),
         organisms::eq_navbar::descriptor(),
+        organisms::eq_drawer::descriptor(),
         organisms::eq_grid::grid::descriptor(),
+        organisms::eq_file_picker::descriptor(),
+        organisms::eq_toolbar::descriptor(),
+        organisms::eq_bottom_nav::descriptor(),
+        organisms::eq_mobile_app_shell::descriptor(),
         // Theming
         playground::theme_showcase::descriptor(),
     ]

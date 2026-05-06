@@ -1,6 +1,7 @@
 use dioxus::prelude::*;
 use super::eq_footer_styles as s;
 use crate::theme::merge_classes;
+use crate::playground;
 
 #[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{CodeBlock, DemoSection, PropInput, PropSelect, StyleInfo, format_catalog};
@@ -54,6 +55,16 @@ fn default_link_groups() -> Vec<FooterLinkGroup> {
 }
 
 /// Footer component containing site-wide footer content
+#[playground(
+    category = Organism,
+    description = "Site-wide footer with link groups, copyright info, and customizable year/holder/tagline.",
+    examples = [
+        ("Basic", "EqFooter {}"),
+        ("Custom", "EqFooter {\n    copyright_holder: \"Acme Corp\",\n    year: 2026,\n    tagline: \"Innovate. Build. Ship.\",\n}"),
+    ],
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqFooter(
     #[props(default = "Equidevium")] copyright_holder: &'static str,
@@ -92,31 +103,6 @@ pub fn EqFooter(
                 }
             }
         }
-    }
-}
-
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-footer",
-        name: "EqFooter",
-        category: ComponentCategory::Organism,
-        description: "Site-wide footer with link groups, copyright info, and customizable year/holder/tagline.",
-        style_tokens: || s::catalog(),
-        usage_examples: || vec![
-            UsageExample {
-                label: "Basic",
-                code: "EqFooter {}".into(),
-            },
-            UsageExample {
-                label: "Custom",
-                code: "EqFooter {\n    copyright_holder: \"Acme Corp\",\n    year: 2026,\n    tagline: \"Innovate. Build. Ship.\",\n}".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqFooter {} },
-        render_gallery: || rsx! { GalleryEqFooter {} },
     }
 }
 
@@ -198,5 +184,41 @@ fn GalleryEqFooter() -> Element {
                 }
             }
         }
+    }
+}
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| rsx! { EqFooter {} });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn footer_link_struct_literal() {
+        let link = FooterLink { label: "Docs", href: "/docs" };
+        assert_eq!(link.label, "Docs");
+        assert_eq!(link.href, "/docs");
+    }
+
+    #[test]
+    fn footer_link_group_struct_literal() {
+        let group = FooterLinkGroup {
+            title: "Resources",
+            links: vec![FooterLink { label: "Docs", href: "/docs" }],
+        };
+        assert_eq!(group.title, "Resources");
+        assert_eq!(group.links.len(), 1);
+    }
+
+    #[test]
+    fn default_link_groups_has_three() {
+        let groups = default_link_groups();
+        assert_eq!(groups.len(), 3);
     }
 }

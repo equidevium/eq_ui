@@ -6,20 +6,38 @@
 //! variants set the fill colour. Gradient fill reuses the
 //! theme's button gradient palette by default.
 //!
-//! ```rust,ignore
-//! EqProgress { value: 0.65 }
-//! EqProgress { value: 0.3, variant: ProgressVariant::Warning, label: true }
-//! EqProgress { indeterminate: true, size: ProgressSize::Lg }
+//! ```no_run
+//! use eq_ui::prelude::*;
+//!
+//! let _: Element = rsx! { EqProgress { value: 0.65 } };
+//! ```
+//!
+//! ```no_run
+//! use eq_ui::prelude::*;
+//! use eq_ui::atoms::ProgressVariant;
+//!
+//! let _: Element = rsx! {
+//!     EqProgress { value: 0.3, variant: ProgressVariant::Warning, label: true }
+//! };
+//! ```
+//!
+//! ```no_run
+//! use eq_ui::prelude::*;
+//! use eq_ui::atoms::ProgressSize;
+//!
+//! let _: Element = rsx! {
+//!     EqProgress { indeterminate: true, size: ProgressSize::Lg }
+//! };
 //! ```
 
 use super::eq_progress_styles as s;
 use crate::theme::merge_classes;
+use crate::{PlaygroundEnum, playground};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
     CodeBlock, DemoSection, PropSelect, PropToggle, StyleInfo, format_catalog,
-    PROP_ROW, PROP_LABEL, PROP_CONTROL,
 };
 #[cfg(feature = "playground")]
 use crate::atoms::{EqText, TextVariant};
@@ -27,7 +45,7 @@ use crate::atoms::{EqText, TextVariant};
 use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
 
 /// Semantic colour variant for the progress fill.
-#[derive(Clone, Copy, PartialEq, Default)]
+#[derive(Clone, Copy, PartialEq, Default, PlaygroundEnum)]
 pub enum ProgressVariant {
     /// Theme gradient fill (default).
     #[default]
@@ -41,7 +59,7 @@ pub enum ProgressVariant {
 }
 
 /// Height preset for the progress track.
-#[derive(Clone, Copy, PartialEq, Default)]
+#[derive(Clone, Copy, PartialEq, Default, PlaygroundEnum)]
 pub enum ProgressSize {
     /// 4px track height.
     Sm,
@@ -57,6 +75,18 @@ pub enum ProgressSize {
 /// Renders a track with a fill bar whose width reflects the `value` prop
 /// (0.0–1.0). When `indeterminate` is true the fill animates continuously
 /// regardless of `value`. An optional label displays the percentage.
+#[playground(
+    category = Atom,
+    description = "Themed progress bar with determinate/indeterminate modes, \
+                   semantic variants, gradient fill, and size presets.",
+    examples = [
+        ("Basic", "EqProgress { value: 0.65 }"),
+        ("With label & variant", "EqProgress {\n    value: 0.3,\n    variant: ProgressVariant::Warning,\n    label: true,\n}"),
+        ("Indeterminate", "EqProgress { indeterminate: true, size: ProgressSize::Lg }"),
+    ],
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqProgress(
     /// Fill amount from 0.0 (empty) to 1.0 (full). Clamped internally.
@@ -145,37 +175,7 @@ pub fn EqProgress(
     }
 }
 
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-progress",
-        name: "EqProgress",
-        category: ComponentCategory::Atom,
-        description: "Themed progress bar with determinate/indeterminate modes, \
-                      semantic variants, gradient fill, and size presets.",
-        style_tokens: || s::catalog(),
-        usage_examples: || vec![
-            UsageExample {
-                label: "Basic",
-                code: "EqProgress { value: 0.65 }".into(),
-            },
-            UsageExample {
-                label: "With label & variant",
-                code: "EqProgress {\n    value: 0.3,\n    variant: ProgressVariant::Warning,\n    label: true,\n}".into(),
-            },
-            UsageExample {
-                label: "Indeterminate",
-                code: "EqProgress { indeterminate: true, size: ProgressSize::Lg }".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqProgress {} },
-        render_gallery: || rsx! { GalleryEqProgress {} },
-    }
-}
-
-// ── Interactive demo ───────────────────────────────────────────────
+// ── Custom demo (range slider for value, variant/size galleries) ──
 
 #[cfg(feature = "playground")]
 #[component]
@@ -362,5 +362,30 @@ fn GalleryEqProgress() -> Element {
                 }
             }
         }
+    }
+}
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| rsx! { EqProgress {} });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_variant_is_default() {
+        let v: ProgressVariant = Default::default();
+        assert!(matches!(v, ProgressVariant::Default));
+    }
+
+    #[test]
+    fn default_size_is_md() {
+        let s: ProgressSize = Default::default();
+        assert!(matches!(s, ProgressSize::Md));
     }
 }

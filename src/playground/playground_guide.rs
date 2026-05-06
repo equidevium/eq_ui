@@ -6,8 +6,8 @@
 //! new components, the style catalog convention, and feature gating.
 
 use dioxus::prelude::*;
-use crate::atoms::{EqText, TextVariant, EqDivider};
-use crate::playground::playground_helpers::{CodeBlock, DemoSection, highlight_rust};
+use crate::atoms::EqDivider;
+use crate::playground::playground_helpers::{CodeBlock, DemoSection};
 use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
 
 // ── Descriptor ────────────────────────────────────────────────────
@@ -43,6 +43,7 @@ pub fn descriptor() -> ComponentDescriptor {
         ],
         render_demo: || rsx! { GuideContent {} },
         render_gallery: || rsx! { GuideContent {} },
+        mobile_friendly: false,
     }
 }
 
@@ -164,6 +165,7 @@ pub fn descriptor() -> ComponentDescriptor {
         ],
         render_demo: || rsx! { DemoEqMyWidget {} },
         render_gallery: || rsx! { GalleryEqMyWidget {} },
+        mobile_friendly: false,
     }
 }"#;
 

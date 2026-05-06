@@ -1,8 +1,10 @@
 use dioxus::prelude::*;
-use super::eq_page_section_styles as s;
 use super::eq_page_section_styles::*;
 use crate::theme::{merge_classes, CONTAINER_LAYOUT};
+use crate::playground;
 
+#[cfg(feature = "playground")]
+use super::eq_page_section_styles as s;
 #[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{CodeBlock, DemoSection, PropInput, StyleInfo, format_catalog};
 #[cfg(feature = "playground")]
@@ -12,6 +14,16 @@ use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory
 
 /// A structural wrapper for a page block/section.
 /// Use this in pages to keep spacing and width consistent.
+#[playground(
+    category = Organism,
+    description = "Page section wrapper with optional title, description, and consistent spacing.",
+    examples = [
+        ("Basic", "EqPageSection {\n    title: \"Features\",\n    description: \"What makes this product special.\",\n}"),
+        ("With children", "EqPageSection {\n    title: \"With Children\",\n    description: \"Extra content below.\",\n    div { \"Nested child content\" }\n}"),
+    ],
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqPageSection(
     /// Optional id for anchor links, e.g. "services"
@@ -45,31 +57,6 @@ pub fn EqPageSection(
                 }
             }
         }
-    }
-}
-
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-page-section",
-        name: "EqPageSection",
-        category: ComponentCategory::Organism,
-        description: "Page section wrapper with optional title, description, and consistent spacing.",
-        style_tokens: || s::catalog(),
-        usage_examples: || vec![
-            UsageExample {
-                label: "Basic",
-                code: "EqPageSection {\n    title: \"Features\",\n    description: \"What makes this product special.\",\n}".into(),
-            },
-            UsageExample {
-                label: "With children",
-                code: "EqPageSection {\n    title: \"With Children\",\n    description: \"Extra content below.\",\n    div { \"Nested child content\" }\n}".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqPageSection {} },
-        render_gallery: || rsx! { GalleryEqPageSection {} },
     }
 }
 
@@ -148,5 +135,18 @@ fn GalleryEqPageSection() -> Element {
                 }
             }
         }
+    }
+}
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| rsx! { EqPageSection {} });
+        dom.rebuild_in_place();
     }
 }

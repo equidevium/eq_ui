@@ -39,11 +39,12 @@ use dioxus::prelude::*;
 #[component]
 fn ThemeSwitcher() -> Element {
     let mut theme = EqTheme::use_theme();
+    let current_name = format!("{:?}", *theme.read());
 
     rsx! {
         select {
             class: s::THEME_SELECT,
-            value: format!("{:?}", *theme.read()),
+            value: "{current_name}",
             onchange: move |evt: Event<FormData>| {
                 let val = evt.value();
                 let new_theme = EqTheme::build_in_variants()
@@ -55,7 +56,11 @@ fn ThemeSwitcher() -> Element {
             },
 
             for (name, _variant) in EqTheme::build_in_variants() {
-                option { value: "{name}", "{name}" }
+                option {
+                    value: "{name}",
+                    selected: name == current_name,
+                    "{name}"
+                }
             }
         }
     }
@@ -101,7 +106,16 @@ fn build_tree_from_descriptors(descriptors: &[ComponentDescriptor]) -> Vec<TreeN
             let children: Vec<TreeNode> = descriptors
                 .iter()
                 .filter(|d| d.category == cat)
-                .map(|d| TreeNode::new(d.id, d.name))
+                .map(|d| {
+                    // Mark mobile-friendly components with a phone icon
+                    // so users can scan the tree for them at a glance.
+                    let label = if d.mobile_friendly {
+                        format!("{}  \u{1F4F1}", d.name)
+                    } else {
+                        d.name.to_string()
+                    };
+                    TreeNode::new(d.id, label)
+                })
                 .collect();
             TreeNode::new_with_children(
                 // Use category label as branch ID (lowercase)
@@ -192,6 +206,7 @@ pub fn EqPlayground(
         EqThemeRenderer {}
 
         EqAppShell {
+            class: "pt-6 px-2",
             header: rsx! {
                 EqHeader {
                     site_title: site_title,

@@ -1,5 +1,6 @@
 use super::eq_tree_styles as s;
 use crate::theme::merge_classes;
+use crate::playground;
 use dioxus::document;
 use dioxus::prelude::*;
 use std::collections::HashSet;
@@ -206,16 +207,16 @@ impl TreeNode {
             return false;
         }
         // Check the node being moved doesn't contain the target parent (cycle)
-        if let Some(node) = self.find_by_id(node_id) {
-            if node.find_by_id(new_parent_id).is_some() {
-                return false;
-            }
+        let cycle = self
+            .find_by_id(node_id)
+            .is_some_and(|node| node.find_by_id(new_parent_id).is_some());
+        if cycle {
+            return false;
         }
         // Remove the node first, then insert under the new parent
-        if let Some(removed) = self.remove_node(node_id) {
-            if self.add_child_to(new_parent_id, removed).is_ok() {
-                return true;
-            }
+        let Some(removed) = self.remove_node(node_id) else { return false; };
+        if self.add_child_to(new_parent_id, removed).is_ok() {
+            return true;
         }
         false
     }
@@ -273,6 +274,17 @@ fn find_parent_id(nodes: &[TreeNode], target: &str) -> Option<String> {
 /// (Up / Down / Left / Right / Home / End / Enter / Space).
 ///
 /// [tv]: https://www.w3.org/WAI/ARIA/apg/patterns/treeview/
+#[playground(
+    category = Molecule,
+    description = "Collapsible tree view for hierarchical data. Branches expand to show children, \
+                   leaves trigger selection events. Optional child count display.",
+    examples = [
+        ("Basic", "let nodes = vec![\n    TreeNode::new_with_children(\"branch\", \"Branch\", vec![\n        TreeNode::new(\"leaf-1\", \"Leaf 1\"),\n        TreeNode::new(\"leaf-2\", \"Leaf 2\"),\n    ]),\n];\n\nEqTree {\n    nodes: nodes,\n    on_select: move |id: String| { /* handle */ },\n}"),
+        ("With counts", "EqTree {\n    nodes,\n    selected: selected(),\n    on_select: move |id: String| selected.set(Some(id)),\n    show_count: true,\n}"),
+    ],
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqTree(
     /// The root-level nodes to display.
@@ -301,10 +313,10 @@ pub fn EqTree(
     });
 
     // Shared expansion state — replaces per-branch `use_signal(|| false)`.
-    let mut expanded_set: Signal<HashSet<String>> = use_signal(|| HashSet::new());
+    let mut expanded_set: Signal<HashSet<String>> = use_signal(HashSet::new);
 
     // Roving tabindex: the focused node id.
-    let mut focused_id: Signal<String> = use_signal(|| String::new());
+    let mut focused_id: Signal<String> = use_signal(String::new);
 
     let cls = merge_classes(s::TREE, &class);
 
@@ -384,10 +396,11 @@ pub fn EqTree(
                             expanded_set.set(set);
                         } else {
                             // Move to parent.
-                            if let Some(parent) = find_parent_id(&nodes_kb, id) {
-                                if let Some(pi) = visible.iter().position(|(pid, _, _)| *pid == parent) {
-                                    focus(pi);
-                                }
+                            let parent = find_parent_id(&nodes_kb, id);
+                            if let Some(pi) = parent
+                                .and_then(|p| visible.iter().position(|(pid, _, _)| *pid == p))
+                            {
+                                focus(pi);
                             }
                         }
                     }
@@ -565,32 +578,6 @@ fn TreeBranch(
     }
 }
 
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-tree",
-        name: "EqTree",
-        category: ComponentCategory::Molecule,
-        description: "Collapsible tree view for hierarchical data. Branches expand to show children, \
-                      leaves trigger selection events. Optional child count display.",
-        style_tokens: || s::catalog(),
-        usage_examples: || vec![
-            UsageExample {
-                label: "Basic",
-                code: "let nodes = vec![\n    TreeNode::new_with_children(\"branch\", \"Branch\", vec![\n        TreeNode::new(\"leaf-1\", \"Leaf 1\"),\n        TreeNode::new(\"leaf-2\", \"Leaf 2\"),\n    ]),\n];\n\nEqTree {\n    nodes: nodes,\n    on_select: move |id: String| { /* handle */ },\n}".into(),
-            },
-            UsageExample {
-                label: "With counts",
-                code: "EqTree {\n    nodes,\n    selected: selected(),\n    on_select: move |id: String| selected.set(Some(id)),\n    show_count: true,\n}".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqTree {} },
-        render_gallery: || rsx! { GalleryEqTree {} },
-    }
-}
-
 // ── Interactive demo ───────────────────────────────────────────────
 
 #[cfg(feature = "playground")]
@@ -718,5 +705,58 @@ fn GalleryEqTree() -> Element {
                 }
             }
         }
+    }
+}
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| {
+            rsx! {
+                EqTree {
+                    nodes: vec![TreeNode::new("a", "Alpha")],
+                    on_select: move |_| {},
+                }
+            }
+        });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn tree_node_new_is_leaf() {
+        let n = TreeNode::new("a", "Alpha");
+        assert_eq!(n.id, "a");
+        assert_eq!(n.label, "Alpha");
+        assert!(n.is_leaf());
+        assert_eq!(n.leaf_count(), 1);
+    }
+
+    #[test]
+    fn tree_node_with_children_sets_parent_id() {
+        let root = TreeNode::new_with_children(
+            "root",
+            "Root",
+            vec![TreeNode::new("a", "A"), TreeNode::new("b", "B")],
+        );
+        assert_eq!(root.children.len(), 2);
+        assert_eq!(root.children[0].parent_id.as_deref(), Some("root"));
+        assert_eq!(root.children[1].parent_id.as_deref(), Some("root"));
+        assert_eq!(root.leaf_count(), 2);
+    }
+
+    #[test]
+    fn tree_find_by_id() {
+        let root = TreeNode::new_with_children(
+            "root",
+            "Root",
+            vec![TreeNode::new("a", "A")],
+        );
+        assert!(root.find_by_id("a").is_some());
+        assert!(root.find_by_id("missing").is_none());
     }
 }

@@ -1,6 +1,7 @@
 use dioxus::prelude::*;
 use super::eq_header_styles as s;
 use crate::theme::{merge_classes, CONTAINER_LAYOUT};
+use crate::playground;
 
 #[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{CodeBlock, DemoSection, PropSelect, StyleInfo, format_catalog};
@@ -14,10 +15,29 @@ use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory
 /// Portable header component.
 /// Accepts nav content as an Element prop so the platform crate
 /// can provide router-aware Links or plain `<a>` tags.
+#[playground(
+    category = Organism,
+    description = "Sticky navigation header with configurable site title and nav items.",
+    examples = [
+        ("Basic", "EqHeader { site_title: \"My App\" }"),
+        ("With navigation", "EqHeader {\n    site_title: \"My App\",\n    nav: rsx! {\n        li { a { href: \"/\", \"Home\" } }\n        li { a { href: \"/about\", \"About\" } }\n    },\n}"),
+    ],
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqHeader(
     #[props(default = "Equidevium")]
     site_title: &'static str,
+    /// When false, the brand/site_title is hidden entirely.
+    /// Useful when integrating with a router navbar that provides
+    /// its own branding or when the header is nav-only.
+    #[props(default = true)]
+    show_brand: bool,
+    /// When true (default), the brand is a clickable link to "/".
+    /// Set to false to render the brand as plain text.
+    #[props(default = true)]
+    brand_link: bool,
     /// Navigation content - the caller provides `<li>` elements.
     /// EqHeader wraps them in `<nav><ul>` with correct styling.
     nav: Option<Element>,
@@ -29,11 +49,20 @@ pub fn EqHeader(
     rsx! {
         header { class: "{cls}",
             div { class: "{CONTAINER_LAYOUT} {s::HEADER_INNER}",
-                h1 {
-                    a {
-                        class: s::BRAND,
-                        href: "/",
-                        "{site_title}"
+                if show_brand {
+                    h1 {
+                        if brand_link {
+                            a {
+                                class: s::BRAND,
+                                href: "/",
+                                "{site_title}"
+                            }
+                        } else {
+                            span {
+                                class: s::BRAND,
+                                "{site_title}"
+                            }
+                        }
                     }
                 }
                 if let Some(nav_content) = nav {
@@ -45,31 +74,6 @@ pub fn EqHeader(
                 }
             }
         }
-    }
-}
-
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-header",
-        name: "EqHeader",
-        category: ComponentCategory::Organism,
-        description: "Sticky navigation header with configurable site title and nav items.",
-        style_tokens: || s::catalog(),
-        usage_examples: || vec![
-            UsageExample {
-                label: "Basic",
-                code: "EqHeader { site_title: \"My App\" }".into(),
-            },
-            UsageExample {
-                label: "With navigation",
-                code: "EqHeader {\n    site_title: \"My App\",\n    nav: rsx! {\n        li { a { href: \"/\", \"Home\" } }\n        li { a { href: \"/about\", \"About\" } }\n    },\n}".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqHeader {} },
-        render_gallery: || rsx! { GalleryEqHeader {} },
     }
 }
 
@@ -171,5 +175,18 @@ fn GalleryEqHeader() -> Element {
                 }
             }
         }
+    }
+}
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| rsx! { EqHeader {} });
+        dom.rebuild_in_place();
     }
 }

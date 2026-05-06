@@ -141,13 +141,13 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
 ) -> Element {
     // ── Internal state ──────────────────────────────────────────
 
-    let sort_state = use_signal(|| Vec::<SortState>::new());
+    let sort_state = use_signal(Vec::<SortState>::new);
     let mut current_page = use_signal(|| 0usize);
     let mut selected_row = use_signal(|| Option::<usize>::None);
-    let mut selected_rows = use_signal(|| HashSet::<usize>::new());
-    let quick_filter_text = use_signal(|| String::new());
-    let column_filters = use_signal(|| HashMap::<&'static str, String>::new());
-    let column_widths = use_signal(|| HashMap::<&'static str, f64>::new());
+    let mut selected_rows = use_signal(HashSet::<usize>::new);
+    let quick_filter_text = use_signal(String::new);
+    let column_filters = use_signal(HashMap::<&'static str, String>::new);
+    let column_widths = use_signal(HashMap::<&'static str, f64>::new);
     let resize_active = use_signal(|| Option::<ResizeState>::None);
     let mut container_element: Signal<Option<MountedEvent>> = use_signal(|| None);
     let mut container_width = use_signal(|| 0.0_f64);
@@ -165,7 +165,7 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
     let reorder_from: Signal<Option<usize>> = use_signal(|| None);
     let reorder_over: Signal<Option<usize>> = use_signal(|| None);
     // ARIA live region text for announcing drag/reorder operations.
-    let mut move_announcement: Signal<String> = use_signal(|| String::new());
+    let mut move_announcement: Signal<String> = use_signal(String::new);
 
     // Clear selection when data length changes (e.g. rows moved via
     // drag-and-drop). Stale indices would point at wrong rows.
@@ -288,7 +288,7 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
 
     let total_rows = sorted_indices.len();
     let total_pages = if paginate && page_size > 0 {
-        (total_rows + page_size - 1) / page_size
+        total_rows.div_ceil(page_size)
     } else {
         1
     };
@@ -406,7 +406,6 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
                     "aria-hidden": "true",
                     onmousemove: {
                         let mut column_widths = column_widths;
-                        let resize_active = resize_active;
                         let columns = columns.clone();
                         move |evt: Event<MouseData>| {
                             if let Some(ref state) = *resize_active.read() {
@@ -467,7 +466,6 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
                 ondragstart: {
                     let drag_id = drag_id;
                     let selected_rows = selected_rows;
-                    let drag_ctx = drag_ctx;
                     move |_| {
                         if let (Some(id), Some(mut ctx)) = (drag_id, drag_ctx) {
                             let indices: Vec<usize> = {
@@ -491,13 +489,11 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
                     drop_hover.set(false);
                 },
                 ondrop: {
-                    let on_drop_receive = on_drop_receive.clone();
-                    let drag_ctx = drag_ctx;
                     move |evt: Event<DragData>| {
                         evt.prevent_default();
                         drop_hover.set(false);
                         if let Some(mut ctx) = drag_ctx {
-                            if let Some(payload) = ctx().take() {
+                            if let Some(payload) = ctx() {
                                 if announce_moves {
                                     let count = payload.indices.len();
                                     let src = payload.source_id;
@@ -631,7 +627,7 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
             }
 
             // Bulk action bar (visible when Multi selection has rows selected)
-            if row_selection == RowSelection::Multi && selected_rows.read().len() > 0 {
+            if row_selection == RowSelection::Multi && !selected_rows.read().is_empty() {
                 {
                     let count = selected_rows.read().len();
                     render_bulk_actions(
@@ -712,6 +708,7 @@ pub fn descriptor() -> ComponentDescriptor {
         ],
         render_demo: || rsx! { DemoEqGrid {} },
         render_gallery: || rsx! { GalleryEqGrid {} },
+        mobile_friendly: false,
     }
 }
 
@@ -869,9 +866,9 @@ fn DemoEqGridDragDrop() -> Element {
     let _drag_ctx: Signal<Option<GridDragPayload>> =
         use_context_provider(|| Signal::new(Option::<GridDragPayload>::None));
 
-    let mut team_a = use_signal(|| team_a_data());
-    let mut team_b = use_signal(|| team_b_data());
-    let mut status = use_signal(|| String::new());
+    let team_a = use_signal(team_a_data);
+    let team_b = use_signal(team_b_data);
+    let status = use_signal(String::new);
 
     // Re-index helper: updates the `index` field to match position.
     let reindex = |data: &mut Vec<DndPerson>| {
@@ -1018,7 +1015,7 @@ fn DemoEqGridReorder() -> Element {
         ]
     });
 
-    let mut last_move = use_signal(|| String::new());
+    let mut last_move = use_signal(String::new);
 
     let columns = vec![
         EqColumnDef::new("index", "#", |e: &DemoEmployee| e.index.to_string())
@@ -1117,7 +1114,7 @@ fn DemoEqGrid() -> Element {
         _ => RowSelection::None,
     };
 
-    let mut employees = use_signal(|| demo_employees());
+    let mut employees = use_signal(demo_employees);
     // When virtualization is active, switch to a large dataset.
     use_effect(move || {
         let virt = nav_idx() == 2;
@@ -1128,9 +1125,9 @@ fn DemoEqGrid() -> Element {
         }
     });
     let mut selection_count = use_signal(|| 0usize);
-    let mut bulk_status = use_signal(|| String::new());
-    let mut export_preview = use_signal(|| String::new());
-    let mut clipboard_preview = use_signal(|| String::new());
+    let mut bulk_status = use_signal(String::new);
+    let mut export_preview = use_signal(String::new);
+    let mut clipboard_preview = use_signal(String::new);
 
     let page_size = match page_size_idx() {
         1 => 10,
@@ -1397,5 +1394,37 @@ fn GalleryEqGrid() -> Element {
                 }
             }
         }
+    }
+}
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders_empty() {
+        let mut dom = VirtualDom::new(|| {
+            let cols: Vec<EqColumnDef<String>> = vec![
+                EqColumnDef::new("name", "Name", |s: &String| s.clone()),
+            ];
+            let data: Vec<String> = vec![];
+            rsx! { EqGrid { data, columns: cols } }
+        });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn column_def_builder_sets_fields() {
+        let col = EqColumnDef::<String>::new("id", "ID", |s: &String| s.clone())
+            .sortable(false)
+            .filterable(true)
+            .width(120);
+        assert_eq!(col.id, "id");
+        assert_eq!(col.header, "ID");
+        assert!(!col.sortable);
+        assert!(col.filterable);
+        assert_eq!(col.width, Some(120));
     }
 }

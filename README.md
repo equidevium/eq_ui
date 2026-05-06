@@ -1,6 +1,6 @@
 # eq_ui
 
-Dioxus 0.7 component library. Atomic design, pure Tailwind, 23 themes.
+Dioxus 0.7 component library. Atomic design, pure Tailwind, 26 themes, 45 components.
 
 https://github.com/user-attachments/assets/4ea4f561-4581-481d-bc27-c2f5a2879998
 
@@ -25,18 +25,36 @@ https://github.com/user-attachments/assets/4ea4f561-4581-481d-bc27-c2f5a2879998
 | EqTab | Atom | full | Tab bar with underline, pill, and card variants; badges; disabled state |
 | EqRadioGroup | Atom | full | Radio button group with mutually exclusive selection, three sizes, vertical/horizontal layout |
 | EqSwitch | Atom | full | Toggle switch with pill track and sliding thumb, three sizes |
+| EqSlider | Atom | native | Range slider with accent-color theming, three sizes, optional value label |
+| EqAvatar | Atom | full | User avatar with image/initials/icon fallback, four sizes, status dot |
+| EqTooltip | Atom | full | Hover/focus tooltip, four positions, pure CSS, keyboard accessible |
+| EqSelect | Atom | full | Dropdown select with search, keyboard nav, WAI-ARIA combobox |
 | EqCard | Molecule | full | Card with header/body/footer slots |
 | EqImageCard | Molecule | full | Image card with caption modes (below/overlay) |
 | EqCarousel | Molecule | full | Generic content carousel with arrows and dots |
 | EqTree | Molecule | full | Collapsible tree view with select and expand |
 | EqAccordion | Molecule | full | Collapsible panels with single/multi-expand modes |
+| EqNavItem | Molecule | full | Navigation item with icon, label, active state, size variants |
+| EqCta | Molecule | full | Call-to-action with title, description, action slot, inline/centered layout |
+| EqModal | Molecule | full | Modal dialog with backdrop, five sizes, close-on-Escape, focus trap |
+| EqToastList | Molecule | full | Toast notification stack, four severity levels, auto-dismiss, six positions |
+| EqDropdown | Molecule | full | Dropdown menu with items, separators, keyboard navigation, two positions |
+| EqDatePicker | Molecule | full | Date picker with calendar popup, month navigation, formatted display |
+| EqCalendar | Molecule | full | Calendar with month & week views, events, month/year drill-down |
+| EqVirtualList | Molecule | full | Windowed list rendering only visible items, sticky headers, scroll-to-index |
+| EqDeviceFrame | Molecule | full | Static iPhone 16 / 16 Pro chrome with Dynamic Island for showcasing mobile-only components |
 | EqHeader | Organism | native | Sticky header with brand, nav, and backdrop blur |
 | EqFooter | Organism | native | Footer with link groups and copyright |
 | EqHeroShell | Organism | full | Hero banner with background image, overlay, custom colors |
 | EqPageSection | Organism | native | Titled content section |
 | EqAppShell | Organism | native | Full page layout (header + main + footer) |
 | EqNavbar | Organism | native | Horizontal nav bar |
+| EqDrawer | Organism | full | Slide-in panel from any edge, four sizes, header/body/footer slots |
 | EqGrid | Organism | full | Data grid with sorting, filtering, pagination, virtualization, DnD, export |
+| EqFilePicker | Organism | full | File/folder picker with drag-drop, thumbnails, progress, backend trait |
+| EqToolbar | Organism | full | Mobile header with start/title/end slots and an optional secondary row |
+| EqBottomNav | Organism | full | Bottom-anchored mobile tab bar with icon+label items, badges, and active state |
+| EqMobileAppShell | Organism | full | Three-region mobile layout (toolbar + scrollable body + bottom nav) with iOS safe-area padding |
 | Getting Started Guide | Guide | - | In-app developer guide for the playground |
 | Theme Showcase | Theming | - | Theme color and gradient swatch viewer |
 
@@ -47,22 +65,11 @@ ARIA legend: **full** = roles + attributes + keyboard, **native** = semantic HTM
 | Component | Category | ARIA | Notes |
 |---|---|---|---|
 | Skeleton | Atom | - | CSS keyframes |
-| Slider | Atom | planned | Via dioxus-primitives |
-| Calendar | Molecule | planned | Via dioxus-primitives |
-| Pagination | Molecule | planned |  |
-| ToastList | Molecule | planned | Via dioxus-primitives |
-| Dialog | Molecule | planned | Via dioxus-primitives |
-| Sheet / Drawer | Molecule | planned | Needs slide transition |
-| Select | Atom | planned | Via dioxus-primitives, positioning via eval |
-| ToolTip | Atom | planned | Via dioxus-primitives, positioning via eval |
-| DropDownMenu | Molecule | planned | Via dioxus-primitives, positioning via eval |
+| Badge | Atom | - | Status indicator |
 | ContextMenu | Molecule | planned | Via dioxus-primitives, positioning via eval |
 | HoverCard | Molecule | planned | Via dioxus-primitives, positioning via eval |
-| DatePicker | Molecule | planned | Via dioxus-primitives, positioning via eval |
-| VirtualList | Organism | - | Scroll position via eval |
 | RichTextEditor | Organism | - | JS editor init via eval |
 | Signature | Atom | - | Canvas drawing via eval |
-| Babylon.js | Organism | - | JS engine init via eval |
 
 ### Blitz (native) readiness
 
@@ -84,34 +91,54 @@ Tier 1 = works as-is, Tier 2 = needs small fix, Tier 3 = needs significant work.
 | EqVideo | 1 | no | Video playback on Blitz depends on media support |
 | EqProgress | 1 | no | Indeterminate animation needs Blitz fallback |
 | EqTab | 1 | no |  |
+| EqRadioGroup | 1 | no |  |
+| EqSwitch | 2 | no | CSS transition degrades to instant toggle on Blitz |
+| EqSlider | 1 | no | Native range input |
+| EqAvatar | 1 | no |  |
+| EqTooltip | 2 | no | CSS hover positioning may degrade on Blitz |
+| EqSelect | 3 | yes | Uses document::eval for positioning and outside-click |
 | EqCard | 1 | no |  |
 | EqImageCard | 1 | no |  |
 | EqCarousel | 2 | no | Slide transition needs Blitz fallback |
-| EqTree | 1 | no | Full WAI-ARIA tree pattern: role tree/treeitem/group, aria-expanded/selected/level/setsize/posinset, roving tabindex, keyboard nav (arrows/Home/End/Enter/Space) |
-| EqAccordion | 1 | no | Full WAI-ARIA accordion pattern: aria-expanded, aria-controls/aria-labelledby linking, role region on panels, keyboard nav (Up/Down/Home/End) |
+| EqTree | 1 | no | Full WAI-ARIA tree pattern |
+| EqAccordion | 1 | no | Full WAI-ARIA accordion pattern |
+| EqNavItem | 1 | no |  |
+| EqCta | 1 | no |  |
+| EqModal | 2 | yes | Uses document::eval for focus trap |
+| EqToastList | 3 | yes | Uses JS setTimeout for auto-dismiss |
+| EqDropdown | 3 | yes | Uses document::eval for outside-click detection |
+| EqDatePicker | 3 | yes | Uses document::eval for popup positioning |
+| EqCalendar | 1 | no |  |
+| EqVirtualList | 3 | yes | Uses document::eval for scroll-to-index |
+| EqDeviceFrame | 1 | no | Pure CSS + inline SVG, no JS |
 | EqHeader | 2 | no | backdrop-filter needs Blitz fallback |
 | EqFooter | 1 | no |  |
-| EqHeroShell | 2 | no | aria-labelledby auto-links to h1 title, aria-hidden on decorative bg/overlay, optional role prop (banner) |
+| EqHeroShell | 2 | no | Decorative aria-hidden, optional role prop |
 | EqPageSection | 1 | no |  |
 | EqAppShell | 1 | no |  |
 | EqNavbar | 1 | no |  |
-| EqGrid | 3 | yes | Full ARIA: aria-sort on headers, scope=col, aria-selected on rows, aria-rowcount/colcount, aria-busy, aria-live pagination, aria-label on filters/nav, aria-hidden spacers |
+| EqDrawer | 2 | no | CSS transition degrades on Blitz |
+| EqGrid | 3 | yes | Full ARIA, virtualization, DnD all use eval |
+| EqFilePicker | 3 | yes | Uses document::eval for file input and drop handling |
+| EqToolbar | 1 | no | Pure layout, no JS |
+| EqBottomNav | 1 | no | Pure layout, no JS |
+| EqMobileAppShell | 1 | no | Pure layout, uses env(safe-area-inset-*) which Blitz may need to support |
 | Theme Showcase | 1 | no | Playground-only, feature-gated |
-| EqRadioGroup | 1 | no |  |
-| EqSwitch | 2 | no | CSS transition degrades to instant toggle on Blitz |
 
 <!-- COMPONENTS_END -->
 
-**Theming** - 23 built-in themes, custom CSS, runtime switching. The `theme` module also exports shared Tailwind constants you can use in your own layouts.
+**Theming** - 26 built-in themes, custom CSS, runtime switching. The `theme` module also exports shared Tailwind constants you can use in your own layouts.
 
 ## Quick start
 
-Add the crate to your `Cargo.toml`:
+Add the crate to your `Cargo.toml`. Check
+[crates.io/crates/eq_ui](https://crates.io/crates/eq_ui) for the
+current version before pinning; this README drifts.
 
 ```toml
 [dependencies]
 # From crates.io:
-eq_ui = "0.3.0"
+eq_ui = "0.4.2"
 
 # Or from GitHub:
 eq_ui = { git = "https://github.com/equidevium/eq_ui", branch = "main" }
@@ -164,9 +191,46 @@ cargo update -p eq_ui
 ## Using the components
 
 ```rust
-use eq_ui::atoms::{EqText, TextVariant, EqInput, InputKind, EqLabel, EqLink, EqIcon, IconSize, EqImage, AtomImageSize, AspectRatio, ObjectFit, EqCheckbox, CheckboxState, EqButton, ButtonVariant, ButtonSize, EqDivider, EqScrollableSpace, EqVideo, EqProgress, ProgressVariant, ProgressSize, EqTab, TabItem, TabVariant, TabSize};
-use eq_ui::molecules::{EqCard, EqCardHeader, EqCardBody, EqCardFooter, EqImageCard, CaptionMode, EqCarousel, EqTree, TreeNode, EqAccordion, AccordionItem, AccordionMode};
-use eq_ui::organisms::{EqAppShell, EqHeader, EqFooter, EqHeroShell, EqPageSection, EqNavbar, EqGrid, EqColumnDef, GridNavigation, GridDensity, RowSelection, ColumnAlign, ExportFormat, GridDragPayload};
+use eq_ui::atoms::{
+    EqText, TextVariant, EqInput, InputKind, EqLabel, EqLink,
+    EqIcon, IconSize, EqImage, AtomImageSize, AspectRatio, ObjectFit,
+    EqCheckbox, CheckboxState, EqButton, ButtonVariant, ButtonSize,
+    EqDivider, EqScrollableSpace, EqVideo,
+    EqProgress, ProgressVariant, ProgressSize,
+    EqTab, TabItem, TabVariant, TabSize,
+    EqRadioGroup, RadioItem, RadioSize, RadioLayout,
+    EqSwitch, SwitchSize,
+    EqSlider, SliderSize,
+    EqAvatar, AvatarSize, AvatarStatus,
+    EqTooltip, TooltipPosition,
+    EqSelect, SelectOption, SelectPosition,
+};
+use eq_ui::molecules::{
+    EqCard, EqCardBody, EqCardFooter, EqCardHeader,
+    EqImageCard, CaptionMode,
+    EqCarousel, CarouselMode,
+    EqTree, TreeNode,
+    EqAccordion, AccordionItem, AccordionMode,
+    EqNavItem, NavItemSize,
+    EqCta, CtaLayout,
+    EqModal, ModalSize,
+    EqToastList, ToastData, ToastSeverity, ToastPosition,
+    EqDropdown, DropdownItem, DropdownPosition,
+    EqDatePicker, DateValue, DatePickerPosition,
+    EqCalendar, CalendarEvent, CalendarMode, EventColor,
+    EqVirtualList, VirtualListDirection, StickyHeader,
+    EqDeviceFrame, DeviceModel,
+};
+use eq_ui::organisms::{
+    EqAppShell, EqHeader, EqFooter, EqHeroShell, EqPageSection, EqNavbar,
+    EqGrid, EqColumnDef, GridNavigation, GridDensity, RowSelection,
+    ColumnAlign, ExportFormat, GridDragPayload,
+    EqDrawer, DrawerSide, DrawerSize,
+    EqFilePicker, FilePickerMode, PickedFile, FilePickerBackend, WebFilePickerBackend,
+    EqToolbar,
+    EqBottomNav, BottomNavItem, BottomNavBadge,
+    EqMobileAppShell,
+};
 use eq_ui::theme;  // shared constants like CONTAINER_LAYOUT, BTN_PRIMARY, etc.
 ```
 
@@ -256,6 +320,43 @@ EqTab {
     active: active(),
     on_change: move |idx| active.set(idx),
 }
+
+// Range slider
+EqSlider {
+    value: 50.0,
+    min: 0.0,
+    max: 100.0,
+    size: SliderSize::Md,
+    show_value: true,
+    on_change: move |val| slider_val.set(val),
+}
+
+// Avatar with fallbacks
+EqAvatar {
+    src: "https://example.com/avatar.jpg",
+    alt: "Jane Doe",
+    size: AvatarSize::Lg,
+    status: AvatarStatus::Online,
+}
+
+// Tooltip
+EqTooltip {
+    text: "More information here",
+    position: TooltipPosition::Top,
+    span { "Hover me" }
+}
+
+// Select dropdown with search
+EqSelect {
+    options: vec![
+        SelectOption::new("us", "United States"),
+        SelectOption::new("uk", "United Kingdom"),
+        SelectOption::new("de", "Germany"),
+    ],
+    placeholder: "Choose a country",
+    searchable: true,
+    on_change: move |val| country.set(val),
+}
 ```
 
 ### Molecules
@@ -305,9 +406,112 @@ EqTree {
 EqAccordion {
     items: vec![
         AccordionItem::new("faq-1", "What is eq_ui?", rsx! { p { "A Dioxus component library." } }),
-        AccordionItem::new("faq-2", "How many themes?", rsx! { p { "23 built-in themes." } }),
+        AccordionItem::new("faq-2", "How many themes?", rsx! { p { "25 built-in themes." } }),
     ],
     mode: AccordionMode::Single,
+}
+
+// Modal dialog
+let mut show_modal = use_signal(|| false);
+
+EqModal {
+    open: show_modal(),
+    on_close: move |_| show_modal.set(false),
+    size: ModalSize::Md,
+    title: "Confirm Action",
+    div { "Are you sure you want to proceed?" }
+}
+
+// Toast notifications
+let mut toasts = use_signal(Vec::<ToastData>::new);
+
+EqToastList {
+    toasts: toasts(),
+    position: ToastPosition::TopRight,
+    on_dismiss: move |id| toasts.write().retain(|t| t.id != id),
+}
+
+// Dropdown menu
+EqDropdown {
+    items: vec![
+        DropdownItem::new("edit", "Edit"),
+        DropdownItem::separator(),
+        DropdownItem::new("delete", "Delete").disabled(true),
+    ],
+    on_select: move |id| handle_action(id),
+    EqButton { variant: ButtonVariant::Outline, "Actions" }
+}
+
+// Date picker
+EqDatePicker {
+    value: date_val(),
+    on_change: move |d| date_val.set(Some(d)),
+    placeholder: "Select a date",
+}
+
+// Calendar with month or week view
+EqCalendar {
+    events: vec![
+        CalendarEvent::new("1", "Meeting", 2026, 5, 4),
+        CalendarEvent::timed("2", "Standup", 2026, 5, 4, 9, 0, 9, 30),
+    ],
+    mode: CalendarMode::Month,  // or Week
+    on_date_click: move |date| selected.set(Some(date)),
+}
+
+// Virtual list for large datasets
+EqVirtualList {
+    item_count: 10_000,
+    item_size: 40.0,
+    viewport_size: 400.0,
+    render_item: Callback::new(move |idx| rsx! { div { "Row {idx}" } }),
+}
+
+// iPhone device frame for showcasing mobile-only components
+EqDeviceFrame {
+    model: DeviceModel::IPhone16,
+    div { class: "p-6 text-center",
+        h1 { class: "text-xl font-semibold", "My Mobile App" }
+        p { class: "text-sm opacity-70", "Mobile-only content lives inside the frame." }
+    }
+}
+```
+
+### Mobile shell
+
+The three mobile organisms compose together. `EqMobileAppShell` owns
+the layout; `EqToolbar` and `EqBottomNav` slot into it.
+
+```rust
+let mut active = use_signal(|| "home".to_string());
+
+let nav_items = vec![
+    BottomNavItem::new("home", "Home", rsx! { /* icon */ }),
+    BottomNavItem::new("inbox", "Inbox", rsx! { /* icon */ })
+        .badge(BottomNavBadge::Count(3)),
+    BottomNavItem::new("profile", "Profile", rsx! { /* icon */ }),
+];
+
+EqDeviceFrame {
+    model: DeviceModel::IPhone16,
+    EqMobileAppShell {
+        toolbar: rsx! {
+            EqToolbar {
+                title: rsx! { "Inbox" },
+                end: rsx! { EqButton { variant: ButtonVariant::Ghost, "Edit" } },
+            }
+        },
+        bottom_nav: rsx! {
+            EqBottomNav {
+                items: nav_items,
+                active: active(),
+                on_change: move |id| active.set(id),
+            }
+        },
+        div { class: "p-4",
+            // Page body scrolls independently
+        }
+    }
 }
 ```
 
@@ -347,6 +551,26 @@ EqPageSection {
     title: "Features",
     description: "Everything you need to build fast.",
     // children go in the body
+}
+
+// Drawer - slide-in panel from any edge
+let mut show_drawer = use_signal(|| false);
+
+EqDrawer {
+    open: show_drawer(),
+    on_close: move |_| show_drawer.set(false),
+    side: DrawerSide::Right,
+    size: DrawerSize::Md,
+    title: "Settings",
+    div { "Drawer content here" }
+}
+
+// File picker with drag-and-drop
+EqFilePicker {
+    mode: FilePickerMode::Multiple,
+    accept: ".png,.jpg,.pdf",
+    max_size: 10 * 1024 * 1024,  // 10 MB
+    on_change: move |files: Vec<PickedFile>| handle_files(files),
 }
 ```
 
@@ -406,9 +630,9 @@ Virtualization renders only visible rows plus a small buffer (split-table layout
 
 ## Theming
 
-23 built-in themes, custom CSS themes at runtime.
+26 built-in themes, custom CSS themes at runtime.
 
-**Built-in:** Unghosty (default), Burgundy, Gold, PurplePink, Monochrome, Watermelon, Sunset, Ocean, Spacetime, Gruvbox, Monokai, Hellas, Egypt, Dometrain, Catppuccin, Dracula, Nord, OneDark, RosePine, SolarizedDark, TokyoNight, Warcraft, SweetRush.
+**Built-in:** Unghosty, Burgundy, Gold, PurplePink, Monochrome, Watermelon, Sunset, Ocean, Spacetime, Gruvbox, Monokai, Hellas, Egypt, Dometrain, Catppuccin, Dracula, Nord, OneDark, RosePine, SolarizedDark, TokyoNight, Warcraft, SweetRush, Cloud, Synthwave, Limbotron (default).
 
 ### Setting up theming
 
@@ -469,6 +693,7 @@ src/
   lib.rs              - crate root, CSS asset exports
   theme.rs            - shared Tailwind class constants
   eq_theme.rs         - theme enum, context, and runtime switching
+  playground_enum_trait.rs - PlaygroundEnum trait for prop iteration
   playground/         - feature-gated interactive component showcase
     eq_playground.rs  - EqPlayground organism (self-contained with CSS/theme)
     playground_types.rs - ComponentDescriptor, ComponentCategory, UsageExample
@@ -484,11 +709,18 @@ src/
     eq_icon_paths.rs  - SVG path data constants (Phosphor icons)
     eq_image.rs       - image with sizing, aspect ratio, object-fit
     eq_checkbox.rs    - checkbox with checked/unchecked/indeterminate states
+    eq_button.rs      - button with 5 variants, 3 sizes, gradient transitions
     eq_scrollable_space.rs - scrollable container with themed scrollbar
     eq_divider.rs     - separator with solid/dashed/dotted/spacer variants
     eq_video.rs       - video with poster overlay, autoplay, controls
     eq_progress.rs    - progress bar with determinate/indeterminate modes
     eq_tab.rs         - tab bar with underline, pill, and card variants
+    eq_radio_group.rs - radio button group with three sizes
+    eq_switch.rs      - toggle switch with three sizes
+    eq_slider.rs      - range slider with accent-color theming
+    eq_avatar.rs      - user avatar with image/initials/icon fallback
+    eq_tooltip.rs     - hover/focus tooltip with four positions
+    eq_select.rs      - dropdown select with search and keyboard nav
     *_styles.rs       - co-located style constants for each atom
   molecules/
     eq_card.rs        - card with header/body/footer slots
@@ -496,6 +728,15 @@ src/
     eq_carousel.rs    - generic content carousel with arrows and dots
     eq_tree.rs        - collapsible tree view with select and expand
     eq_accordion.rs   - collapsible panels with single/multi-expand modes
+    eq_nav_item.rs    - navigation item with icon and label
+    eq_cta.rs         - call-to-action section with inline/centered layout
+    eq_modal.rs       - modal dialog with focus management
+    eq_toast.rs       - toast notification stack with auto-dismiss
+    eq_dropdown.rs    - dropdown menu with keyboard navigation
+    eq_date_picker.rs - date picker with calendar popup
+    eq_calendar.rs    - calendar with month & week views
+    eq_virtual_list.rs - windowed list rendering with sticky headers
+    eq_device_frame.rs - static iPhone 16 / 16 Pro chrome for mobile-only previews
     *_styles.rs       - co-located style constants for each molecule
   organisms/
     eq_app_shell.rs   - full page layout (header + main + footer)
@@ -504,6 +745,11 @@ src/
     eq_hero_shell.rs  - hero banner with background image, overlay, custom colors
     eq_page_section.rs - titled content section
     eq_navbar.rs      - horizontal nav bar
+    eq_drawer.rs      - slide-in panel from any screen edge
+    eq_file_picker.rs - file/folder picker with drag-drop and backend trait
+    eq_toolbar.rs     - mobile header with start/title/end slots and a secondary row
+    eq_bottom_nav.rs  - bottom-anchored mobile tab bar
+    eq_mobile_app_shell.rs - three-region mobile layout (toolbar + body + bottom nav)
     eq_grid/          - feature-rich data grid organism
       grid.rs         - main orchestration component
       types.rs        - shared enums (GridNavigation, RowSelection, GridDensity, etc.)
@@ -516,9 +762,10 @@ src/
       export.rs       - CSV, JSON, TXT, ODS export
       styles.rs       - co-located style constants
     *_styles.rs       - co-located style constants for each organism
+  eq_ui_macros/       - proc-macro crate (#[playground], PlaygroundEnum derive)
 assets/
   icons/              - Phosphor SVG icons (square, check-square, etc.)
-  theme/              - base CSS + 21 theme color files
+  theme/              - base CSS + 25 theme color files
   styling/            - component-specific CSS (navbar)
   tailwind.css        - Tailwind entry point with @source directives
 ```
@@ -531,7 +778,13 @@ Colors use CSS custom properties (`--color-primary-dark`, `--color-label-primary
 
 ## Dependencies
 
-`dioxus = "0.7.3"`. Nothing else.
+Runtime: `dioxus = "=0.7.3"`, `serde` + `serde_json` (for `document::eval` result parsing), `eq_ui_macros` (proc-macro crate, workspace member).
+
+Build: `eq_ui_build` (workspace member).
+
+Dev (examples and playground only): `web-sys`, `wasm-bindgen`, `wasm-bindgen-futures`.
+
+The `dioxus` version is currently pinned with `=` because Dioxus 0.7 is still moving; loosen the pin once the upstream API stabilizes.
 
 ## Platform Compatibility
 
@@ -543,7 +796,7 @@ All existing components work cross-platform: web, desktop (Wry), mobile. See the
 
 ## Running the Playground
 
-Interactive playground for browsing and testing all 28 components. Enable with the `playground` feature:
+Interactive playground for browsing and testing all 45 components. Enable with the `playground` feature:
 
 ```bash
 dx serve --example playground --features playground --platform web
@@ -566,6 +819,40 @@ rsx! { EqPlayground { descriptors: descs } }
 ```
 
 See [playground.md](./playground.md) for the full architecture specification.
+
+## Testing
+
+A Rust crate has three test pools, and `cargo test` routes to them via flags. Each pool tests a different thing in eq_ui.
+
+```bash
+cargo test                  # everything: unit + integration + doctests
+cargo test --lib            # only the per-component smoke tests under src/*.rs
+cargo test --tests          # only unit + integration tests, no doctests
+cargo test --doc            # only the runnable code examples in /// and //! comments
+```
+
+What each pool covers here:
+
+- **Unit tests** live in `#[cfg(test)] mod tests` blocks inside every component file. One smoke test per registered component plus pure-function tests on enums, builders, and formatters where they exist. Fast.
+- **Integration tests** under a top-level `tests/` folder. None at the moment; planned for future releases.
+- **Doctests** are the `no_run` examples inside `///` and `//!` doc comments. Each compiles into its own tiny binary, so doctests are slower per-test than unit tests. Catches API drift in the documentation when prop names or types change.
+
+For day-to-day work `cargo test --lib` is fastest. Before tagging a release, run plain `cargo test` (or the full pre-publish checklist in [ROADMAP.md](./ROADMAP.md)).
+
+If you add a new component, add a smoke test in the same file using the established pattern:
+
+```rust
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| rsx! { EqYourComponent { /* required props */ } });
+        dom.rebuild_in_place();
+    }
+}
+```
 
 ## Roadmap
 

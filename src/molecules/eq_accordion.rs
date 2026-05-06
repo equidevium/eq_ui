@@ -1,5 +1,6 @@
 use super::eq_accordion_styles as s;
 use crate::theme::merge_classes;
+use crate::{PlaygroundEnum, playground};
 use dioxus::document;
 use dioxus::prelude::*;
 
@@ -13,7 +14,7 @@ use crate::atoms::{EqText, TextVariant};
 use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
 
 /// Controls whether multiple panels can be open simultaneously.
-#[derive(Clone, Copy, PartialEq, Default)]
+#[derive(Clone, Copy, PartialEq, Default, PlaygroundEnum)]
 pub enum AccordionMode {
     /// Only one panel open at a time - opening a panel closes the others.
     #[default]
@@ -61,6 +62,17 @@ impl AccordionItem {
 /// [acc]: https://www.w3.org/WAI/ARIA/apg/patterns/accordion/
 ///
 /// Use `class` to extend or replace the default styles.
+#[playground(
+    category = Molecule,
+    description = "Collapsible accordion with single or multi-expand modes. Smooth height animation \
+                   powered by CSS grid-rows transition.",
+    examples = [
+        ("Single expand", "let items = vec![\n    AccordionItem::new(\n        \"panel-1\",\n        rsx! { \"First panel\" },\n        rsx! { \"Content for the first panel.\" },\n    ),\n];\n\nEqAccordion { items }"),
+        ("Multi expand", "EqAccordion {\n    items,\n    mode: AccordionMode::Multi,\n}"),
+    ],
+    custom_demo,
+    custom_gallery,
+)]
 #[component]
 pub fn EqAccordion(
     /// The panels to render.
@@ -114,7 +126,7 @@ pub fn EqAccordion(
                 // Each header button has id "{prefix}-hdr-{item_id}".
                 // We can infer the index from the item_ids list.
                 // Fall back to first/last depending on key direction.
-                let cur_idx = {
+                let _cur_idx = {
                     // Try to figure out which header is focused from focused_id
                     // We don't store focused state — all buttons are natively
                     // focusable, so we rely on document.activeElement.
@@ -249,32 +261,6 @@ pub fn EqAccordion(
     }
 }
 
-// ── Playground descriptor ──────────────────────────────────────────
-
-#[cfg(feature = "playground")]
-pub fn descriptor() -> ComponentDescriptor {
-    ComponentDescriptor {
-        id: "eq-accordion",
-        name: "EqAccordion",
-        category: ComponentCategory::Molecule,
-        description: "Collapsible accordion with single or multi-expand modes. Smooth height animation \
-                      powered by CSS grid-rows transition.",
-        style_tokens: || s::catalog(),
-        usage_examples: || vec![
-            UsageExample {
-                label: "Single expand",
-                code: "let items = vec![\n    AccordionItem::new(\n        \"panel-1\",\n        rsx! { \"First panel\" },\n        rsx! { \"Content for the first panel.\" },\n    ),\n];\n\nEqAccordion { items }".into(),
-            },
-            UsageExample {
-                label: "Multi expand",
-                code: "EqAccordion {\n    items,\n    mode: AccordionMode::Multi,\n}".into(),
-            },
-        ],
-        render_demo: || rsx! { DemoEqAccordion {} },
-        render_gallery: || rsx! { GalleryEqAccordion {} },
-    }
-}
-
 // ── Interactive demo ───────────────────────────────────────────────
 
 #[cfg(feature = "playground")]
@@ -287,7 +273,7 @@ fn DemoEqAccordion() -> Element {
         "Multi" => AccordionMode::Multi,
         _ => AccordionMode::Single,
     };
-    let panel_count: usize = panel_count_str().parse().unwrap_or(3).min(6).max(1);
+    let panel_count: usize = panel_count_str().parse().unwrap_or(3).clamp(1, 6);
 
     let sample_panels: Vec<(&str, &str, &str)> = vec![
         (
@@ -453,5 +439,40 @@ fn GalleryEqAccordion() -> Element {
                 }
             }
         }
+    }
+}
+
+// ── Smoke tests ─────────────────────────────────────────────────────
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke_renders() {
+        let mut dom = VirtualDom::new(|| {
+            rsx! {
+                EqAccordion {
+                    items: vec![AccordionItem::new(
+                        "p1",
+                        rsx! { "Header" },
+                        rsx! { "Body" },
+                    )],
+                }
+            }
+        });
+        dom.rebuild_in_place();
+    }
+
+    #[test]
+    fn default_mode_is_single() {
+        let m: AccordionMode = Default::default();
+        assert!(matches!(m, AccordionMode::Single));
+    }
+
+    #[test]
+    fn accordion_item_new_sets_id() {
+        let item = AccordionItem::new("foo", rsx! { "h" }, rsx! { "b" });
+        assert_eq!(item.id, "foo");
     }
 }
