@@ -19,7 +19,7 @@ playground = []
 
 [dependencies]
 dioxus = "=0.7.3"
-eq_ui_macros = { path = "eq_ui_macros" }
+eq_ui_macros = { path = "eq_ui_macros", version = "0.1.0"}
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 
