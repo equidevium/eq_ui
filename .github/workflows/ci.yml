@@ -1,0 +1,117 @@
+name: CI
+
+# Runs on every push, every PR, and on a daily schedule for the
+# security jobs (audit + deny). The schedule catches new CVEs that
+# land in the RustSec advisory database between code changes.
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # Daily at 03:00 UTC. Only the security jobs run.
+    - cron: "0 3 * * *"
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+  # Speed up rustup installs in CI.
+  RUSTUP_MAX_RETRIES: 10
+  CARGO_NET_RETRY: 10
+
+jobs:
+  # ── Format ────────────────────────────────────────────────────────
+  # Fastest job, runs first. No cache needed; rustfmt is built-in.
+
+  fmt:
+    name: Format check
+    runs-on: ubuntu-latest
+    if: github.event_name != 'schedule'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - run: cargo fmt --all -- --check
+
+  # ── Clippy ────────────────────────────────────────────────────────
+
+  clippy:
+    name: Clippy (all targets, all features)
+    runs-on: ubuntu-latest
+    if: github.event_name != 'schedule'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo clippy --all-targets --all-features -- -D warnings
+
+  # ── Tests ─────────────────────────────────────────────────────────
+
+  test:
+    name: Tests (lib + doc)
+    runs-on: ubuntu-latest
+    if: github.event_name != 'schedule'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Unit tests
+        run: cargo test --all-features --lib
+      - name: Doc tests
+        run: cargo test --all-features --doc
+
+  # ── Build (release) ───────────────────────────────────────────────
+  # Build with two feature configurations:
+  #   - default (no features) — what bare `cargo add eq_ui` gives you
+  #   - all features — exercises the playground + any future features
+  # If only one is checked, consumers who pick the other path can hit
+  # build failures we never see locally.
+
+  build:
+    name: Build (release)
+    runs-on: ubuntu-latest
+    if: github.event_name != 'schedule'
+    strategy:
+      matrix:
+        features: ["", "--all-features"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo build --release ${{ matrix.features }}
+
+  # ── Security: cargo audit ─────────────────────────────────────────
+  # Runs on push, PR, and daily schedule. The schedule catches CVEs
+  # that get filed in the advisory database without our code moving.
+
+  audit:
+    name: Security audit (cargo-audit)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Generate Cargo.lock
+        run: cargo generate-lockfile
+      - uses: rustsec/audit-check@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  # ── Security: cargo deny ──────────────────────────────────────────
+  # Reads deny.toml at the repo root. Checks advisories, licenses,
+  # bans, and source registries.
+
+  deny:
+    name: Cargo deny check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Generate Cargo.lock
+        run: cargo generate-lockfile
+      - uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          command: check

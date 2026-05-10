@@ -208,6 +208,39 @@ signatures:
 
 ---
 
+## Security: do not pipe untrusted data into component IDs (v0.5.x)
+
+**Affected components:** `EqTree`, `EqAccordion`.
+
+**Problem.** Both components currently interpolate consumer-provided
+ids into a JavaScript string passed to `document::eval()` for focus
+management. If you pass a string containing a single quote (e.g., a
+username, a database row id, a file path) the eval call breaks out
+of the JS string literal and arbitrary JavaScript runs.
+
+**Until the fix lands in v0.5.x:** do not use external/untrusted
+data as `TreeNode.id` or `AccordionItem.id` without sanitizing it
+first. Stable application-level identifiers are fine; user input
+piped directly into the id is not.
+
+**Recommended:** map external strings through a known-safe id
+scheme (UUIDs, sequential integers, hashes) and keep the original
+string in a separate field on your data type.
+
+```rust
+// Don't do this if `name` comes from user input:
+TreeNode::new(name.clone(), name)
+
+// Do this instead:
+TreeNode::new(format!("user-{}", row_id), name)
+```
+
+The fix (proper JS escaping at every eval interpolation site) is
+tracked in `updates.md` under the Security review findings section
+and will ship in v0.5.x.
+
+---
+
 ## Visual regressions after upgrading eq_ui
 
 **Symptom.** You bumped eq_ui's version and a layout that previously

@@ -1,0 +1,101 @@
+# cargo-deny configuration
+#
+# Run with: cargo deny check
+# Install with: cargo install cargo-deny
+#
+# This config covers four checks:
+#   - advisories: known CVEs in the dependency tree (overlaps with
+#     cargo-audit, but enforced as part of `cargo deny check`)
+#   - licenses: dependency license compatibility with our MIT OR
+#     Apache-2.0 dual license
+#   - bans: ban specific crates or duplicate versions
+#   - sources: only allow crates from approved registries
+#
+# Adjust as the dep tree evolves. Re-run on every dep bump.
+
+[graph]
+all-features = true
+
+# ── Advisories ─────────────────────────────────────────────────────
+
+[advisories]
+version = 2
+# Treat unmaintained crates and yanked versions as warnings, not
+# errors. Production CVEs (vulnerability) are denied by default.
+yanked = "warn"
+ignore = [
+    # rand 0.9.2: unsound when used with a custom logger that calls
+    # `rand::rng()`. Pulled in transitively via:
+    #   tungstenite -> dioxus-devtools -> dioxus-web -> dioxus 0.7.3.
+    # eq_ui itself does not call into this code path, and the
+    # unsoundness condition (custom logger using rng) is exotic for
+    # consumers of a UI library. Revisit when the upstream chain
+    # ships a patched rand. Track:
+    #   https://rustsec.org/advisories/RUSTSEC-2026-0097
+    "RUSTSEC-2026-0097",
+]
+
+# ── Licenses ───────────────────────────────────────────────────────
+
+[licenses]
+version = 2
+# Allowed licenses. Add entries here only when we actually encounter
+# them in the dep tree. Opting in per-license keeps the allowlist
+# meaningful: a new license arriving in a transitive dep will fail
+# the check and force a deliberate decision.
+allow = [
+    "MIT",
+    "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "ISC",
+    "Unicode-3.0",
+    "Zlib",
+    "CC0-1.0",
+]
+# Don't warn about allowed licenses that no dep currently uses.
+# Without this, every entry in `allow` that isn't matched produces
+# a license-not-encountered warning.
+unused-allowed-license = "allow"
+# Confidence threshold for license detection. 0.8 is the cargo-deny
+# default; raising it forces clearer license declarations.
+confidence-threshold = 0.8
+
+# ── Bans ───────────────────────────────────────────────────────────
+
+[bans]
+multiple-versions = "warn"
+# Specific duplicate-version cases we accept. Each entry should be
+# either an upstream issue we can't fix without forking, or a
+# deliberate choice with a written reason. Re-audit on every dep
+# bump to remove entries that are no longer present.
+skip = [
+    # Upstream Dioxus / manganis pull both old and new versions of
+    # `const-serialize` and its macro crate during their 0.7 ->
+    # 0.8-alpha transition.
+    { crate = "const-serialize@0.7.2", reason = "manganis 0.7.4 transitive" },
+    { crate = "const-serialize-macro@0.7.2", reason = "manganis 0.7.4 transitive" },
+    # `eq_ui_macros` uses convert_case 0.7.1 while dioxus-core-macro
+    # uses 0.8.0. Worth bumping our macro crate eventually.
+    { crate = "convert_case@0.7.1", reason = "eq_ui_macros internal; dioxus-core-macro uses 0.8.0" },
+    # `jni` 0.21 is on thiserror 1.x and windows-sys 0.45; the rest
+    # of the dioxus tree has moved to thiserror 2.x and newer
+    # windows-sys. Locked together.
+    { crate = "thiserror@1.0.69", reason = "jni 0.21 transitive" },
+    { crate = "thiserror-impl@1.0.69", reason = "jni 0.21 transitive" },
+    { crate = "windows-sys@0.45.0", reason = "jni 0.21 transitive" },
+    # manganis-core uses winnow 0.7.x while toml_edit uses 1.0.x.
+    { crate = "winnow@0.7.15", reason = "manganis-core 0.7.4 transitive" },
+]
+# skip-tree = []
+# Crates we explicitly never want pulled in.
+deny = []
+
+# ── Sources ────────────────────────────────────────────────────────
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "warn"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
+# allow-git = []  # add specific git deps here if needed

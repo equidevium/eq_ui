@@ -854,6 +854,24 @@ mod tests {
 }
 ```
 
+## Quality and security checks
+
+Beyond tests, eq_ui's pre-publish checklist runs a set of defensive checks. The full list lives in [ROADMAP.md](./ROADMAP.md), but the gist:
+
+```bash
+cargo fmt --check
+cargo clippy --all-targets --all-features -- -D warnings
+cargo audit                         # CVEs in deps via the RustSec advisory DB
+cargo deny check                    # license + duplicate-version + advisory + source checks
+cargo semver-checks check-release   # API breakage detection vs the published version
+```
+
+One-time installs: `cargo install cargo-audit cargo-deny cargo-semver-checks`.
+
+These are also enforced in CI. The workflow at [`.github/workflows/ci.yml`](./.github/workflows/ci.yml) runs the full checklist on every push and pull request, plus a daily security run that catches new CVEs that land in the advisory database without code changes.
+
+`deny.toml` at the repo root is tuned to the current dependency tree; bumping deps may require updating its `[bans].skip` or `[licenses].allow` lists.
+
 ## Roadmap
 
 See [ROADMAP.md](./ROADMAP.md) for what's coming next.

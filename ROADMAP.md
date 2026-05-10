@@ -144,15 +144,40 @@ Items to tackle once the "Now" batch stabilizes.
 Longer-term ideas and aspirations.
 
 ### Components
+
+#### Form and input
+
 - [ ] **EqForm** (Organism) - Form builder with validation, field groups, and submission handling.
+- [ ] **EqValidation** (Pattern) - Field validation primitives. Most likely a trait derivable from a struct with annotated form-state fields, plus a `Validator` type that composes per-field rules and surfaces errors. Integrates with EqInput / EqSelect / EqRadioGroup / EqCheckbox so any form-builder picks up validation for free.
+- [ ] **EqRangeSlider** (Molecule) - Two-handle slider for selecting a numeric range. Builds on EqSlider.
+- [ ] **EqTimePicker** (Molecule) - Time selection with formatted display, minute / hour granularity, 12 and 24-hour modes.
+- [ ] **EqOneTimeInput** (Molecule) - Multi-digit OTP entry with paste support and per-cell focus.
+- [ ] **EqPasswordStrength** (Molecule) - Password strength meter with configurable policy rules and rule-by-rule feedback.
+- [ ] **EqSearch** (Molecule) - Search input with autocomplete dropdown driven by a context-supplied result source.
+- [ ] **EqRating** (Atom) - Star or symbol rating with 5, 7, and 10 variants.
+
+#### Display and layout
+
+- [ ] **EqTypography** (Atom) - Text wrapper exposing size, alignment, wrapping, overflow, and case-transform props for one-stop styling.
+- [ ] **EqLoading** (Atom) - Spinner / activity indicator with size and color variants.
+- [ ] **EqQr** (Atom) - QR code renderer from a string. SVG output, configurable size and error-correction level.
 - [ ] **EqSidebar** (Organism) - Collapsible sidebar navigation.
 - [ ] **EqBreadcrumb** (Molecule) - Navigation breadcrumb trail.
 - [ ] **EqStepper** (Molecule) - Multi-step progress indicator.
 - [ ] **EqCommandPalette** (Organism) - Keyboard-driven command palette (Cmd+K style).
 - [ ] **EqContextMenu** (Molecule) - Right-click context menu.
 - [ ] **EqHoverCard** (Molecule) - Hover card with rich content preview.
+- [ ] **EqFreeGridColumns** (Organism) - Multi-column free-form layout where each column renders independent content. Closer to a magazine spread than a data grid.
+- [ ] **EqNewspaper** (Organism) - Article-style layout combining EqFreeGridColumns with inline image placement for editorial content.
+
+#### Editors and complex widgets
+
 - [ ] **EqRichTextEditor** (Organism) - Rich text editor via JS engine init.
 - [ ] **EqSignature** (Atom) - Canvas-based signature drawing.
+- [ ] **EqPdfViewer** (Organism) - PDF rendering with page navigation and zoom. Likely wraps the browser's built-in viewer plus a thin control layer.
+- [ ] **EqSchedule** (Organism) - Calendar event scheduler with day / week / month views, drag-to-create, and event editing. Significantly larger than EqCalendar.
+- [ ] **EqSnippingTool** (Organism) - Screen-region capture overlay similar to OS-level snipping tools. Browser support varies; may need platform-specific backends.
+- [ ] **EqCaptcha** (Organism) - Captcha challenge wrapper. Most likely an integration layer for hCaptcha or similar rather than rolling our own; security-sensitive features should not be DIY.
 
 ### Platform
 - [ ] **Desktop-specific components** - Components optimized for Dioxus desktop (native menus, system tray integration).
@@ -174,7 +199,20 @@ Longer-term ideas and aspirations.
 - **MSRV:** Rust **1.85** (Rust 2024 edition, matches `edition = "2024"` in `Cargo.toml`). Bumping MSRV requires a minor version bump and a note in the release row below.
 - **Dioxus pin:** `dioxus = "=0.7.3"` is exact-pinned for now because Dioxus 0.7 is still moving. Loosen to a caret range only after a Dioxus minor without breaking changes.
 - **Changelog:** Each release adds a row to the table below at the time the version is tagged. No row, no release.
-- **Pre-publish checklist (every release):** Run `cargo build --features playground --release`, `cargo test --lib`, `cargo test --doc`, `cargo clippy --features playground -- -D warnings`, and `cargo semver-checks check-release` (install with `cargo install cargo-semver-checks`). If any of these fail, fix or annotate before tagging.
+- **Pre-publish checklist (every release):** Run the following in order. If any step fails, fix or annotate before tagging.
+
+  ```bash
+  cargo fmt --check
+  cargo clippy --all-targets --all-features -- -D warnings
+  cargo build --features playground --release
+  cargo test --all-features
+  cargo test --doc
+  cargo audit
+  cargo deny check
+  cargo semver-checks check-release
+  ```
+
+  One-time installs: `cargo install cargo-audit`, `cargo install cargo-deny`, `cargo install cargo-semver-checks`. Optional sanity check: `cargo +nightly miri test` if any `unsafe` code is added in the future.
 - **Cut criteria for v0.5:** Smoke tests cover every registered component (or have a documented reason to skip); `eq_ui::prelude` module exists; integration guide (`docs/`) published; the pre-publish checklist above is green on the release commit; CHANGELOG row for v0.5.0 added. CI pipeline, axe-core a11y scanning, and EqCard macro unification slip to v0.5.x or v0.6.0.
 
 ## Release History
