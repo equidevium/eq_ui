@@ -1,14 +1,12 @@
 //! Style constants for EqVirtualList.
 
 /// Outer scrollable viewport container (vertical mode).
-pub const VIEWPORT: &str =
-    "overflow-auto relative \
+pub const VIEWPORT: &str = "overflow-auto relative \
      bg-[var(--color-card)] \
      border border-[var(--color-card-border)] rounded-lg";
 
 /// Outer scrollable viewport container (horizontal mode).
-pub const VIEWPORT_HORIZONTAL: &str =
-    "overflow-x-auto overflow-y-hidden relative \
+pub const VIEWPORT_HORIZONTAL: &str = "overflow-x-auto overflow-y-hidden relative \
      bg-[var(--color-card)] \
      border border-[var(--color-card-border)] rounded-lg";
 
@@ -32,14 +30,12 @@ pub const ITEM: &str = "w-full";
 pub const ITEM_HORIZONTAL: &str = "h-full shrink-0";
 
 /// Sticky header sitting above the scrollable area.
-pub const STICKY_HEADER: &str =
-    "sticky top-0 z-10 \
+pub const STICKY_HEADER: &str = "sticky top-0 z-10 \
      bg-[var(--color-card)] \
      border-b border-[var(--color-card-border)]";
 
 /// Sticky header in horizontal mode.
-pub const STICKY_HEADER_HORIZONTAL: &str =
-    "sticky left-0 z-10 \
+pub const STICKY_HEADER_HORIZONTAL: &str = "sticky left-0 z-10 \
      bg-[var(--color-card)] \
      border-r border-[var(--color-card-border)]";
 

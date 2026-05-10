@@ -1,16 +1,18 @@
-use dioxus::prelude::*;
 use super::eq_header_styles as s;
-use crate::theme::{merge_classes, CONTAINER_LAYOUT};
 use crate::playground;
+use crate::theme::{CONTAINER_LAYOUT, merge_classes};
+use dioxus::prelude::*;
 
-#[cfg(feature = "playground")]
-use crate::playground::playground_helpers::{CodeBlock, DemoSection, PropSelect, StyleInfo, format_catalog};
 #[cfg(feature = "playground")]
 use crate::atoms::EqText;
 #[cfg(feature = "playground")]
 use crate::atoms::TextVariant;
 #[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_helpers::{
+    CodeBlock, DemoSection, PropSelect, StyleInfo, format_catalog,
+};
+#[cfg(feature = "playground")]
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 /// Portable header component.
 /// Accepts nav content as an Element prop so the platform crate
@@ -27,8 +29,7 @@ use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory
 )]
 #[component]
 pub fn EqHeader(
-    #[props(default = "Equidevium")]
-    site_title: &'static str,
+    #[props(default = "Equidevium")] site_title: &'static str,
     /// When false, the brand/site_title is hidden entirely.
     /// Useful when integrating with a router navbar that provides
     /// its own branding or when the header is nav-only.

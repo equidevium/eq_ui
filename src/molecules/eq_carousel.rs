@@ -4,15 +4,15 @@ use crate::{PlaygroundEnum, playground};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
+use crate::atoms::{AspectRatio, AtomImageSize, EqText, TextVariant};
+#[cfg(feature = "playground")]
+use crate::molecules::eq_image_card::{CaptionMode, EqImageCard};
+#[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
-    CodeBlock, DemoSection, PropSelect, PropInput, StyleInfo, format_catalog,
+    CodeBlock, DemoSection, PropInput, PropSelect, StyleInfo, format_catalog,
 };
 #[cfg(feature = "playground")]
-use crate::atoms::{EqText, TextVariant, AtomImageSize, AspectRatio};
-#[cfg(feature = "playground")]
-use crate::molecules::eq_image_card::{EqImageCard, CaptionMode};
-#[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 // ---------------------------------------------------------------------------
 // CarouselMode
@@ -104,10 +104,18 @@ pub fn EqCarousel(
     let len = slides.len();
 
     let go_prev = move |_| {
-        current.set(if current() == 0 { len - 1 } else { current() - 1 });
+        current.set(if current() == 0 {
+            len - 1
+        } else {
+            current() - 1
+        });
     };
     let go_next = move |_| {
-        current.set(if current() + 1 >= len { 0 } else { current() + 1 });
+        current.set(if current() + 1 >= len {
+            0
+        } else {
+            current() + 1
+        });
     };
 
     let show_controls = len > 1;

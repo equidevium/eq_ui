@@ -4,16 +4,13 @@
 pub const FIELD: &str = "space-y-2";
 
 /// Helper / hint text below an input
-pub const HELP: &str =
-    "text-sm text-[var(--color-label-secondary)]";
+pub const HELP: &str = "text-sm text-[var(--color-label-secondary)]";
 
 /// Error message text
-pub const ERROR: &str =
-    "text-sm text-red-400";
+pub const ERROR: &str = "text-sm text-red-400";
 
 /// Base input / textarea control
-pub const CONTROL: &str =
-    "w-full rounded-md border px-3 py-2 text-sm outline-none transition \
+pub const CONTROL: &str = "w-full rounded-md border px-3 py-2 text-sm outline-none transition \
      bg-[var(--color-card)]/40 text-[var(--color-label-primary)] \
      border-[var(--color-card-border)] \
      placeholder:text-[var(--color-label-secondary)]/70 \

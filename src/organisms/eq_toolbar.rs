@@ -31,17 +31,13 @@ use crate::theme::merge_classes;
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
-use crate::atoms::{EqText, TextVariant, EqButton, ButtonVariant, EqInput, InputKind, EqProgress};
+use crate::atoms::{ButtonVariant, EqButton, EqInput, EqProgress, EqText, InputKind, TextVariant};
 #[cfg(feature = "playground")]
 use crate::molecules::EqDeviceFrame;
 #[cfg(feature = "playground")]
-use crate::playground::playground_helpers::{
-    CodeBlock, DemoSection, StyleInfo, format_catalog,
-};
+use crate::playground::playground_helpers::{CodeBlock, DemoSection, StyleInfo, format_catalog};
 #[cfg(feature = "playground")]
-use crate::playground::playground_types::{
-    ComponentCategory, ComponentDescriptor, UsageExample,
-};
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 /// Mobile header / toolbar.
 #[playground(

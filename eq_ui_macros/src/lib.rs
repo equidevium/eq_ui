@@ -39,12 +39,12 @@
 
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input, DeriveInput};
+use syn::{DeriveInput, parse_macro_input};
 
-mod playground_attr;
-mod playground_enum;
 mod codegen;
 mod parse_props;
+mod playground_attr;
+mod playground_enum;
 
 /// Derive macro that implements `PlaygroundEnumInfo` for an enum,
 /// exposing variant names and a `from_name` constructor for use

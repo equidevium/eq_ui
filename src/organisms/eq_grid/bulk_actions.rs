@@ -61,27 +61,30 @@ pub(super) fn render_bulk_actions<T: Clone + PartialEq + 'static>(
 
     // Build aggregation data if any aggregation columns are specified.
     let agg_data: Vec<(&'static str, String)> = if !aggregation_columns.is_empty() {
-        aggregation_columns.iter().filter_map(|&agg_col_id| {
-            let col = columns.iter().find(|c| c.id == agg_col_id)?;
-            // Try to sum numeric values; fall back to count.
-            let mut sum = 0.0f64;
-            let mut all_numeric = true;
-            for &idx in &indices {
-                let val = (col.value_getter)(&data[idx]);
-                if let Ok(n) = val.trim().parse::<f64>() {
-                    sum += n;
-                } else {
-                    all_numeric = false;
-                    break;
+        aggregation_columns
+            .iter()
+            .filter_map(|&agg_col_id| {
+                let col = columns.iter().find(|c| c.id == agg_col_id)?;
+                // Try to sum numeric values; fall back to count.
+                let mut sum = 0.0f64;
+                let mut all_numeric = true;
+                for &idx in &indices {
+                    let val = (col.value_getter)(&data[idx]);
+                    if let Ok(n) = val.trim().parse::<f64>() {
+                        sum += n;
+                    } else {
+                        all_numeric = false;
+                        break;
+                    }
                 }
-            }
-            let display = if all_numeric {
-                format!("{:.2}", sum)
-            } else {
-                format!("{} values", indices.len())
-            };
-            Some((col.header, display))
-        }).collect()
+                let display = if all_numeric {
+                    format!("{:.2}", sum)
+                } else {
+                    format!("{} values", indices.len())
+                };
+                Some((col.header, display))
+            })
+            .collect()
     } else {
         Vec::new()
     };

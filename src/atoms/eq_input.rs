@@ -1,16 +1,16 @@
-use dioxus::prelude::*;
 use super::eq_input_styles as s;
 use crate::theme::merge_classes;
 use crate::{PlaygroundEnum, playground};
+use dioxus::prelude::*;
 
-#[cfg(feature = "playground")]
-use crate::playground::playground_helpers::{
-    CodeBlock, DemoSection, PropSelect, PropToggle, PropInput, StyleInfo, format_catalog,
-};
 #[cfg(feature = "playground")]
 use crate::atoms::{EqText, TextVariant};
 #[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_helpers::{
+    CodeBlock, DemoSection, PropInput, PropSelect, PropToggle, StyleInfo, format_catalog,
+};
+#[cfg(feature = "playground")]
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 /// Input kind - determines the rendered element and `type` attribute.
 #[derive(Clone, PartialEq, Default, PlaygroundEnum)]
@@ -39,20 +39,13 @@ pub enum InputKind {
 )]
 #[component]
 pub fn EqInput(
-    #[props(default)]
-    kind: InputKind,
-    #[props(default = "")]
-    placeholder: &'static str,
-    #[props(default = "")]
-    name: &'static str,
-    #[props(default = "")]
-    id: &'static str,
-    #[props(default = false)]
-    disabled: bool,
-    #[props(default = false)]
-    required: bool,
-    #[props(default = String::new())]
-    value: String,
+    #[props(default)] kind: InputKind,
+    #[props(default = "")] placeholder: &'static str,
+    #[props(default = "")] name: &'static str,
+    #[props(default = "")] id: &'static str,
+    #[props(default = false)] disabled: bool,
+    #[props(default = false)] required: bool,
+    #[props(default = String::new())] value: String,
     /// Optional class override - extend or replace default styles.
     #[props(into, default)]
     class: String,
@@ -76,7 +69,7 @@ pub fn EqInput(
                     oninput: move |e| oninput.call(e),
                 }
             }
-        },
+        }
         _ => {
             let input_type = match kind {
                 InputKind::Email => "email",

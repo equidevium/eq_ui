@@ -12,11 +12,9 @@ pub const FOOTER_GROUP_TITLE: &str =
 
 pub const FOOTER_LIST: &str = "mt-4 space-y-2";
 
-pub const FOOTER_LINK: &str =
-    "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] active:text-[var(--color-label-primary)] transition";
+pub const FOOTER_LINK: &str = "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] active:text-[var(--color-label-primary)] transition";
 
-pub const FOOTER_BOTTOM: &str =
-    "mt-10 flex flex-col gap-2 border-t border-[var(--color-card-border)] pt-6 text-sm \
+pub const FOOTER_BOTTOM: &str = "mt-10 flex flex-col gap-2 border-t border-[var(--color-card-border)] pt-6 text-sm \
      text-[var(--color-label-secondary)] md:flex-row md:items-center md:justify-between";
 
 pub const FOOTER_TAGLINE: &str = "text-[var(--color-label-primary)]";

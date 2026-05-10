@@ -43,13 +43,9 @@ use crate::atoms::{EqText, TextVariant};
 #[cfg(feature = "playground")]
 use crate::molecules::EqDeviceFrame;
 #[cfg(feature = "playground")]
-use crate::playground::playground_helpers::{
-    CodeBlock, DemoSection, StyleInfo, format_catalog,
-};
+use crate::playground::playground_helpers::{CodeBlock, DemoSection, StyleInfo, format_catalog};
 #[cfg(feature = "playground")]
-use crate::playground::playground_types::{
-    ComponentCategory, ComponentDescriptor, UsageExample,
-};
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 /// Badge style on a `BottomNavItem`.
 #[derive(Clone, PartialEq)]
@@ -274,12 +270,9 @@ EqBottomNav {
 
     let items = vec![
         BottomNavItem::new("home", "Home", icon_home()),
-        BottomNavItem::new("inbox", "Inbox", icon_inbox())
-            .badge(BottomNavBadge::Count(3)),
-        BottomNavItem::new("profile", "Profile", icon_user())
-            .badge(BottomNavBadge::Dot),
-        BottomNavItem::new("settings", "Settings", icon_gear())
-            .disabled(true),
+        BottomNavItem::new("inbox", "Inbox", icon_inbox()).badge(BottomNavBadge::Count(3)),
+        BottomNavItem::new("profile", "Profile", icon_user()).badge(BottomNavBadge::Dot),
+        BottomNavItem::new("settings", "Settings", icon_gear()).disabled(true),
     ];
 
     rsx! {

@@ -1,12 +1,12 @@
-use dioxus::prelude::*;
 use crate::playground;
+use dioxus::prelude::*;
 
-#[cfg(feature = "playground")]
-use crate::playground::playground_helpers::{CodeBlock, DemoSection, StyleInfo, format_catalog};
 #[cfg(feature = "playground")]
 use crate::atoms::{EqText, TextVariant};
 #[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_helpers::{CodeBlock, DemoSection, StyleInfo, format_catalog};
+#[cfg(feature = "playground")]
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 const NAVBAR_CSS: Asset = asset!("/assets/styling/navbar.css");
 

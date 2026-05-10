@@ -1,13 +1,13 @@
-use dioxus::prelude::*;
-use crate::theme::{merge_classes, APP, CONTAINER_LAYOUT, MAIN_CONTENT, MAIN_INNER};
 use crate::playground;
+use crate::theme::{APP, CONTAINER_LAYOUT, MAIN_CONTENT, MAIN_INNER, merge_classes};
+use dioxus::prelude::*;
 
-#[cfg(feature = "playground")]
-use crate::playground::playground_helpers::{CodeBlock, DemoSection, StyleInfo, format_catalog};
 #[cfg(feature = "playground")]
 use crate::atoms::{EqText, TextVariant};
 #[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_helpers::{CodeBlock, DemoSection, StyleInfo, format_catalog};
+#[cfg(feature = "playground")]
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 /// Generic app shell layout.
 /// The platform crate passes its own header, footer, and main content

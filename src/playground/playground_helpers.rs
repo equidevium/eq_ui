@@ -12,8 +12,8 @@
 //! All per-component `render_demo` / `render_gallery` functions should
 //! import helpers from here rather than duplicating them.
 
-use dioxus::prelude::*;
 use crate::atoms::{EqText, TextVariant};
+use dioxus::prelude::*;
 
 // ── DemoSection ────────────────────────────────────────────────────
 
@@ -47,10 +47,9 @@ const GRV_BLUE: &str = "#7cc6d4";
 // ── Rust keywords ──────────────────────────────────────────────────
 
 const RUST_KEYWORDS: &[&str] = &[
-    "as", "async", "await", "break", "const", "continue", "crate", "dyn",
-    "else", "enum", "extern", "false", "fn", "for", "if", "impl", "in",
-    "let", "loop", "match", "mod", "move", "mut", "pub", "ref", "return",
-    "self", "Self", "static", "struct", "super", "trait", "true", "type",
+    "as", "async", "await", "break", "const", "continue", "crate", "dyn", "else", "enum", "extern",
+    "false", "fn", "for", "if", "impl", "in", "let", "loop", "match", "mod", "move", "mut", "pub",
+    "ref", "return", "self", "Self", "static", "struct", "super", "trait", "true", "type",
     "unsafe", "use", "where", "while",
 ];
 
@@ -359,8 +358,7 @@ pub const PROP_LABEL: &str =
     "text-xs font-medium text-[var(--color-label-secondary)] w-20 shrink-0";
 
 /// Input / select control style for prop controls.
-pub const PROP_CONTROL: &str =
-    "rounded-md bg-[var(--color-card)] text-[var(--color-label-primary)] \
+pub const PROP_CONTROL: &str = "rounded-md bg-[var(--color-card)] text-[var(--color-label-primary)] \
      border border-[var(--color-card-border)] px-2 py-1 text-xs";
 
 // ── PropSelect ─────────────────────────────────────────────────────
@@ -416,11 +414,7 @@ pub fn PropInput(
 
 /// Styled boolean toggle (true/false dropdown) for live prop editing.
 #[component]
-pub fn PropToggle(
-    label: &'static str,
-    value: bool,
-    onchange: EventHandler<bool>,
-) -> Element {
+pub fn PropToggle(label: &'static str, value: bool, onchange: EventHandler<bool>) -> Element {
     rsx! {
         div { class: PROP_ROW,
             span { class: PROP_LABEL, "{label}" }

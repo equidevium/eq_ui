@@ -15,20 +15,20 @@ pub const UI_TAILWIND_CSS: Asset = asset!("/assets/tailwind.css");
 pub const UI_INDEX_CSS: Asset = asset!("/assets/theme/index.css");
 pub const UI_BUTTONS_CSS: Asset = asset!("/assets/theme/buttons.css");
 
-#[cfg(feature = "playground")]
-pub mod playground;
-pub mod theme;
 pub mod atoms;
+pub mod eq_theme;
 pub mod molecules;
 pub mod organisms;
-pub mod eq_theme;
+#[cfg(feature = "playground")]
+pub mod playground;
 pub mod playground_enum_trait;
 pub mod prelude;
+pub mod theme;
 
-pub use eq_ui_macros::{playground, PlaygroundEnum};
+pub use eq_ui_macros::{PlaygroundEnum, playground};
 
 #[cfg(feature = "playground")]
-pub use playground::{ComponentDescriptor, ComponentCategory, UsageExample, EqPlayground};
+pub use playground::{ComponentCategory, ComponentDescriptor, EqPlayground, UsageExample};
 pub use theme::*;
 
 /// Returns descriptors for all built-in components.

@@ -35,13 +35,13 @@ use crate::{PlaygroundEnum, playground};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
+use crate::atoms::{EqText, TextVariant};
+#[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
     CodeBlock, DemoSection, PropSelect, StyleInfo, format_catalog,
 };
 #[cfg(feature = "playground")]
-use crate::atoms::{EqText, TextVariant};
-#[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 // ── Types ─────────────────────────────────────────────────────────
 
@@ -366,9 +366,7 @@ fn DemoEqDropdown() -> Element {
         DropdownItem::new("delete", "Delete").disabled(),
     ];
 
-    let selected_label = selected()
-        .clone()
-        .unwrap_or_else(|| "(none)".to_string());
+    let selected_label = selected().clone().unwrap_or_else(|| "(none)".to_string());
 
     let code = r#"let items = vec![
     DropdownItem::new("edit", "Edit"),

@@ -1,19 +1,19 @@
-use dioxus::prelude::*;
 use super::eq_nav_item_styles as s;
-use crate::theme::merge_classes;
 use crate::atoms::{EqIcon, IconSize};
+use crate::theme::merge_classes;
 use crate::{PlaygroundEnum, playground};
+use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
 use crate::atoms::eq_icon_paths;
+#[cfg(feature = "playground")]
+use crate::atoms::{EqText, TextVariant};
 #[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
     CodeBlock, DemoSection, PropInput, PropToggle, StyleInfo, format_catalog,
 };
 #[cfg(feature = "playground")]
-use crate::atoms::{EqText, TextVariant};
-#[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 /// Size variant for EqNavItem.
 #[derive(Clone, PartialEq, Default, PlaygroundEnum)]

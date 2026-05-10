@@ -7,16 +7,13 @@ pub const ACCORDION: &str = "flex flex-col divide-y divide-[var(--color-card-bor
 pub const PANEL: &str = "";
 
 /// The clickable header row.
-pub const HEADER: &str =
-    "flex items-center justify-between w-full gap-3 px-4 py-3 cursor-pointer select-none text-left transition-colors hover:bg-[var(--color-card)]/40 active:bg-[var(--color-card)]/40";
+pub const HEADER: &str = "flex items-center justify-between w-full gap-3 px-4 py-3 cursor-pointer select-none text-left transition-colors hover:bg-[var(--color-card)]/40 active:bg-[var(--color-card)]/40";
 
 /// Header text defaults.
-pub const HEADER_TEXT: &str =
-    "font-medium text-sm text-[var(--color-label-primary)]";
+pub const HEADER_TEXT: &str = "font-medium text-sm text-[var(--color-label-primary)]";
 
 /// Chevron icon for expand/collapse indicator.
-pub const CHEVRON: &str =
-    "size-5 shrink-0 text-[var(--color-label-secondary)] transition-transform duration-[var(--transition-fast)]";
+pub const CHEVRON: &str = "size-5 shrink-0 text-[var(--color-label-secondary)] transition-transform duration-[var(--transition-fast)]";
 
 /// Chevron rotated when panel is open.
 pub const CHEVRON_OPEN: &str = "rotate-180";

@@ -1,17 +1,17 @@
 use super::eq_video_styles as s;
 use super::{AspectRatio, AtomImageSize};
-use crate::theme::merge_classes;
 use crate::playground;
+use crate::theme::merge_classes;
 use dioxus::prelude::*;
 
+#[cfg(feature = "playground")]
+use crate::atoms::{EqText, TextVariant};
 #[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
     CodeBlock, DemoSection, PropSelect, PropToggle, StyleInfo, format_catalog,
 };
 #[cfg(feature = "playground")]
-use crate::atoms::{EqText, TextVariant};
-#[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 /// Atomic video component.
 ///

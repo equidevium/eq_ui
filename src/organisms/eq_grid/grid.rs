@@ -11,19 +11,24 @@ use super::header::render_header;
 use super::pagination::render_pagination;
 use super::quick_filter::render_quick_filter;
 use super::styles as s;
-use super::types::{ExportFormat, GridDensity, GridDragPayload, GridNavigation, ResizeState, RowSelection, SortDirection, SortState};
-use crate::atoms::eq_icon_paths;
+use super::types::{
+    ExportFormat, GridDensity, GridDragPayload, GridNavigation, ResizeState, RowSelection,
+    SortDirection, SortState,
+};
 use crate::atoms::EqIcon;
+use crate::atoms::eq_icon_paths;
 use crate::theme::merge_classes;
 use dioxus::prelude::*;
 use std::collections::{HashMap, HashSet};
 
 #[cfg(feature = "playground")]
-use crate::playground::playground_helpers::{CodeBlock, DemoSection, PropSelect, PropToggle, StyleInfo, format_catalog};
+use crate::atoms::{EqTab, EqText, TabItem, TabVariant, TextVariant};
 #[cfg(feature = "playground")]
-use crate::atoms::{EqText, TextVariant, EqTab, TabItem, TabVariant};
+use crate::playground::playground_helpers::{
+    CodeBlock, DemoSection, PropSelect, PropToggle, StyleInfo, format_catalog,
+};
 #[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 /// Feature-rich data grid organism.
 ///
@@ -203,43 +208,44 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
 
     // Step 2: Apply column filters (AND logic - row must match ALL active filters).
     let col_filters = column_filters.read();
-    let filtered_indices: Vec<usize> = if col_filters.is_empty() && quick_filter_text.read().is_empty() {
-        all_indices
-    } else {
-        all_indices
-            .into_iter()
-            .filter(|&idx| {
-                // Column filters: AND logic
-                for (&col_id, filter_text) in col_filters.iter() {
-                    if filter_text.is_empty() {
-                        continue;
+    let filtered_indices: Vec<usize> =
+        if col_filters.is_empty() && quick_filter_text.read().is_empty() {
+            all_indices
+        } else {
+            all_indices
+                .into_iter()
+                .filter(|&idx| {
+                    // Column filters: AND logic
+                    for (&col_id, filter_text) in col_filters.iter() {
+                        if filter_text.is_empty() {
+                            continue;
+                        }
+                        let needle = filter_text.to_lowercase();
+                        if let Some(col) = columns.iter().find(|c| c.id == col_id) {
+                            let val = (col.value_getter)(&data[idx]).to_lowercase();
+                            if !val.contains(&needle) {
+                                return false;
+                            }
+                        }
                     }
-                    let needle = filter_text.to_lowercase();
-                    if let Some(col) = columns.iter().find(|c| c.id == col_id) {
-                        let val = (col.value_getter)(&data[idx]).to_lowercase();
-                        if !val.contains(&needle) {
+
+                    // Quick filter: OR logic - any column value contains the text
+                    let qf = quick_filter_text.read();
+                    if !qf.is_empty() {
+                        let needle = qf.to_lowercase();
+                        let matches_any = columns.iter().any(|col| {
+                            let val = (col.value_getter)(&data[idx]).to_lowercase();
+                            val.contains(&needle)
+                        });
+                        if !matches_any {
                             return false;
                         }
                     }
-                }
 
-                // Quick filter: OR logic - any column value contains the text
-                let qf = quick_filter_text.read();
-                if !qf.is_empty() {
-                    let needle = qf.to_lowercase();
-                    let matches_any = columns.iter().any(|col| {
-                        let val = (col.value_getter)(&data[idx]).to_lowercase();
-                        val.contains(&needle)
-                    });
-                    if !matches_any {
-                        return false;
-                    }
-                }
-
-                true
-            })
-            .collect()
-    };
+                    true
+                })
+                .collect()
+        };
     drop(col_filters);
 
     // Step 3: Sort the filtered indices (supports multi-column chained sort).
@@ -319,33 +325,45 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
 
     // ── Virtual scroll windowing ────────────────────────────────
 
-    let row_height = if virtualize { measured_row_height() } else { 0.0 };
+    let row_height = if virtualize {
+        measured_row_height()
+    } else {
+        0.0
+    };
     let buffer = 3_usize; // extra rows above and below the viewport
 
     // `virt_first` / `virt_last` track the visible row range (1-based)
     // shown in the virtualization info footer.
-    let (windowed_indices, top_spacer, bottom_spacer, viewport_height, virt_first, virt_last) = if virtualize {
-        let total_vis = visible_indices.len();
-        let vp_h = (page_size as f64) * row_height;
+    let (windowed_indices, top_spacer, bottom_spacer, viewport_height, virt_first, virt_last) =
+        if virtualize {
+            let total_vis = visible_indices.len();
+            let vp_h = (page_size as f64) * row_height;
 
-        if total_vis == 0 {
-            (Vec::new(), 0.0, 0.0, vp_h, 0usize, 0usize)
+            if total_vis == 0 {
+                (Vec::new(), 0.0, 0.0, vp_h, 0usize, 0usize)
+            } else {
+                let first = ((scroll_top() / row_height).floor() as usize).min(total_vis - 1);
+                let last = (first + page_size).min(total_vis);
+
+                // Expand by buffer, clamped to bounds.
+                let win_start = first.saturating_sub(buffer);
+                let win_end = (last + buffer).min(total_vis);
+
+                let top_h = (win_start as f64) * row_height;
+                let bottom_h = ((total_vis - win_end) as f64) * row_height;
+
+                (
+                    visible_indices[win_start..win_end].to_vec(),
+                    top_h,
+                    bottom_h,
+                    vp_h,
+                    first + 1,
+                    last,
+                )
+            }
         } else {
-            let first = ((scroll_top() / row_height).floor() as usize).min(total_vis - 1);
-            let last = (first + page_size).min(total_vis);
-
-            // Expand by buffer, clamped to bounds.
-            let win_start = first.saturating_sub(buffer);
-            let win_end = (last + buffer).min(total_vis);
-
-            let top_h = (win_start as f64) * row_height;
-            let bottom_h = ((total_vis - win_end) as f64) * row_height;
-
-            (visible_indices[win_start..win_end].to_vec(), top_h, bottom_h, vp_h, first + 1, last)
-        }
-    } else {
-        (visible_indices.to_vec(), 0.0, 0.0, 0.0, 0, 0)
-    };
+            (visible_indices.to_vec(), 0.0, 0.0, 0.0, 0, 0)
+        };
 
     // ── Colgroup - shared column widths for split-table virtualisation ──
 
@@ -385,7 +403,11 @@ pub fn EqGrid<T: Clone + PartialEq + 'static>(
     // Total column count including utility columns (grip, checkbox).
     let aria_colcount = columns.len()
         + if reorderable { 1 } else { 0 }
-        + if row_selection == RowSelection::Multi { 1 } else { 0 };
+        + if row_selection == RowSelection::Multi {
+            1
+        } else {
+            0
+        };
     // Total row count is always the full dataset (filtered) so screen
     // readers know the true size even when paginated or virtualized.
     let aria_rowcount_val = total_rows + 1; // +1 for header row
@@ -696,7 +718,8 @@ pub fn descriptor() -> ComponentDescriptor {
         category: ComponentCategory::Organism,
         description: "Feature-rich, type-safe data grid with sorting, filtering, pagination, row selection, and export.",
         style_tokens: || s::catalog(),
-        usage_examples: || vec![
+        usage_examples: || {
+            vec![
             UsageExample {
                 label: "Basic",
                 code: "#[derive(Clone, PartialEq)]\nstruct Employee {\n    name: String,\n    role: String,\n    salary: f64,\n}\n\nlet columns = vec![\n    EqColumnDef::new(\"name\", \"Name\", |e| e.name.clone())\n        .filterable(true),\n];\n\nEqGrid {\n    data: employees,\n    columns: columns,\n}".into(),
@@ -705,7 +728,8 @@ pub fn descriptor() -> ComponentDescriptor {
                 label: "With pagination",
                 code: "EqGrid {\n    data: employees,\n    columns: columns,\n    navigation: GridNavigation::Paginate,\n    page_size: 10,\n    row_selection: RowSelection::Single,\n    striped: true,\n}".into(),
             },
-        ],
+        ]
+        },
         render_demo: || rsx! { DemoEqGrid {} },
         render_gallery: || rsx! { GalleryEqGrid {} },
         mobile_friendly: false,
@@ -732,23 +756,51 @@ fn demo_employees() -> Vec<DemoEmployee> {
         ("Grace Hopper", "Architect", "R&D", 120000.0, "Active"),
         ("Alan Turing", "Researcher", "Science", 105000.0, "Inactive"),
         ("Linus Torvalds", "Lead", "Engineering", 150000.0, "Active"),
-        ("Margaret Hamilton", "Director", "Engineering", 140000.0, "Active"),
+        (
+            "Margaret Hamilton",
+            "Director",
+            "Engineering",
+            140000.0,
+            "Active",
+        ),
         ("Dennis Ritchie", "Engineer", "Systems", 98000.0, "Inactive"),
         ("Barbara Liskov", "Professor", "Science", 130000.0, "Active"),
         ("Ken Thompson", "Engineer", "Systems", 102000.0, "Active"),
-        ("Bjarne Stroustrup", "Architect", "Languages", 115000.0, "Active"),
-        ("Guido van Rossum", "Lead", "Languages", 125000.0, "Inactive"),
+        (
+            "Bjarne Stroustrup",
+            "Architect",
+            "Languages",
+            115000.0,
+            "Active",
+        ),
+        (
+            "Guido van Rossum",
+            "Lead",
+            "Languages",
+            125000.0,
+            "Inactive",
+        ),
         ("Hedy Lamarr", "Inventor", "R&D", 88000.0, "Active"),
         ("Tim Berners-Lee", "Architect", "Web", 135000.0, "Active"),
         ("John McCarthy", "Researcher", "AI", 110000.0, "Inactive"),
         ("Frances Allen", "Engineer", "Compilers", 99000.0, "Active"),
-        ("Donald Knuth", "Professor", "Algorithms", 142000.0, "Active"),
+        (
+            "Donald Knuth",
+            "Professor",
+            "Algorithms",
+            142000.0,
+            "Active",
+        ),
     ];
     base.into_iter()
         .enumerate()
         .map(|(i, (n, r, d, s, st))| DemoEmployee {
-            index: i + 1, name: n.into(), role: r.into(), department: d.into(),
-            salary: s, status: st.into(),
+            index: i + 1,
+            name: n.into(),
+            role: r.into(),
+            department: d.into(),
+            salary: s,
+            status: st.into(),
         })
         .collect()
 }
@@ -786,13 +838,19 @@ fn demo_columns() -> Vec<EqColumnDef<DemoEmployee>> {
         EqColumnDef::new("role", "Role", |e: &DemoEmployee| e.role.clone())
             .filterable(true)
             .min_width(100),
-        EqColumnDef::new("dept", "Department", |e: &DemoEmployee| e.department.clone())
-            .filterable(true)
-            .min_width(100),
+        EqColumnDef::new("dept", "Department", |e: &DemoEmployee| {
+            e.department.clone()
+        })
+        .filterable(true)
+        .min_width(100),
         EqColumnDef::new("salary", "Salary", |e: &DemoEmployee| e.salary.to_string())
             .with_formatter(|e: &DemoEmployee| format!("${:.0}", e.salary))
             .align(super::types::ColumnAlign::Right)
-            .comparator(|a: &DemoEmployee, b: &DemoEmployee| a.salary.partial_cmp(&b.salary).unwrap_or(std::cmp::Ordering::Equal))
+            .comparator(|a: &DemoEmployee, b: &DemoEmployee| {
+                a.salary
+                    .partial_cmp(&b.salary)
+                    .unwrap_or(std::cmp::Ordering::Equal)
+            })
             .width(120)
             .min_width(80),
         EqColumnDef::new("status", "Status", |e: &DemoEmployee| e.status.clone())
@@ -824,20 +882,52 @@ struct DndPerson {
 #[cfg(feature = "playground")]
 fn team_a_data() -> Vec<DndPerson> {
     vec![
-        DndPerson { index: 1, name: "Ada Lovelace".into(), role: "Engineer".into() },
-        DndPerson { index: 2, name: "Grace Hopper".into(), role: "Architect".into() },
-        DndPerson { index: 3, name: "Alan Turing".into(), role: "Researcher".into() },
-        DndPerson { index: 4, name: "Linus Torvalds".into(), role: "Lead".into() },
-        DndPerson { index: 5, name: "Margaret Hamilton".into(), role: "Director".into() },
+        DndPerson {
+            index: 1,
+            name: "Ada Lovelace".into(),
+            role: "Engineer".into(),
+        },
+        DndPerson {
+            index: 2,
+            name: "Grace Hopper".into(),
+            role: "Architect".into(),
+        },
+        DndPerson {
+            index: 3,
+            name: "Alan Turing".into(),
+            role: "Researcher".into(),
+        },
+        DndPerson {
+            index: 4,
+            name: "Linus Torvalds".into(),
+            role: "Lead".into(),
+        },
+        DndPerson {
+            index: 5,
+            name: "Margaret Hamilton".into(),
+            role: "Director".into(),
+        },
     ]
 }
 
 #[cfg(feature = "playground")]
 fn team_b_data() -> Vec<DndPerson> {
     vec![
-        DndPerson { index: 1, name: "Dennis Ritchie".into(), role: "Engineer".into() },
-        DndPerson { index: 2, name: "Barbara Liskov".into(), role: "Professor".into() },
-        DndPerson { index: 3, name: "Ken Thompson".into(), role: "Engineer".into() },
+        DndPerson {
+            index: 1,
+            name: "Dennis Ritchie".into(),
+            role: "Engineer".into(),
+        },
+        DndPerson {
+            index: 2,
+            name: "Barbara Liskov".into(),
+            role: "Professor".into(),
+        },
+        DndPerson {
+            index: 3,
+            name: "Ken Thompson".into(),
+            role: "Engineer".into(),
+        },
     ]
 }
 
@@ -850,10 +940,8 @@ fn dnd_columns() -> Vec<EqColumnDef<DndPerson>> {
             .align(super::types::ColumnAlign::Right)
             .width(40)
             .min_width(40),
-        EqColumnDef::new("name", "Name", |e: &DndPerson| e.name.clone())
-            .min_width(120),
-        EqColumnDef::new("role", "Role", |e: &DndPerson| e.role.clone())
-            .min_width(80),
+        EqColumnDef::new("name", "Name", |e: &DndPerson| e.name.clone()).min_width(120),
+        EqColumnDef::new("role", "Role", |e: &DndPerson| e.role.clone()).min_width(80),
     ]
 }
 
@@ -897,7 +985,8 @@ fn DemoEqGridDragDrop() -> Element {
         \x20   on_drop_receive: move |payload: GridDragPayload| {\n\
         \x20       // Move rows from source to target\n\
         \x20   },\n\
-        }".to_string();
+        }"
+    .to_string();
 
     rsx! {
         div { class: "space-y-4",
@@ -1004,27 +1093,85 @@ fn DemoEqGridDragDrop() -> Element {
 fn DemoEqGridReorder() -> Element {
     let mut data = use_signal(|| {
         vec![
-            DemoEmployee { index: 1, name: "Ada Lovelace".into(), role: "Engineer".into(), department: "R&D".into(), salary: 95000.0, status: "Active".into() },
-            DemoEmployee { index: 2, name: "Grace Hopper".into(), role: "Architect".into(), department: "R&D".into(), salary: 120000.0, status: "Active".into() },
-            DemoEmployee { index: 3, name: "Alan Turing".into(), role: "Researcher".into(), department: "Science".into(), salary: 105000.0, status: "Inactive".into() },
-            DemoEmployee { index: 4, name: "Linus Torvalds".into(), role: "Lead".into(), department: "Engineering".into(), salary: 150000.0, status: "Active".into() },
-            DemoEmployee { index: 5, name: "Margaret Hamilton".into(), role: "Director".into(), department: "Engineering".into(), salary: 140000.0, status: "Active".into() },
-            DemoEmployee { index: 6, name: "Dennis Ritchie".into(), role: "Engineer".into(), department: "Systems".into(), salary: 98000.0, status: "Inactive".into() },
-            DemoEmployee { index: 7, name: "Barbara Liskov".into(), role: "Professor".into(), department: "Science".into(), salary: 130000.0, status: "Active".into() },
-            DemoEmployee { index: 8, name: "Ken Thompson".into(), role: "Engineer".into(), department: "Systems".into(), salary: 102000.0, status: "Active".into() },
+            DemoEmployee {
+                index: 1,
+                name: "Ada Lovelace".into(),
+                role: "Engineer".into(),
+                department: "R&D".into(),
+                salary: 95000.0,
+                status: "Active".into(),
+            },
+            DemoEmployee {
+                index: 2,
+                name: "Grace Hopper".into(),
+                role: "Architect".into(),
+                department: "R&D".into(),
+                salary: 120000.0,
+                status: "Active".into(),
+            },
+            DemoEmployee {
+                index: 3,
+                name: "Alan Turing".into(),
+                role: "Researcher".into(),
+                department: "Science".into(),
+                salary: 105000.0,
+                status: "Inactive".into(),
+            },
+            DemoEmployee {
+                index: 4,
+                name: "Linus Torvalds".into(),
+                role: "Lead".into(),
+                department: "Engineering".into(),
+                salary: 150000.0,
+                status: "Active".into(),
+            },
+            DemoEmployee {
+                index: 5,
+                name: "Margaret Hamilton".into(),
+                role: "Director".into(),
+                department: "Engineering".into(),
+                salary: 140000.0,
+                status: "Active".into(),
+            },
+            DemoEmployee {
+                index: 6,
+                name: "Dennis Ritchie".into(),
+                role: "Engineer".into(),
+                department: "Systems".into(),
+                salary: 98000.0,
+                status: "Inactive".into(),
+            },
+            DemoEmployee {
+                index: 7,
+                name: "Barbara Liskov".into(),
+                role: "Professor".into(),
+                department: "Science".into(),
+                salary: 130000.0,
+                status: "Active".into(),
+            },
+            DemoEmployee {
+                index: 8,
+                name: "Ken Thompson".into(),
+                role: "Engineer".into(),
+                department: "Systems".into(),
+                salary: 102000.0,
+                status: "Active".into(),
+            },
         ]
     });
 
     let mut last_move = use_signal(String::new);
 
     let columns = vec![
-        EqColumnDef::new("index", "#", |e: &DemoEmployee| e.index.to_string())
-            .width(60),
-        EqColumnDef::new("name", "Name", |e: &DemoEmployee| e.name.clone())
-            .sortable(true),
+        EqColumnDef::new("index", "#", |e: &DemoEmployee| e.index.to_string()).width(60),
+        EqColumnDef::new("name", "Name", |e: &DemoEmployee| e.name.clone()).sortable(true),
         EqColumnDef::new("role", "Role", |e: &DemoEmployee| e.role.clone()),
-        EqColumnDef::new("dept", "Department", |e: &DemoEmployee| e.department.clone()),
-        EqColumnDef::new("salary", "Salary", |e: &DemoEmployee| format!("${}", e.salary as u64)),
+        EqColumnDef::new("dept", "Department", |e: &DemoEmployee| {
+            e.department.clone()
+        }),
+        EqColumnDef::new("salary", "Salary", |e: &DemoEmployee| {
+            format!("${}", e.salary as u64)
+        }),
     ];
 
     let code = r#"EqGrid {
@@ -1081,7 +1228,6 @@ fn DemoEqGridReorder() -> Element {
 }
 
 // ── Interactive demo ───────────────────────────────────────────────
-
 
 #[cfg(feature = "playground")]
 #[component]
@@ -1160,7 +1306,8 @@ fn DemoEqGrid() -> Element {
         \x20   row_selection: RowSelection::Single,\n\
         \x20   quick_filter: true,\n\
         \x20   striped: true,\n\
-        }".to_string();
+        }"
+    .to_string();
 
     rsx! {
         DemoSection { title: "EqGrid",
@@ -1406,9 +1553,8 @@ mod tests {
     #[test]
     fn smoke_renders_empty() {
         let mut dom = VirtualDom::new(|| {
-            let cols: Vec<EqColumnDef<String>> = vec![
-                EqColumnDef::new("name", "Name", |s: &String| s.clone()),
-            ];
+            let cols: Vec<EqColumnDef<String>> =
+                vec![EqColumnDef::new("name", "Name", |s: &String| s.clone())];
             let data: Vec<String> = vec![];
             rsx! { EqGrid { data, columns: cols } }
         });

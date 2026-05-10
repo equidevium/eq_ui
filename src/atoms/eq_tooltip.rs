@@ -22,13 +22,13 @@ use crate::{PlaygroundEnum, playground};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
+use crate::atoms::{ButtonVariant, EqButton, EqText, TextVariant};
+#[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
-    CodeBlock, DemoSection, PropSelect, PropInput, StyleInfo, format_catalog,
+    CodeBlock, DemoSection, PropInput, PropSelect, StyleInfo, format_catalog,
 };
 #[cfg(feature = "playground")]
-use crate::atoms::{EqText, TextVariant, EqButton, ButtonVariant};
-#[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 // ── Types ─────────────────────────────────────────────────────────
 
@@ -96,7 +96,10 @@ pub fn EqTooltip(
     // Unique ID for aria-describedby.
     let tooltip_id = use_hook(|| {
         static COUNTER: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
-        format!("eq-tooltip-{}", COUNTER.fetch_add(1, std::sync::atomic::Ordering::Relaxed))
+        format!(
+            "eq-tooltip-{}",
+            COUNTER.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
+        )
     });
 
     rsx! {

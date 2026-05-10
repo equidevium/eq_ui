@@ -5,13 +5,13 @@ use dioxus::document;
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
-use crate::playground::playground_helpers::{
-    CodeBlock, DemoSection, PropSelect, PropInput, StyleInfo, format_catalog,
-};
-#[cfg(feature = "playground")]
 use crate::atoms::{EqText, TextVariant};
 #[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_helpers::{
+    CodeBlock, DemoSection, PropInput, PropSelect, StyleInfo, format_catalog,
+};
+#[cfg(feature = "playground")]
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 /// Controls whether multiple panels can be open simultaneously.
 #[derive(Clone, Copy, PartialEq, Default, PlaygroundEnum)]
@@ -36,11 +36,7 @@ pub struct AccordionItem {
 
 impl AccordionItem {
     /// Shorthand constructor.
-    pub fn new(
-        id: impl Into<String>,
-        header: Element,
-        body: Element,
-    ) -> Self {
+    pub fn new(id: impl Into<String>, header: Element, body: Element) -> Self {
         Self {
             id: id.into(),
             header,

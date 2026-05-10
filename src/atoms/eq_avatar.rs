@@ -48,13 +48,13 @@ use crate::{PlaygroundEnum, playground};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
-use crate::playground::playground_helpers::{
-    CodeBlock, DemoSection, PropSelect, PropToggle, PropInput, StyleInfo, format_catalog,
-};
-#[cfg(feature = "playground")]
 use crate::atoms::{EqText, TextVariant};
 #[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_helpers::{
+    CodeBlock, DemoSection, PropInput, PropSelect, PropToggle, StyleInfo, format_catalog,
+};
+#[cfg(feature = "playground")]
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 // ── Types ─────────────────────────────────────────────────────────
 
@@ -101,8 +101,7 @@ fn extract_initials(name: &str) -> String {
 // ── SVG fallback icon (generic person silhouette) ─────────────────
 
 /// Heroicons `user` outline (24×24).
-const USER_ICON_PATH: &str =
-    "M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 \
+const USER_ICON_PATH: &str = "M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 \
      20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 \
      0-5.216-.584-7.499-1.632Z";
 

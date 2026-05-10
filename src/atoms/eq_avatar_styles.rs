@@ -1,8 +1,7 @@
 //! Style constants for EqAvatar.
 
 /// Shared base: centered flex, rounded-full, overflow hidden, shrink-0.
-pub const BASE: &str =
-    "inline-flex items-center justify-center rounded-full overflow-hidden shrink-0 \
+pub const BASE: &str = "inline-flex items-center justify-center rounded-full overflow-hidden shrink-0 \
      select-none font-semibold uppercase";
 
 /// Small size (32×32).
@@ -18,16 +17,14 @@ pub const XL: &str = "size-16 text-lg";
 pub const IMAGE: &str = "w-full h-full object-cover";
 
 /// Initials fallback background.
-pub const INITIALS: &str =
-    "bg-[var(--color-accent-primary)] text-white";
+pub const INITIALS: &str = "bg-[var(--color-accent-primary)] text-white";
 
 /// Icon fallback (generic person silhouette).
 pub const ICON_FALLBACK: &str =
     "bg-[var(--color-tertiary-dark)] text-[var(--color-label-secondary)]";
 
 /// Online status indicator dot (absolute positioned).
-pub const STATUS_DOT: &str =
-    "absolute bottom-0 right-0 rounded-full border-2 \
+pub const STATUS_DOT: &str = "absolute bottom-0 right-0 rounded-full border-2 \
      border-[var(--color-core-dark)]";
 
 /// Status dot sizes per avatar size.

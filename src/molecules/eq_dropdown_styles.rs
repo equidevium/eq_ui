@@ -4,8 +4,7 @@
 pub const WRAPPER: &str = "relative inline-flex";
 
 /// The trigger button.
-pub const TRIGGER: &str =
-    "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm \
+pub const TRIGGER: &str = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm \
      cursor-pointer select-none \
      bg-[var(--color-input-bg)] text-[var(--color-label-primary)] \
      border border-[var(--color-input-border)] \
@@ -21,8 +20,7 @@ pub const CHEVRON: &str =
 pub const CHEVRON_OPEN: &str = "rotate-180";
 
 /// The dropdown menu panel.
-pub const MENU: &str =
-    "absolute z-50 mt-1 min-w-full rounded-md py-1 \
+pub const MENU: &str = "absolute z-50 mt-1 min-w-full rounded-md py-1 \
      bg-[var(--color-card)] \
      border border-[var(--color-card-border)] \
      shadow-2xl shadow-black/40 overflow-hidden";
@@ -38,24 +36,20 @@ pub const POS_BOTTOM: &str = "top-full left-0";
 pub const POS_TOP: &str = "bottom-full left-0 mb-1 mt-0";
 
 /// A single dropdown item.
-pub const ITEM: &str =
-    "w-full px-3 py-2 text-left text-sm cursor-pointer \
+pub const ITEM: &str = "w-full px-3 py-2 text-left text-sm cursor-pointer \
      text-[var(--color-label-primary)] \
      hover:bg-[var(--color-accent-primary)]/10 \
      focus:bg-[var(--color-accent-primary)]/10 \
      focus:outline-none transition-colors duration-100";
 
 /// Active / selected item.
-pub const ITEM_ACTIVE: &str =
-    "bg-[var(--color-accent-primary)]/10 font-medium";
+pub const ITEM_ACTIVE: &str = "bg-[var(--color-accent-primary)]/10 font-medium";
 
 /// Disabled item.
-pub const ITEM_DISABLED: &str =
-    "opacity-40 cursor-not-allowed pointer-events-none";
+pub const ITEM_DISABLED: &str = "opacity-40 cursor-not-allowed pointer-events-none";
 
 /// Separator between item groups.
-pub const SEPARATOR: &str =
-    "my-1 border-t border-[var(--color-card-border)]";
+pub const SEPARATOR: &str = "my-1 border-t border-[var(--color-card-border)]";
 
 /// All style tokens for playground introspection.
 pub fn catalog() -> Vec<(&'static str, &'static str)> {

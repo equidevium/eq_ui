@@ -1,16 +1,18 @@
-use dioxus::prelude::*;
 use super::eq_page_section_styles::*;
-use crate::theme::{merge_classes, CONTAINER_LAYOUT};
 use crate::playground;
+use crate::theme::{CONTAINER_LAYOUT, merge_classes};
+use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
 use super::eq_page_section_styles as s;
 #[cfg(feature = "playground")]
-use crate::playground::playground_helpers::{CodeBlock, DemoSection, PropInput, StyleInfo, format_catalog};
-#[cfg(feature = "playground")]
 use crate::atoms::{EqText, TextVariant};
 #[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_helpers::{
+    CodeBlock, DemoSection, PropInput, StyleInfo, format_catalog,
+};
+#[cfg(feature = "playground")]
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 /// A structural wrapper for a page block/section.
 /// Use this in pages to keep spacing and width consistent.

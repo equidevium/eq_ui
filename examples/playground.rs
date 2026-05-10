@@ -12,7 +12,7 @@
 //! ```
 
 use dioxus::prelude::*;
-use eq_ui::{all_component_descriptors, EqPlayground};
+use eq_ui::{EqPlayground, all_component_descriptors};
 
 fn main() {
     dioxus::launch(App);

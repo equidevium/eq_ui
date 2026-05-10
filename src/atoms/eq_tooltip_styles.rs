@@ -4,8 +4,7 @@
 pub const WRAPPER: &str = "relative inline-flex";
 
 /// The tooltip bubble — shared base.
-pub const TOOLTIP: &str =
-    "absolute z-50 px-2.5 py-1.5 rounded-md text-xs font-medium \
+pub const TOOLTIP: &str = "absolute z-50 px-2.5 py-1.5 rounded-md text-xs font-medium \
      whitespace-nowrap pointer-events-none \
      bg-[var(--color-surface-overlay)] text-[var(--color-label-primary)] \
      shadow-lg border border-[var(--color-card-border)] \
@@ -17,17 +16,13 @@ pub const VISIBLE: &str = "opacity-100";
 pub const HIDDEN: &str = "opacity-0";
 
 /// Position: top (default).
-pub const POS_TOP: &str =
-    "bottom-full left-1/2 -translate-x-1/2 mb-2";
+pub const POS_TOP: &str = "bottom-full left-1/2 -translate-x-1/2 mb-2";
 /// Position: bottom.
-pub const POS_BOTTOM: &str =
-    "top-full left-1/2 -translate-x-1/2 mt-2";
+pub const POS_BOTTOM: &str = "top-full left-1/2 -translate-x-1/2 mt-2";
 /// Position: left.
-pub const POS_LEFT: &str =
-    "right-full top-1/2 -translate-y-1/2 mr-2";
+pub const POS_LEFT: &str = "right-full top-1/2 -translate-y-1/2 mr-2";
 /// Position: right.
-pub const POS_RIGHT: &str =
-    "left-full top-1/2 -translate-y-1/2 ml-2";
+pub const POS_RIGHT: &str = "left-full top-1/2 -translate-y-1/2 ml-2";
 
 /// All style tokens for playground introspection.
 pub fn catalog() -> Vec<(&'static str, &'static str)> {

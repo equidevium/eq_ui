@@ -1,16 +1,16 @@
-use dioxus::prelude::*;
 use super::eq_label_styles as s;
-use crate::theme::merge_classes;
 use crate::playground;
+use crate::theme::merge_classes;
+use dioxus::prelude::*;
 
+#[cfg(feature = "playground")]
+use crate::atoms::{EqText, TextVariant};
 #[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
     CodeBlock, DemoSection, PropInput, StyleInfo, format_catalog,
 };
 #[cfg(feature = "playground")]
-use crate::atoms::{EqText, TextVariant};
-#[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 /// Atomic form label component.
 /// Renders a `<label>` element with consistent styling.

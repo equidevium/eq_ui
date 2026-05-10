@@ -3,8 +3,7 @@
 /// Outer container. Fills available height, lays out the three regions
 /// in a flex column, and pads for iOS safe areas. The `env(...)`
 /// values are 0 on platforms that don't expose them.
-pub const ROOT: &str =
-    "relative flex flex-col h-full overflow-hidden \
+pub const ROOT: &str = "relative flex flex-col h-full overflow-hidden \
      bg-[var(--color-primary-dark)] \
      pt-[env(safe-area-inset-top)] \
      pb-[env(safe-area-inset-bottom)]";
@@ -13,8 +12,7 @@ pub const ROOT: &str =
 pub const TOOLBAR_REGION: &str = "flex-shrink-0";
 
 /// Scrollable middle. Fills remaining height; scrolls vertically.
-pub const BODY: &str =
-    "flex-1 overflow-y-auto \
+pub const BODY: &str = "flex-1 overflow-y-auto \
      text-[var(--color-label-primary)]";
 
 /// Bottom nav region. Stays at its natural height, anchored below

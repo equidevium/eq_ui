@@ -35,13 +35,13 @@ use crate::{PlaygroundEnum, playground};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
+use crate::atoms::{EqText, TextVariant};
+#[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
     CodeBlock, DemoSection, PropSelect, PropToggle, StyleInfo, format_catalog,
 };
 #[cfg(feature = "playground")]
-use crate::atoms::{EqText, TextVariant};
-#[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 // ── Types ─────────────────────────────────────────────────────────
 
@@ -86,12 +86,10 @@ impl SelectOption {
 // ── SVG paths ────────────────────────────────────────────────────
 
 /// Heroicons chevron-down (mini, 20×20).
-const CHEVRON_PATH: &str =
-    "m5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z";
+const CHEVRON_PATH: &str = "m5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z";
 
 /// Heroicons check (mini, 20×20).
-const CHECK_PATH: &str =
-    "M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z";
+const CHECK_PATH: &str = "M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z";
 
 // ── Component ─────────────────────────────────────────────────────
 
@@ -150,18 +148,29 @@ pub fn EqSelect(
 
     let wrapper_cls = merge_classes(s::WRAPPER, &class);
 
-    let trigger_cls = if disabled { s::TRIGGER_DISABLED } else { s::TRIGGER };
+    let trigger_cls = if disabled {
+        s::TRIGGER_DISABLED
+    } else {
+        s::TRIGGER
+    };
     let chevron_rot = if open() { s::CHEVRON_OPEN } else { "" };
 
     let pos_cls = match position {
         SelectPosition::Bottom => s::POS_BOTTOM,
         SelectPosition::Top => s::POS_TOP,
     };
-    let listbox_state = if open() { s::LISTBOX_OPEN } else { s::LISTBOX_CLOSED };
+    let listbox_state = if open() {
+        s::LISTBOX_OPEN
+    } else {
+        s::LISTBOX_CLOSED
+    };
 
     // Find the label of the selected option.
     let selected_label = selected.as_ref().and_then(|sel_id| {
-        options.iter().find(|o| &o.id == sel_id).map(|o| o.label.clone())
+        options
+            .iter()
+            .find(|o| &o.id == sel_id)
+            .map(|o| o.label.clone())
     });
 
     let has_selection = selected_label.is_some();
@@ -174,7 +183,9 @@ pub fn EqSelect(
         .iter()
         .enumerate()
         .filter(|(_, o)| {
-            if query.is_empty() { return true; }
+            if query.is_empty() {
+                return true;
+            }
             o.label.to_lowercase().contains(&query)
         })
         .collect();
@@ -187,7 +198,11 @@ pub fn EqSelect(
         .collect();
     let selectable2 = selectable.clone();
 
-    let aria = if aria_label.is_empty() { None } else { Some(aria_label.clone()) };
+    let aria = if aria_label.is_empty() {
+        None
+    } else {
+        Some(aria_label.clone())
+    };
 
     rsx! {
         div {
@@ -431,9 +446,7 @@ fn DemoEqSelect() -> Element {
         SelectOption::new("cobol", "COBOL").disabled(),
     ];
 
-    let selected_display = selected()
-        .clone()
-        .unwrap_or_else(|| "(none)".to_string());
+    let selected_display = selected().clone().unwrap_or_else(|| "(none)".to_string());
 
     let code = format!(
         r#"let options = vec![

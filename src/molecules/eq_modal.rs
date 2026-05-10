@@ -42,13 +42,13 @@ use dioxus::document;
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
+use crate::atoms::{ButtonVariant, EqButton, EqText, TextVariant};
+#[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
     CodeBlock, DemoSection, PropSelect, PropToggle, StyleInfo, format_catalog,
 };
 #[cfg(feature = "playground")]
-use crate::atoms::{EqText, TextVariant, EqButton, ButtonVariant};
-#[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 /// Size preset for the modal panel.
 #[derive(Clone, Copy, PartialEq, Default, PlaygroundEnum)]
@@ -127,7 +127,11 @@ pub fn EqModal(
     let show_header = has_title || show_close;
 
     // Backdrop and panel animation classes
-    let backdrop_anim = if open { s::BACKDROP_OPEN } else { s::BACKDROP_CLOSED };
+    let backdrop_anim = if open {
+        s::BACKDROP_OPEN
+    } else {
+        s::BACKDROP_CLOSED
+    };
     let panel_anim = if open { s::PANEL_OPEN } else { s::PANEL_CLOSED };
 
     let size_cls = match size {

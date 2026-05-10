@@ -11,13 +11,13 @@ use dioxus::document;
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
+use crate::atoms::{EqText, TextVariant};
+#[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
     CodeBlock, DemoSection, PropSelect, PropToggle, StyleInfo, format_catalog,
 };
 #[cfg(feature = "playground")]
-use crate::atoms::{EqText, TextVariant};
-#[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 // ── Types ─────────────────────────────────────────────────────────
 
@@ -301,13 +301,10 @@ fn DemoEqRadioGroup() -> Element {
     };
 
     let items = vec![
-        RadioItem::new("opt1", "Option One")
-            .description("First option with a description"),
-        RadioItem::new("opt2", "Option Two")
-            .description("Second option with details"),
+        RadioItem::new("opt1", "Option One").description("First option with a description"),
+        RadioItem::new("opt2", "Option Two").description("Second option with details"),
         RadioItem::new("opt3", "Option Three"),
-        RadioItem::new("opt4", "Disabled Option")
-            .disabled(true),
+        RadioItem::new("opt4", "Disabled Option").disabled(true),
     ];
 
     let code = "use eq_ui::atoms::{EqRadioGroup, RadioItem, RadioSize, RadioLayout};\n\
@@ -326,7 +323,8 @@ fn DemoEqRadioGroup() -> Element {
         \x20   on_change: move |v| selected.set(v),\n\
         \x20   size: RadioSize::Md,\n\
         \x20   layout: RadioLayout::Vertical,\n\
-        }".to_string();
+        }"
+    .to_string();
 
     rsx! {
         DemoSection { title: "EqRadioGroup",

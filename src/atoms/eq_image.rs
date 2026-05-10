@@ -4,13 +4,13 @@ use crate::{PlaygroundEnum, playground};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
+use crate::atoms::{EqText, TextVariant};
+#[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
     CodeBlock, DemoSection, PropSelect, PropToggle, StyleInfo, format_catalog,
 };
 #[cfg(feature = "playground")]
-use crate::atoms::{EqText, TextVariant};
-#[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 /// Image size preset.
 #[derive(Clone, PartialEq, Default, PlaygroundEnum)]
@@ -104,7 +104,13 @@ pub fn EqImage(
     };
     let rounded_class = if rounded { s::ROUNDED } else { "" };
 
-    let wrapper_base = format!("{} {} {} {}", s::WRAPPER, size_class, ratio_class, rounded_class);
+    let wrapper_base = format!(
+        "{} {} {} {}",
+        s::WRAPPER,
+        size_class,
+        ratio_class,
+        rounded_class
+    );
     let wrapper_cls = merge_classes(&wrapper_base, &class);
 
     let effective_alt = if decorative { "" } else { &alt };

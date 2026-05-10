@@ -24,9 +24,9 @@ pub use crate::eq_theme::EqTheme;
 
 // Common atoms
 pub use crate::atoms::{
-    AspectRatio, AtomImageSize, ButtonSize, ButtonVariant, EqAvatar, EqButton, EqCheckbox, EqDivider,
-    EqIcon, EqImage, EqInput, EqLabel, EqLink, EqProgress, EqText, IconSize, InputKind, ObjectFit,
-    TextVariant,
+    AspectRatio, AtomImageSize, ButtonSize, ButtonVariant, EqAvatar, EqButton, EqCheckbox,
+    EqDivider, EqIcon, EqImage, EqInput, EqLabel, EqLink, EqProgress, EqText, IconSize, InputKind,
+    ObjectFit, TextVariant,
 };
 
 // Common molecules

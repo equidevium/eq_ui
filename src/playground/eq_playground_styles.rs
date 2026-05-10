@@ -5,8 +5,7 @@ pub const SIDEBAR: &str =
     "w-64 shrink-0 border-r border-[var(--color-card-border)] p-3 flex flex-col";
 
 /// Sidebar visible on mobile (overlay).
-pub const SIDEBAR_MOBILE_OPEN: &str =
-    "fixed inset-y-0 left-0 z-40 w-64 bg-[var(--color-primary-dark)] \
+pub const SIDEBAR_MOBILE_OPEN: &str = "fixed inset-y-0 left-0 z-40 w-64 bg-[var(--color-primary-dark)] \
      border-r border-[var(--color-card-border)] p-3 flex flex-col pt-16 \
      md:relative md:inset-auto md:z-auto md:pt-3";
 
@@ -24,8 +23,7 @@ pub const LAYOUT: &str = "flex min-h-[calc(100vh-8rem)] relative";
 pub const PREVIEW_PANEL: &str = "flex-1 overflow-y-auto";
 
 /// Empty state - centered placeholder.
-pub const EMPTY_STATE: &str =
-    "flex flex-col items-center justify-center h-full min-h-[60vh] gap-4 \
+pub const EMPTY_STATE: &str = "flex flex-col items-center justify-center h-full min-h-[60vh] gap-4 \
      text-[var(--color-label-secondary)]";
 
 /// Empty state icon.
@@ -35,16 +33,14 @@ pub const EMPTY_ICON: &str = "size-16 opacity-30";
 pub const HAMBURGER: &str = "md:hidden";
 
 /// Hamburger button style.
-pub const HAMBURGER_BTN: &str =
-    "p-2 rounded-md text-[var(--color-label-secondary)] \
+pub const HAMBURGER_BTN: &str = "p-2 rounded-md text-[var(--color-label-secondary)] \
      hover:text-[var(--color-label-primary)] active:text-[var(--color-label-primary)] transition";
 
 /// Hamburger icon size.
 pub const HAMBURGER_ICON: &str = "size-5";
 
 /// Theme switcher select control.
-pub const THEME_SELECT: &str =
-    "rounded-md bg-[var(--color-card)] text-[var(--color-label-primary)] \
+pub const THEME_SELECT: &str = "rounded-md bg-[var(--color-card)] text-[var(--color-label-primary)] \
      border border-[var(--color-card-border)] px-2 py-1 text-sm";
 
 /// All style tokens for playground introspection.

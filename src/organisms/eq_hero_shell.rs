@@ -1,16 +1,18 @@
-use dioxus::prelude::*;
 use super::eq_hero_shell_styles::*;
-use crate::theme::{merge_classes, CONTAINER_LAYOUT};
 use crate::playground;
+use crate::theme::{CONTAINER_LAYOUT, merge_classes};
+use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
 use super::eq_hero_shell_styles as s;
 #[cfg(feature = "playground")]
-use crate::playground::playground_helpers::{CodeBlock, DemoSection, PropInput, PropToggle, StyleInfo, format_catalog};
-#[cfg(feature = "playground")]
 use crate::atoms::{EqText, TextVariant};
 #[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_helpers::{
+    CodeBlock, DemoSection, PropInput, PropToggle, StyleInfo, format_catalog,
+};
+#[cfg(feature = "playground")]
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 /// Full-width hero section organism.
 ///
@@ -30,14 +32,10 @@ use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory
 )]
 #[component]
 pub fn EqHeroShell(
-    #[props(into)]
-    title: String,
-    #[props(into)]
-    subtitle: Option<String>,
-    #[props(into)]
-    title_color: Option<String>,
-    #[props(into)]
-    subtitle_color: Option<String>,
+    #[props(into)] title: String,
+    #[props(into)] subtitle: Option<String>,
+    #[props(into)] title_color: Option<String>,
+    #[props(into)] subtitle_color: Option<String>,
     actions: Option<Element>,
     background: Option<Element>,
     /// Accessible label for screen readers. When empty (default), the

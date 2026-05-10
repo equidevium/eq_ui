@@ -9,13 +9,13 @@ use crate::{PlaygroundEnum, playground};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
-use crate::playground::playground_helpers::{
-    CodeBlock, DemoSection, PropSelect, PropToggle, PropInput, StyleInfo, format_catalog,
-};
-#[cfg(feature = "playground")]
 use crate::atoms::{EqText, TextVariant};
 #[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_helpers::{
+    CodeBlock, DemoSection, PropInput, PropSelect, PropToggle, StyleInfo, format_catalog,
+};
+#[cfg(feature = "playground")]
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 /// Visual state of the checkbox.
 #[derive(Clone, Copy, PartialEq, Default, PlaygroundEnum)]
@@ -74,7 +74,11 @@ pub fn EqCheckbox(
         CheckboxState::Indeterminate => (eq_icon_paths::MINUS_SQUARE, s::ICON_ACTIVE),
     };
 
-    let wrapper_base = if disabled { s::WRAPPER_DISABLED } else { s::WRAPPER };
+    let wrapper_base = if disabled {
+        s::WRAPPER_DISABLED
+    } else {
+        s::WRAPPER
+    };
     let wrapper_cls = merge_classes(wrapper_base, &class);
 
     let aria_checked = match state {
@@ -158,7 +162,8 @@ fn DemoEqCheckbox() -> Element {
         EqCheckbox {\n\
         \x20   state: CheckboxState::Indeterminate,\n\
         \x20   on_change: move |_| { /* select all */ },\n\
-        }".to_string();
+        }"
+    .to_string();
 
     rsx! {
         DemoSection { title: "EqCheckbox",

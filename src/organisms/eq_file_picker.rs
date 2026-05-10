@@ -26,18 +26,18 @@
 //! ```
 
 use super::eq_file_picker_styles as s;
-use crate::theme::merge_classes;
 use crate::playground;
+use crate::theme::merge_classes;
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
-use crate::playground::playground_helpers::{
-    CodeBlock, DemoSection, PropToggle, PropInput, StyleInfo, format_catalog,
-};
-#[cfg(feature = "playground")]
 use crate::atoms::{EqText, TextVariant};
 #[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_helpers::{
+    CodeBlock, DemoSection, PropInput, PropToggle, StyleInfo, format_catalog,
+};
+#[cfg(feature = "playground")]
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 // ── Types ────────────────────────────────────────────────────────
 
@@ -133,13 +133,7 @@ pub trait FilePickerBackend: Clone + PartialEq + 'static {
     /// * `multiple` — whether multiple files can be selected
     /// * `folder` — whether to select a folder instead of files
     /// * `callback` — receives the picked files
-    fn open(
-        &self,
-        accept: &str,
-        multiple: bool,
-        folder: bool,
-        callback: Callback<Vec<PickedFile>>,
-    );
+    fn open(&self, accept: &str, multiple: bool, folder: bool, callback: Callback<Vec<PickedFile>>);
 }
 
 /// Default web backend that uses `<input type="file">` via JS interop.
@@ -157,8 +151,16 @@ impl FilePickerBackend for WebFilePickerBackend {
         let accept = accept.to_string();
 
         spawn(async move {
-            let multi_attr = if multiple { "input.multiple = true;" } else { "" };
-            let folder_attr = if folder { "input.webkitdirectory = true;" } else { "" };
+            let multi_attr = if multiple {
+                "input.multiple = true;"
+            } else {
+                ""
+            };
+            let folder_attr = if folder {
+                "input.webkitdirectory = true;"
+            } else {
+                ""
+            };
             let accept_attr = if accept.is_empty() {
                 String::new()
             } else {
@@ -216,37 +218,44 @@ impl FilePickerBackend for WebFilePickerBackend {
 
 /// Parse the JS array-of-objects into PickedFile values.
 fn parse_file_entries(val: &serde_json::Value) -> Vec<PickedFile> {
-    let Some(arr) = val.as_array() else { return Vec::new() };
-    arr.iter().filter_map(|entry| {
-        let name = entry.get("name")?.as_str()?.to_string();
-        let size = entry.get("size")?.as_u64()?;
-        let mime = entry.get("mime").and_then(|v| v.as_str()).unwrap_or("").to_string();
-        let data_url = entry.get("data_url").and_then(|v| v.as_str()).map(|s| s.to_string());
-        let mut pf = PickedFile::new(name, size, mime);
-        if let Some(url) = data_url {
-            pf = pf.with_data_url(url);
-        }
-        Some(pf)
-    }).collect()
+    let Some(arr) = val.as_array() else {
+        return Vec::new();
+    };
+    arr.iter()
+        .filter_map(|entry| {
+            let name = entry.get("name")?.as_str()?.to_string();
+            let size = entry.get("size")?.as_u64()?;
+            let mime = entry
+                .get("mime")
+                .and_then(|v| v.as_str())
+                .unwrap_or("")
+                .to_string();
+            let data_url = entry
+                .get("data_url")
+                .and_then(|v| v.as_str())
+                .map(|s| s.to_string());
+            let mut pf = PickedFile::new(name, size, mime);
+            if let Some(url) = data_url {
+                pf = pf.with_data_url(url);
+            }
+            Some(pf)
+        })
+        .collect()
 }
 
 // ── SVG icons ────────────────────────────────────────────────────
 
 /// Upload cloud icon (Heroicons outline).
-const UPLOAD_ICON: &str =
-    "M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13";
+const UPLOAD_ICON: &str = "M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13";
 
 /// Document icon (Heroicons outline).
-const DOC_ICON: &str =
-    "M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z";
+const DOC_ICON: &str = "M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z";
 
 /// Folder icon (Heroicons outline).
-const FOLDER_ICON: &str =
-    "M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z";
+const FOLDER_ICON: &str = "M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z";
 
 /// X mark icon (Heroicons mini).
-const X_ICON: &str =
-    "M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z";
+const X_ICON: &str = "M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z";
 
 // ── Component ────────────────────────────────────────────────────
 
@@ -389,7 +398,9 @@ pub fn EqFilePicker(
     let accept_for_open = accept.clone();
     let handle_new_for_backend = handle_new_files.clone();
     let trigger_open = move || {
-        if disabled { return; }
+        if disabled {
+            return;
+        }
         let accept_str = accept_for_open.clone();
         let handler = handle_new_for_backend.clone();
         backend.open(
@@ -411,7 +422,10 @@ pub fn EqFilePicker(
     // Unique ID for drop zone to wire up JS drop handler.
     static DZ_COUNTER: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
     let dz_id = use_hook(|| {
-        format!("eq-fp-{}", DZ_COUNTER.fetch_add(1, std::sync::atomic::Ordering::Relaxed))
+        format!(
+            "eq-fp-{}",
+            DZ_COUNTER.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
+        )
     });
 
     let has_files = !files.is_empty();
@@ -703,7 +717,9 @@ fn DemoEqFilePicker() -> Element {
 
     // Simulate upload progress on files without errors.
     let current_files = files();
-    let has_new_files = current_files.iter().any(|f| f.progress.is_none() && f.error.is_none());
+    let has_new_files = current_files
+        .iter()
+        .any(|f| f.progress.is_none() && f.error.is_none());
 
     if has_new_files {
         let mut updated = current_files.clone();
@@ -723,7 +739,8 @@ EqFilePicker {
     max_size_bytes: 10 * 1024 * 1024,
     files: files(),
     on_files_changed: move |f: Vec<PickedFile>| files.set(f),
-}"#.to_string();
+}"#
+    .to_string();
 
     rsx! {
         DemoSection { title: "EqFilePicker",

@@ -1,18 +1,18 @@
 use super::eq_tree_styles as s;
-use crate::theme::merge_classes;
 use crate::playground;
+use crate::theme::merge_classes;
 use dioxus::document;
 use dioxus::prelude::*;
 use std::collections::HashSet;
 
 #[cfg(feature = "playground")]
+use crate::atoms::{EqScrollableSpace, EqText, TextVariant};
+#[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
     CodeBlock, DemoSection, PropToggle, StyleInfo, format_catalog,
 };
 #[cfg(feature = "playground")]
-use crate::atoms::{EqText, TextVariant, EqScrollableSpace};
-#[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 // ---------------------------------------------------------------------------
 // TreeNode data model
@@ -214,7 +214,9 @@ impl TreeNode {
             return false;
         }
         // Remove the node first, then insert under the new parent
-        let Some(removed) = self.remove_node(node_id) else { return false; };
+        let Some(removed) = self.remove_node(node_id) else {
+            return false;
+        };
         if self.add_child_to(new_parent_id, removed).is_ok() {
             return true;
         }
@@ -487,7 +489,11 @@ fn TreeBranch(
         cur_focused == node.id
     };
 
-    let row_class = if is_selected { s::NODE_ACTIVE } else { s::NODE_ROW };
+    let row_class = if is_selected {
+        s::NODE_ACTIVE
+    } else {
+        s::NODE_ROW
+    };
 
     let node_id_click = node.id.clone();
     let label = node.label.clone();
@@ -751,11 +757,7 @@ mod tests {
 
     #[test]
     fn tree_find_by_id() {
-        let root = TreeNode::new_with_children(
-            "root",
-            "Root",
-            vec![TreeNode::new("a", "A")],
-        );
+        let root = TreeNode::new_with_children("root", "Root", vec![TreeNode::new("a", "A")]);
         assert!(root.find_by_id("a").is_some());
         assert!(root.find_by_id("missing").is_none());
     }

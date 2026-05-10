@@ -21,7 +21,9 @@ pub fn export_csv<T: Clone + PartialEq>(
 
     // Header row
     for (i, col) in columns.iter().enumerate() {
-        if i > 0 { out.push(','); }
+        if i > 0 {
+            out.push(',');
+        }
         csv_escape(&mut out, col.header);
     }
     out.push('\n');
@@ -30,7 +32,9 @@ pub fn export_csv<T: Clone + PartialEq>(
     for &idx in indices {
         let row = &data[idx];
         for (i, col) in columns.iter().enumerate() {
-            if i > 0 { out.push(','); }
+            if i > 0 {
+                out.push(',');
+            }
             let val = (col.value_getter)(row);
             csv_escape(&mut out, &val);
         }
@@ -55,7 +59,9 @@ pub fn export_json<T: Clone + PartialEq>(
         out.push_str("  {");
 
         for (col_idx, col) in columns.iter().enumerate() {
-            if col_idx > 0 { out.push_str(", "); }
+            if col_idx > 0 {
+                out.push_str(", ");
+            }
             let val = (col.value_getter)(row);
             out.push('"');
             json_escape(&mut out, col.id);
@@ -65,7 +71,9 @@ pub fn export_json<T: Clone + PartialEq>(
         }
 
         out.push('}');
-        if row_idx + 1 < indices.len() { out.push(','); }
+        if row_idx + 1 < indices.len() {
+            out.push(',');
+        }
         out.push('\n');
     }
 
@@ -83,7 +91,9 @@ pub fn export_txt<T: Clone + PartialEq>(
 
     // Header row
     for (i, col) in columns.iter().enumerate() {
-        if i > 0 { out.push('\t'); }
+        if i > 0 {
+            out.push('\t');
+        }
         out.push_str(col.header);
     }
     out.push('\n');
@@ -92,14 +102,19 @@ pub fn export_txt<T: Clone + PartialEq>(
     for &idx in indices {
         let row = &data[idx];
         for (i, col) in columns.iter().enumerate() {
-            if i > 0 { out.push('\t'); }
+            if i > 0 {
+                out.push('\t');
+            }
             let val = (col.value_getter)(row);
             // Replace tabs/newlines to keep single-line cells.
-            let clean: String = val.chars().map(|c| match c {
-                '\t' => ' ',
-                '\n' | '\r' => ' ',
-                other => other,
-            }).collect();
+            let clean: String = val
+                .chars()
+                .map(|c| match c {
+                    '\t' => ' ',
+                    '\n' | '\r' => ' ',
+                    other => other,
+                })
+                .collect();
             out.push_str(&clean);
         }
         out.push('\n');
@@ -135,7 +150,9 @@ fn csv_escape(out: &mut String, field: &str) {
     if field.contains(',') || field.contains('"') || field.contains('\n') {
         out.push('"');
         for ch in field.chars() {
-            if ch == '"' { out.push('"'); }
+            if ch == '"' {
+                out.push('"');
+            }
             out.push(ch);
         }
         out.push('"');
@@ -194,7 +211,7 @@ fn build_ods_content_xml<T: Clone + PartialEq>(
            office:version=\"1.2\">\n\
          <office:body>\n\
          <office:spreadsheet>\n\
-         <table:table table:name=\"Export\">\n"
+         <table:table table:name=\"Export\">\n",
     );
 
     // Header row
@@ -232,7 +249,7 @@ fn build_ods_content_xml<T: Clone + PartialEq>(
         "</table:table>\n\
          </office:spreadsheet>\n\
          </office:body>\n\
-         </office:document-content>"
+         </office:document-content>",
     );
 
     xml
@@ -247,7 +264,7 @@ fn build_ods_manifest_xml() -> String {
            manifest:media-type=\"application/vnd.oasis.opendocument.spreadsheet\"/>\n\
          <manifest:file-entry manifest:full-path=\"content.xml\" \
            manifest:media-type=\"text/xml\"/>\n\
-         </manifest:manifest>"
+         </manifest:manifest>",
     )
 }
 
@@ -314,18 +331,19 @@ impl ZipWriter {
 
         // Local file header (30 bytes + filename + data)
         self.body.extend_from_slice(&0x04034b50u32.to_le_bytes()); // signature
-        self.body.extend_from_slice(&20u16.to_le_bytes());         // version needed
-        self.body.extend_from_slice(&0u16.to_le_bytes());          // flags
-        self.body.extend_from_slice(&0u16.to_le_bytes());          // compression: STORED
-        self.body.extend_from_slice(&0u16.to_le_bytes());          // mod time
-        self.body.extend_from_slice(&0u16.to_le_bytes());          // mod date
-        self.body.extend_from_slice(&crc.to_le_bytes());           // crc32
-        self.body.extend_from_slice(&data_len.to_le_bytes());      // compressed size
-        self.body.extend_from_slice(&data_len.to_le_bytes());      // uncompressed size
-        self.body.extend_from_slice(&(name_bytes.len() as u16).to_le_bytes()); // name len
-        self.body.extend_from_slice(&0u16.to_le_bytes());          // extra field len
-        self.body.extend_from_slice(name_bytes);                   // filename
-        self.body.extend_from_slice(data);                         // file data
+        self.body.extend_from_slice(&20u16.to_le_bytes()); // version needed
+        self.body.extend_from_slice(&0u16.to_le_bytes()); // flags
+        self.body.extend_from_slice(&0u16.to_le_bytes()); // compression: STORED
+        self.body.extend_from_slice(&0u16.to_le_bytes()); // mod time
+        self.body.extend_from_slice(&0u16.to_le_bytes()); // mod date
+        self.body.extend_from_slice(&crc.to_le_bytes()); // crc32
+        self.body.extend_from_slice(&data_len.to_le_bytes()); // compressed size
+        self.body.extend_from_slice(&data_len.to_le_bytes()); // uncompressed size
+        self.body
+            .extend_from_slice(&(name_bytes.len() as u16).to_le_bytes()); // name len
+        self.body.extend_from_slice(&0u16.to_le_bytes()); // extra field len
+        self.body.extend_from_slice(name_bytes); // filename
+        self.body.extend_from_slice(data); // file data
 
         self.entries.push(ZipEntry {
             name: name_bytes.to_vec(),
@@ -343,23 +361,24 @@ impl ZipWriter {
             let data_len = entry.data.len() as u32;
 
             self.body.extend_from_slice(&0x02014b50u32.to_le_bytes()); // signature
-            self.body.extend_from_slice(&20u16.to_le_bytes());         // version made by
-            self.body.extend_from_slice(&20u16.to_le_bytes());         // version needed
-            self.body.extend_from_slice(&0u16.to_le_bytes());          // flags
-            self.body.extend_from_slice(&0u16.to_le_bytes());          // compression
-            self.body.extend_from_slice(&0u16.to_le_bytes());          // mod time
-            self.body.extend_from_slice(&0u16.to_le_bytes());          // mod date
-            self.body.extend_from_slice(&entry.crc.to_le_bytes());     // crc32
-            self.body.extend_from_slice(&data_len.to_le_bytes());      // compressed size
-            self.body.extend_from_slice(&data_len.to_le_bytes());      // uncompressed size
-            self.body.extend_from_slice(&(entry.name.len() as u16).to_le_bytes()); // name len
-            self.body.extend_from_slice(&0u16.to_le_bytes());          // extra field len
-            self.body.extend_from_slice(&0u16.to_le_bytes());          // comment len
-            self.body.extend_from_slice(&0u16.to_le_bytes());          // disk number
-            self.body.extend_from_slice(&0u16.to_le_bytes());          // internal attrs
-            self.body.extend_from_slice(&0u32.to_le_bytes());          // external attrs
-            self.body.extend_from_slice(&entry.offset.to_le_bytes());  // local header offset
-            self.body.extend_from_slice(&entry.name);                  // filename
+            self.body.extend_from_slice(&20u16.to_le_bytes()); // version made by
+            self.body.extend_from_slice(&20u16.to_le_bytes()); // version needed
+            self.body.extend_from_slice(&0u16.to_le_bytes()); // flags
+            self.body.extend_from_slice(&0u16.to_le_bytes()); // compression
+            self.body.extend_from_slice(&0u16.to_le_bytes()); // mod time
+            self.body.extend_from_slice(&0u16.to_le_bytes()); // mod date
+            self.body.extend_from_slice(&entry.crc.to_le_bytes()); // crc32
+            self.body.extend_from_slice(&data_len.to_le_bytes()); // compressed size
+            self.body.extend_from_slice(&data_len.to_le_bytes()); // uncompressed size
+            self.body
+                .extend_from_slice(&(entry.name.len() as u16).to_le_bytes()); // name len
+            self.body.extend_from_slice(&0u16.to_le_bytes()); // extra field len
+            self.body.extend_from_slice(&0u16.to_le_bytes()); // comment len
+            self.body.extend_from_slice(&0u16.to_le_bytes()); // disk number
+            self.body.extend_from_slice(&0u16.to_le_bytes()); // internal attrs
+            self.body.extend_from_slice(&0u32.to_le_bytes()); // external attrs
+            self.body.extend_from_slice(&entry.offset.to_le_bytes()); // local header offset
+            self.body.extend_from_slice(&entry.name); // filename
         }
 
         let central_dir_size = self.body.len() as u32 - central_dir_offset;
@@ -367,13 +386,14 @@ impl ZipWriter {
 
         // End of central directory record
         self.body.extend_from_slice(&0x06054b50u32.to_le_bytes()); // signature
-        self.body.extend_from_slice(&0u16.to_le_bytes());          // disk number
-        self.body.extend_from_slice(&0u16.to_le_bytes());          // disk with central dir
-        self.body.extend_from_slice(&entry_count.to_le_bytes());   // entries on this disk
-        self.body.extend_from_slice(&entry_count.to_le_bytes());   // total entries
+        self.body.extend_from_slice(&0u16.to_le_bytes()); // disk number
+        self.body.extend_from_slice(&0u16.to_le_bytes()); // disk with central dir
+        self.body.extend_from_slice(&entry_count.to_le_bytes()); // entries on this disk
+        self.body.extend_from_slice(&entry_count.to_le_bytes()); // total entries
         self.body.extend_from_slice(&central_dir_size.to_le_bytes()); // central dir size
-        self.body.extend_from_slice(&central_dir_offset.to_le_bytes()); // central dir offset
-        self.body.extend_from_slice(&0u16.to_le_bytes());          // comment length
+        self.body
+            .extend_from_slice(&central_dir_offset.to_le_bytes()); // central dir offset
+        self.body.extend_from_slice(&0u16.to_le_bytes()); // comment length
 
         self.body
     }

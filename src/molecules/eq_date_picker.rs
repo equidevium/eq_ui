@@ -27,13 +27,13 @@ use crate::{PlaygroundEnum, playground};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
+use crate::atoms::{EqText, TextVariant};
+#[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
     CodeBlock, DemoSection, PropSelect, PropToggle, StyleInfo, format_catalog,
 };
 #[cfg(feature = "playground")]
-use crate::atoms::{EqText, TextVariant};
-#[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 // ── Types ─────────────────────────────────────────────────────────
 
@@ -57,9 +57,7 @@ impl DateValue {
 
     /// Format as human-readable "Mon DD, YYYY".
     pub fn format_display(&self) -> String {
-        let month_name = MONTH_NAMES
-            .get(self.month as usize - 1)
-            .unwrap_or(&"???");
+        let month_name = MONTH_NAMES.get(self.month as usize - 1).unwrap_or(&"???");
         format!("{} {}, {}", month_name, self.day, self.year)
     }
 }
@@ -75,13 +73,22 @@ pub enum DatePickerPosition {
 // ── Date math helpers (no external deps) ──────────────────────────
 
 const MONTH_NAMES: [&str; 12] = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
 ];
 
 const MONTH_FULL: [&str; 12] = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December",
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
 ];
 
 const WEEKDAY_SHORT: [&str; 7] = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
@@ -95,7 +102,13 @@ fn is_leap(year: i32) -> bool {
 fn days_in_month(year: i32, month: u32) -> u32 {
     match month {
         1 => 31,
-        2 => if is_leap(year) { 29 } else { 28 },
+        2 => {
+            if is_leap(year) {
+                29
+            } else {
+                28
+            }
+        }
         3 => 31,
         4 => 30,
         5 => 31,
@@ -115,9 +128,15 @@ fn day_of_week(year: i32, month: u32, day: u32) -> u32 {
     // Tomohiko Sakamoto's algorithm.
     let t = [0i32, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4];
     let mut y = year;
-    if month < 3 { y -= 1; }
+    if month < 3 {
+        y -= 1;
+    }
     let dow = (y + y / 4 - y / 100 + y / 400 + t[month as usize - 1] + day as i32) % 7;
-    if dow < 0 { (dow + 7) as u32 } else { dow as u32 }
+    if dow < 0 {
+        (dow + 7) as u32
+    } else {
+        dow as u32
+    }
 }
 
 /// Get today's date. We parse from JS since there's no std time on WASM.
@@ -129,20 +148,17 @@ fn fallback_today() -> DateValue {
 // ── SVG paths ────────────────────────────────────────────────────
 
 /// Heroicons calendar (outline, 24×24).
-const CALENDAR_PATH: &str =
-    "M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 \
+const CALENDAR_PATH: &str = "M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 \
      2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 \
      2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 \
      0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 \
      11.25v7.5";
 
 /// Heroicons chevron-left (mini).
-const CHEVRON_LEFT: &str =
-    "m12.77 5.23a.75.75 0 0 1 0 1.06L8.832 10l3.938 3.71a.75.75 0 1 1-1.04 1.08l-4.5-4.25a.75.75 0 0 1 0-1.08l4.5-4.25a.75.75 0 0 1 1.06-.02Z";
+const CHEVRON_LEFT: &str = "m12.77 5.23a.75.75 0 0 1 0 1.06L8.832 10l3.938 3.71a.75.75 0 1 1-1.04 1.08l-4.5-4.25a.75.75 0 0 1 0-1.08l4.5-4.25a.75.75 0 0 1 1.06-.02Z";
 
 /// Heroicons chevron-right (mini).
-const CHEVRON_RIGHT: &str =
-    "m7.23 14.77a.75.75 0 0 1 0-1.06L11.168 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06.02Z";
+const CHEVRON_RIGHT: &str = "m7.23 14.77a.75.75 0 0 1 0-1.06L11.168 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06.02Z";
 
 // ── Calendar grid data ────────────────────────────────────────────
 
@@ -192,7 +208,9 @@ fn build_calendar(
             day: d,
             is_current_month: false,
             is_today: today.year == prev_year && today.month == prev_month && today.day == d,
-            is_selected: selected.as_ref().is_some_and(|s| s.year == prev_year && s.month == prev_month && s.day == d),
+            is_selected: selected
+                .as_ref()
+                .is_some_and(|s| s.year == prev_year && s.month == prev_month && s.day == d),
         });
     }
 
@@ -204,7 +222,9 @@ fn build_calendar(
             day: d,
             is_current_month: true,
             is_today: today.year == view_year && today.month == view_month && today.day == d,
-            is_selected: selected.as_ref().is_some_and(|s| s.year == view_year && s.month == view_month && s.day == d),
+            is_selected: selected
+                .as_ref()
+                .is_some_and(|s| s.year == view_year && s.month == view_month && s.day == d),
         });
     }
 
@@ -217,7 +237,9 @@ fn build_calendar(
             day: d,
             is_current_month: false,
             is_today: today.year == next_year && today.month == next_month && today.day == d,
-            is_selected: selected.as_ref().is_some_and(|s| s.year == next_year && s.month == next_month && s.day == d),
+            is_selected: selected
+                .as_ref()
+                .is_some_and(|s| s.year == next_year && s.month == next_month && s.day == d),
         });
     }
 
@@ -271,22 +293,26 @@ pub fn EqDatePicker(
     let today = use_hook(fallback_today);
 
     // View state: which month/year the calendar is showing.
-    let mut view_year = use_signal(|| {
-        value.map(|d| d.year).unwrap_or(today.year)
-    });
-    let mut view_month = use_signal(|| {
-        value.map(|d| d.month).unwrap_or(today.month)
-    });
+    let mut view_year = use_signal(|| value.map(|d| d.year).unwrap_or(today.year));
+    let mut view_month = use_signal(|| value.map(|d| d.month).unwrap_or(today.month));
     let mut open = use_signal(|| false);
 
     let wrapper_cls = merge_classes(s::WRAPPER, &class);
-    let trigger_cls = if disabled { s::TRIGGER_DISABLED } else { s::TRIGGER };
+    let trigger_cls = if disabled {
+        s::TRIGGER_DISABLED
+    } else {
+        s::TRIGGER
+    };
 
     let pos_cls = match position {
         DatePickerPosition::Bottom => s::POS_BOTTOM,
         DatePickerPosition::Top => s::POS_TOP,
     };
-    let panel_state = if open() { s::PANEL_OPEN } else { s::PANEL_CLOSED };
+    let panel_state = if open() {
+        s::PANEL_OPEN
+    } else {
+        s::PANEL_CLOSED
+    };
 
     // Display text.
     let display_text = value

@@ -1,14 +1,16 @@
-use dioxus::prelude::*;
 use super::eq_footer_styles as s;
-use crate::theme::merge_classes;
 use crate::playground;
+use crate::theme::merge_classes;
+use dioxus::prelude::*;
 
-#[cfg(feature = "playground")]
-use crate::playground::playground_helpers::{CodeBlock, DemoSection, PropInput, PropSelect, StyleInfo, format_catalog};
 #[cfg(feature = "playground")]
 use crate::atoms::{EqText, TextVariant};
 #[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_helpers::{
+    CodeBlock, DemoSection, PropInput, PropSelect, StyleInfo, format_catalog,
+};
+#[cfg(feature = "playground")]
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 /// Footer link representation
 #[derive(Clone, PartialEq)]
@@ -30,25 +32,52 @@ fn default_link_groups() -> Vec<FooterLinkGroup> {
         FooterLinkGroup {
             title: "Company",
             links: vec![
-                FooterLink { label: "About", href: "/about" },
-                FooterLink { label: "Careers", href: "/careers" },
-                FooterLink { label: "Press", href: "/press" },
+                FooterLink {
+                    label: "About",
+                    href: "/about",
+                },
+                FooterLink {
+                    label: "Careers",
+                    href: "/careers",
+                },
+                FooterLink {
+                    label: "Press",
+                    href: "/press",
+                },
             ],
         },
         FooterLinkGroup {
             title: "Resources",
             links: vec![
-                FooterLink { label: "Documentation", href: "/docs" },
-                FooterLink { label: "Blog", href: "/blog" },
-                FooterLink { label: "Support", href: "/support" },
+                FooterLink {
+                    label: "Documentation",
+                    href: "/docs",
+                },
+                FooterLink {
+                    label: "Blog",
+                    href: "/blog",
+                },
+                FooterLink {
+                    label: "Support",
+                    href: "/support",
+                },
             ],
         },
         FooterLinkGroup {
             title: "Legal",
             links: vec![
-                FooterLink { label: "Privacy", href: "/privacy" },
-                FooterLink { label: "Terms", href: "/terms" },
-                FooterLink { label: "Cookies", href: "/cookies" },
+                FooterLink {
+                    label: "Privacy",
+                    href: "/privacy",
+                },
+                FooterLink {
+                    label: "Terms",
+                    href: "/terms",
+                },
+                FooterLink {
+                    label: "Cookies",
+                    href: "/cookies",
+                },
             ],
         },
     ]
@@ -201,7 +230,10 @@ mod tests {
 
     #[test]
     fn footer_link_struct_literal() {
-        let link = FooterLink { label: "Docs", href: "/docs" };
+        let link = FooterLink {
+            label: "Docs",
+            href: "/docs",
+        };
         assert_eq!(link.label, "Docs");
         assert_eq!(link.href, "/docs");
     }
@@ -210,7 +242,10 @@ mod tests {
     fn footer_link_group_struct_literal() {
         let group = FooterLinkGroup {
             title: "Resources",
-            links: vec![FooterLink { label: "Docs", href: "/docs" }],
+            links: vec![FooterLink {
+                label: "Docs",
+                href: "/docs",
+            }],
         };
         assert_eq!(group.title, "Resources");
         assert_eq!(group.links.len(), 1);

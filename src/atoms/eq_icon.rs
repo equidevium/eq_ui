@@ -1,16 +1,16 @@
-use dioxus::prelude::*;
 use super::eq_icon_styles as s;
 use crate::theme::merge_classes;
 use crate::{PlaygroundEnum, playground};
+use dioxus::prelude::*;
 
+#[cfg(feature = "playground")]
+use crate::atoms::{EqText, TextVariant};
 #[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
     CodeBlock, DemoSection, PropSelect, PropToggle, StyleInfo, format_catalog,
 };
 #[cfg(feature = "playground")]
-use crate::atoms::{EqText, TextVariant};
-#[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 /// Icon size variant.
 #[derive(Clone, PartialEq, Default, PlaygroundEnum)]
@@ -47,10 +47,8 @@ pub fn EqIcon(
     /// rendered automatically. Mutually exclusive with children.
     #[props(into, default)]
     path: String,
-    #[props(default)]
-    size: IconSize,
-    #[props(default = false)]
-    muted: bool,
+    #[props(default)] size: IconSize,
+    #[props(default = false)] muted: bool,
     /// Accessible label for standalone icons (e.g. icon-only buttons).
     #[props(into, default)]
     aria_label: String,

@@ -43,19 +43,15 @@ use crate::theme::merge_classes;
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
-use crate::atoms::{EqText, TextVariant, EqButton, ButtonVariant};
+use crate::atoms::{ButtonVariant, EqButton, EqText, TextVariant};
 #[cfg(feature = "playground")]
 use crate::molecules::EqDeviceFrame;
 #[cfg(feature = "playground")]
-use crate::organisms::{EqToolbar, EqBottomNav, BottomNavItem, BottomNavBadge};
+use crate::organisms::{BottomNavBadge, BottomNavItem, EqBottomNav, EqToolbar};
 #[cfg(feature = "playground")]
-use crate::playground::playground_helpers::{
-    CodeBlock, DemoSection, StyleInfo, format_catalog,
-};
+use crate::playground::playground_helpers::{CodeBlock, DemoSection, StyleInfo, format_catalog};
 #[cfg(feature = "playground")]
-use crate::playground::playground_types::{
-    ComponentCategory, ComponentDescriptor, UsageExample,
-};
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 /// Mobile app layout with optional fixed toolbar, scrollable body, and
 /// optional fixed bottom nav.
@@ -142,8 +138,7 @@ EqMobileAppShell {
 
     let nav_items = vec![
         BottomNavItem::new("home", "Home", demo_icon_home()),
-        BottomNavItem::new("inbox", "Inbox", demo_icon_inbox())
-            .badge(BottomNavBadge::Count(3)),
+        BottomNavItem::new("inbox", "Inbox", demo_icon_inbox()).badge(BottomNavBadge::Count(3)),
         BottomNavItem::new("profile", "Profile", demo_icon_user()),
     ];
 

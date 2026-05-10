@@ -70,11 +70,7 @@ impl<T: Clone + PartialEq + 'static> PartialEq for EqColumnDef<T> {
 
 impl<T: Clone + PartialEq + 'static> EqColumnDef<T> {
     /// Create a column with required fields. All optional fields use defaults.
-    pub fn new(
-        id: &'static str,
-        header: &'static str,
-        value_getter: fn(&T) -> String,
-    ) -> Self {
+    pub fn new(id: &'static str, header: &'static str, value_getter: fn(&T) -> String) -> Self {
         Self {
             id,
             header,

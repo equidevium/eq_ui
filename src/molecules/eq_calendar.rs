@@ -22,18 +22,18 @@
 
 use super::eq_calendar_styles as s;
 use crate::molecules::eq_date_picker::DateValue;
-use crate::theme::merge_classes;
 use crate::playground;
+use crate::theme::merge_classes;
 use dioxus::prelude::*;
 
+#[cfg(feature = "playground")]
+use crate::atoms::{EqText, TextVariant};
 #[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
     CodeBlock, DemoSection, PropToggle, StyleInfo, format_catalog,
 };
 #[cfg(feature = "playground")]
-use crate::atoms::{EqText, TextVariant};
-#[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 // ── Event types ───────────────────────────────────────────────────
 
@@ -131,7 +131,10 @@ impl CalendarEvent {
     pub fn time_display(&self) -> String {
         match (self.start_hour, self.end_hour) {
             (Some(sh), Some(eh)) => {
-                format!("{:02}:{:02} – {:02}:{:02}", sh, self.start_min, eh, self.end_min)
+                format!(
+                    "{:02}:{:02} – {:02}:{:02}",
+                    sh, self.start_min, eh, self.end_min
+                )
             }
             _ => "All day".to_string(),
         }
@@ -141,13 +144,22 @@ impl CalendarEvent {
 // ── Date math (shared with EqDatePicker) ──────────────────────────
 
 const MONTH_SHORT: [&str; 12] = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
 ];
 
 const MONTH_FULL: [&str; 12] = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December",
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
 ];
 
 const WEEKDAY_SHORT: [&str; 7] = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
@@ -158,28 +170,47 @@ fn is_leap(year: i32) -> bool {
 
 fn days_in_month(year: i32, month: u32) -> u32 {
     match month {
-        1 => 31, 2 => if is_leap(year) { 29 } else { 28 },
-        3 => 31, 4 => 30, 5 => 31, 6 => 30,
-        7 => 31, 8 => 31, 9 => 30, 10 => 31,
-        11 => 30, 12 => 31, _ => 30,
+        1 => 31,
+        2 => {
+            if is_leap(year) {
+                29
+            } else {
+                28
+            }
+        }
+        3 => 31,
+        4 => 30,
+        5 => 31,
+        6 => 30,
+        7 => 31,
+        8 => 31,
+        9 => 30,
+        10 => 31,
+        11 => 30,
+        12 => 31,
+        _ => 30,
     }
 }
 
 fn day_of_week(year: i32, month: u32, day: u32) -> u32 {
     let t = [0i32, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4];
     let mut y = year;
-    if month < 3 { y -= 1; }
+    if month < 3 {
+        y -= 1;
+    }
     let dow = (y + y / 4 - y / 100 + y / 400 + t[month as usize - 1] + day as i32) % 7;
-    if dow < 0 { (dow + 7) as u32 } else { dow as u32 }
+    if dow < 0 {
+        (dow + 7) as u32
+    } else {
+        dow as u32
+    }
 }
 
 /// Heroicons chevron-left (mini).
-const CHEVRON_LEFT: &str =
-    "m12.77 5.23a.75.75 0 0 1 0 1.06L8.832 10l3.938 3.71a.75.75 0 1 1-1.04 1.08l-4.5-4.25a.75.75 0 0 1 0-1.08l4.5-4.25a.75.75 0 0 1 1.06-.02Z";
+const CHEVRON_LEFT: &str = "m12.77 5.23a.75.75 0 0 1 0 1.06L8.832 10l3.938 3.71a.75.75 0 1 1-1.04 1.08l-4.5-4.25a.75.75 0 0 1 0-1.08l4.5-4.25a.75.75 0 0 1 1.06-.02Z";
 
 /// Heroicons chevron-right (mini).
-const CHEVRON_RIGHT: &str =
-    "m7.23 14.77a.75.75 0 0 1 0-1.06L11.168 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06.02Z";
+const CHEVRON_RIGHT: &str = "m7.23 14.77a.75.75 0 0 1 0-1.06L11.168 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06.02Z";
 
 const WEEKDAY_FULL: [&str; 7] = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -190,14 +221,26 @@ fn add_days(date: DateValue, n: i32) -> DateValue {
     let mut d = date.day as i32 + n;
 
     while d < 1 {
-        if m == 1 { m = 12; y -= 1; } else { m -= 1; }
+        if m == 1 {
+            m = 12;
+            y -= 1;
+        } else {
+            m -= 1;
+        }
         d += days_in_month(y, m) as i32;
     }
     loop {
         let dim = days_in_month(y, m) as i32;
-        if d <= dim { break; }
+        if d <= dim {
+            break;
+        }
         d -= dim;
-        if m == 12 { m = 1; y += 1; } else { m += 1; }
+        if m == 12 {
+            m = 1;
+            y += 1;
+        } else {
+            m += 1;
+        }
     }
     DateValue::new(y, m, d as u32)
 }
@@ -241,7 +284,8 @@ struct CalendarCell {
 }
 
 fn events_for_date(events: &[CalendarEvent], y: i32, m: u32, d: u32) -> Vec<EventColor> {
-    events.iter()
+    events
+        .iter()
         .filter(|e| e.date.year == y && e.date.month == m && e.date.day == d)
         .map(|e| e.color)
         .collect()
@@ -298,10 +342,14 @@ fn build_calendar(
     for i in 0..first_dow {
         let d = prev_days - first_dow + 1 + i;
         cells.push(CalendarCell {
-            year: prev_year, month: prev_month, day: d,
+            year: prev_year,
+            month: prev_month,
+            day: d,
             is_current_month: false,
             is_today: today.year == prev_year && today.month == prev_month && today.day == d,
-            is_selected: selected.as_ref().is_some_and(|s| s.year == prev_year && s.month == prev_month && s.day == d),
+            is_selected: selected
+                .as_ref()
+                .is_some_and(|s| s.year == prev_year && s.month == prev_month && s.day == d),
             is_disabled: is_disabled(prev_year, prev_month, d),
             event_colors: events_for_date(events, prev_year, prev_month, d),
         });
@@ -310,10 +358,14 @@ fn build_calendar(
     // Current month.
     for d in 1..=days {
         cells.push(CalendarCell {
-            year: view_year, month: view_month, day: d,
+            year: view_year,
+            month: view_month,
+            day: d,
             is_current_month: true,
             is_today: today.year == view_year && today.month == view_month && today.day == d,
-            is_selected: selected.as_ref().is_some_and(|s| s.year == view_year && s.month == view_month && s.day == d),
+            is_selected: selected
+                .as_ref()
+                .is_some_and(|s| s.year == view_year && s.month == view_month && s.day == d),
             is_disabled: is_disabled(view_year, view_month, d),
             event_colors: events_for_date(events, view_year, view_month, d),
         });
@@ -323,10 +375,14 @@ fn build_calendar(
     let remaining = 42 - cells.len();
     for d in 1..=remaining as u32 {
         cells.push(CalendarCell {
-            year: next_year, month: next_month, day: d,
+            year: next_year,
+            month: next_month,
+            day: d,
             is_current_month: false,
             is_today: today.year == next_year && today.month == next_month && today.day == d,
-            is_selected: selected.as_ref().is_some_and(|s| s.year == next_year && s.month == next_month && s.day == d),
+            is_selected: selected
+                .as_ref()
+                .is_some_and(|s| s.year == next_year && s.month == next_month && s.day == d),
             is_disabled: is_disabled(next_year, next_month, d),
             event_colors: events_for_date(events, next_year, next_month, d),
         });
@@ -389,26 +445,30 @@ pub fn EqCalendar(
 ) -> Element {
     let today = use_hook(|| DateValue::new(2026, 5, 4));
 
-    let mut view_year = use_signal(|| {
-        selected.map(|d| d.year).unwrap_or(today.year)
-    });
-    let mut view_month = use_signal(|| {
-        selected.map(|d| d.month).unwrap_or(today.month)
-    });
+    let mut view_year = use_signal(|| selected.map(|d| d.year).unwrap_or(today.year));
+    let mut view_month = use_signal(|| selected.map(|d| d.month).unwrap_or(today.month));
     // 0 = days/week, 1 = month picker, 2 = year picker
     let mut view_mode = use_signal(|| 0u8);
 
     // Anchor date for week view (the selected date or today).
-    let mut week_anchor = use_signal(|| {
-        selected.unwrap_or(today)
-    });
+    let mut week_anchor = use_signal(|| selected.unwrap_or(today));
 
     let is_week = mode == CalendarMode::Week;
-    let width_cls = if is_week { s::WRAPPER_WEEK } else { s::WRAPPER_MONTH };
+    let width_cls = if is_week {
+        s::WRAPPER_WEEK
+    } else {
+        s::WRAPPER_MONTH
+    };
     let wrapper_cls = merge_classes(&format!("{} {}", s::WRAPPER, width_cls), &class);
 
     let cells = build_calendar(
-        view_year(), view_month(), &today, &selected, &min_date, &max_date, &events,
+        view_year(),
+        view_month(),
+        &today,
+        &selected,
+        &min_date,
+        &max_date,
+        &events,
     );
     let month_name = MONTH_FULL.get(view_month() as usize - 1).unwrap_or(&"???");
     let year_val = view_year();
@@ -855,24 +915,29 @@ fn DemoEqCalendar() -> Element {
     let mut constrained = use_signal(|| false);
     let mut week_mode = use_signal(|| false);
 
-    let min_date = if constrained() { Some(DateValue::new(2026, 5, 1)) } else { None };
-    let max_date = if constrained() { Some(DateValue::new(2026, 5, 31)) } else { None };
+    let min_date = if constrained() {
+        Some(DateValue::new(2026, 5, 1))
+    } else {
+        None
+    };
+    let max_date = if constrained() {
+        Some(DateValue::new(2026, 5, 31))
+    } else {
+        None
+    };
 
     // Sample events — mix of all-day and timed events.
     let events = vec![
         // All-day events
         CalendarEvent::new(DateValue::new(2026, 5, 4), "Team standup"),
-        CalendarEvent::new(DateValue::new(2026, 5, 4), "Design review")
-            .color(EventColor::Info),
+        CalendarEvent::new(DateValue::new(2026, 5, 4), "Design review").color(EventColor::Info),
         CalendarEvent::new(DateValue::new(2026, 5, 10), "Sprint planning")
             .color(EventColor::Success),
         CalendarEvent::new(DateValue::new(2026, 5, 15), "Release deadline")
             .color(EventColor::Danger),
-        CalendarEvent::new(DateValue::new(2026, 5, 20), "Retrospective")
-            .color(EventColor::Warning),
+        CalendarEvent::new(DateValue::new(2026, 5, 20), "Retrospective").color(EventColor::Warning),
         CalendarEvent::new(DateValue::new(2026, 5, 22), "1:1 meeting"),
-        CalendarEvent::new(DateValue::new(2026, 5, 28), "Demo day")
-            .color(EventColor::Success),
+        CalendarEvent::new(DateValue::new(2026, 5, 28), "Demo day").color(EventColor::Success),
         // Timed events (visible in week mode)
         CalendarEvent::timed(DateValue::new(2026, 5, 4), "Standup", 9, 0, 9, 30),
         CalendarEvent::timed(DateValue::new(2026, 5, 4), "Design sync", 14, 0, 15, 30)
@@ -890,7 +955,8 @@ fn DemoEqCalendar() -> Element {
     // Find events for the selected date.
     let selected_events: Vec<String> = selected()
         .map(|sel| {
-            events.iter()
+            events
+                .iter()
                 .filter(|e| e.date == sel)
                 .map(|e| {
                     if e.is_timed() {
@@ -929,7 +995,8 @@ EqCalendar {
     mode: CalendarMode::Week,
     events,
     on_select: move |d: DateValue| selected.set(Some(d)),
-}"#.to_string();
+}"#
+    .to_string();
 
     rsx! {
         DemoSection { title: "EqCalendar",
@@ -1014,17 +1081,13 @@ fn GalleryEqCalendar() -> Element {
 
     let sample_events = vec![
         CalendarEvent::new(DateValue::new(2026, 5, 4), "Standup"),
-        CalendarEvent::new(DateValue::new(2026, 5, 4), "Review")
-            .color(EventColor::Info),
-        CalendarEvent::new(DateValue::new(2026, 5, 12), "Deploy")
-            .color(EventColor::Success),
-        CalendarEvent::new(DateValue::new(2026, 5, 20), "Deadline")
-            .color(EventColor::Danger),
+        CalendarEvent::new(DateValue::new(2026, 5, 4), "Review").color(EventColor::Info),
+        CalendarEvent::new(DateValue::new(2026, 5, 12), "Deploy").color(EventColor::Success),
+        CalendarEvent::new(DateValue::new(2026, 5, 20), "Deadline").color(EventColor::Danger),
     ];
 
     let week_events = vec![
-        CalendarEvent::new(DateValue::new(2026, 5, 5), "Team offsite")
-            .color(EventColor::Info),
+        CalendarEvent::new(DateValue::new(2026, 5, 5), "Team offsite").color(EventColor::Info),
         CalendarEvent::timed(DateValue::new(2026, 5, 4), "Standup", 9, 0, 9, 30),
         CalendarEvent::timed(DateValue::new(2026, 5, 4), "Design sync", 14, 0, 15, 30)
             .color(EventColor::Info),
@@ -1115,8 +1178,7 @@ mod tests {
 
     #[test]
     fn calendar_event_color_builder() {
-        let e = CalendarEvent::new(DateValue::new(2026, 5, 1), "x")
-            .color(EventColor::Success);
+        let e = CalendarEvent::new(DateValue::new(2026, 5, 1), "x").color(EventColor::Success);
         assert!(matches!(e.color, EventColor::Success));
     }
 }

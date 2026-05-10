@@ -11,13 +11,13 @@ use crate::{PlaygroundEnum, playground};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
-use crate::playground::playground_helpers::{
-    CodeBlock, DemoSection, PropSelect, PropToggle, PropInput, StyleInfo, format_catalog,
-};
-#[cfg(feature = "playground")]
 use crate::atoms::{EqText, TextVariant};
 #[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_helpers::{
+    CodeBlock, DemoSection, PropInput, PropSelect, PropToggle, StyleInfo, format_catalog,
+};
+#[cfg(feature = "playground")]
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 /// Visual variant of the button.
 #[derive(Clone, Copy, PartialEq, Default, PlaygroundEnum)]
@@ -118,7 +118,11 @@ pub fn EqButton(
     let animate_cls = if animate { "" } else { s::NO_TRANSITION };
     let base = format!(
         "{} {} {} {} {}",
-        s::BASE, variant_cls, size_cls, gradient_cls, animate_cls
+        s::BASE,
+        variant_cls,
+        size_cls,
+        gradient_cls,
+        animate_cls
     );
     let cls = merge_classes(&base, &class);
 
@@ -195,7 +199,8 @@ fn DemoEqButton() -> Element {
         EqButton {\n\
         \x20   disabled: true,\n\
         \x20   \"Not Available\"\n\
-        }".to_string();
+        }"
+    .to_string();
 
     let variant_names: Vec<(&str, ButtonVariant)> = vec![
         ("Primary", ButtonVariant::Primary),

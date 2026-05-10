@@ -23,8 +23,7 @@ pub fn merge_classes(defaults: &str, class_override: &str) -> String {
 }
 
 // ── Layout ──────────────────────────────────────────────────────────
-pub const APP: &str =
-    "min-h-screen bg-transparent text-[var(--color-label-primary)]";
+pub const APP: &str = "min-h-screen bg-transparent text-[var(--color-label-primary)]";
 pub const CONTAINER_LAYOUT: &str = "mx-auto max-w-6xl px-4 md:px-6";
 pub const MAIN_CONTENT: &str = "flex-1";
 pub const MAIN_INNER: &str = "py-6 md:py-10";
@@ -33,8 +32,7 @@ pub const MAIN_INNER: &str = "py-6 md:py-10";
 pub const NOTFOUND: &str = "mx-auto max-w-2xl py-16";
 pub const NOTFOUND_HEADING: &str = "text-2xl font-semibold";
 pub const NOTFOUND_TEXT: &str = "mt-3 text-[var(--color-label-secondary)]";
-pub const NOTFOUND_LINK: &str =
-    "mt-6 inline-block text-[var(--color-label-primary)] underline hover:text-[var(--color-label-bold)]";
+pub const NOTFOUND_LINK: &str = "mt-6 inline-block text-[var(--color-label-primary)] underline hover:text-[var(--color-label-bold)]";
 
 // ── Spacing ─────────────────────────────────────────────────────────
 pub const STACK_SM: &str = "space-y-2";
@@ -64,12 +62,10 @@ pub const BORDER_FOCUS: &str =
     "focus:border-[var(--color-focus-ring)] focus:ring-2 focus:ring-[var(--color-focus-ring)]/50";
 
 // ── Surfaces ────────────────────────────────────────────────────────
-pub const SURFACE: &str =
-    "rounded-xl border border-[var(--color-card-border)] \
+pub const SURFACE: &str = "rounded-xl border border-[var(--color-card-border)] \
      bg-[var(--color-card)]/60";
 pub const SURFACE_ELEVATED: &str = "shadow-sm";
-pub const SURFACE_INTERACTIVE: &str =
-    "transition hover:shadow-md hover:-translate-y-[1px]";
+pub const SURFACE_INTERACTIVE: &str = "transition hover:shadow-md hover:-translate-y-[1px]";
 
 // ── Shadows ─────────────────────────────────────────────────────────
 pub const SHADOW_NONE: &str = "shadow-none";
@@ -79,29 +75,22 @@ pub const SHADOW_LG: &str = "shadow-lg shadow-black/30";
 pub const SHADOW_FOCUS: &str = "focus:shadow-md focus:shadow-black/30";
 
 // ── Section cards (move when component is created) ──────────────────
-pub const SECTION_CARD: &str =
-    "rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card)]/60 p-4 md:p-6 shadow-sm";
-pub const SECTION_CARD_SM: &str =
-    "rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card)]/60 p-3 md:p-4 shadow-sm";
+pub const SECTION_CARD: &str = "rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card)]/60 p-4 md:p-6 shadow-sm";
+pub const SECTION_CARD_SM: &str = "rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card)]/60 p-3 md:p-4 shadow-sm";
 pub const SECTION_HEADER: &str = "space-y-2";
-pub const SECTION_TITLE: &str =
-    "text-lg font-semibold text-[var(--color-label-primary)]";
-pub const SECTION_BODY: &str =
-    "text-[var(--color-label-secondary)] leading-relaxed";
+pub const SECTION_TITLE: &str = "text-lg font-semibold text-[var(--color-label-primary)]";
+pub const SECTION_BODY: &str = "text-[var(--color-label-secondary)] leading-relaxed";
 pub const SECTION_STACK: &str = "space-y-6";
 
 // ── Navs (move to eq_nav_styles.rs when EqNav is created) ──────────
 pub const NAV: &str = "flex";
 pub const NAV_LIST: &str = "flex items-center gap-4 list-none m-0 p-0";
-pub const NAV_LINK: &str =
-    "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] active:text-[var(--color-label-primary)] transition";
-pub const NAV_LINK_ACTIVE: &str =
-    "text-[var(--color-label-primary)] font-medium";
+pub const NAV_LINK: &str = "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] active:text-[var(--color-label-primary)] transition";
+pub const NAV_LINK_ACTIVE: &str = "text-[var(--color-label-primary)] font-medium";
 
 // ── Link groups (move when component is created) ────────────────────
 pub const LINK_GROUP: &str = "space-y-3";
 pub const LINK_GROUP_TITLE: &str =
     "text-sm font-semibold tracking-wide text-[var(--color-label-primary)]";
 pub const LINK_GROUP_LIST: &str = "space-y-2";
-pub const LINK_GROUP_LINK: &str =
-    "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] active:text-[var(--color-label-primary)] transition";
+pub const LINK_GROUP_LINK: &str = "text-sm text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] active:text-[var(--color-label-primary)] transition";

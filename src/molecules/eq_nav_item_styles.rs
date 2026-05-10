@@ -1,8 +1,7 @@
 //! Style constants for EqNavItem.
 
 /// Base wrapper: inline-flex layout with icon + label aligned.
-pub const NAV_ITEM_BASE: &str =
-    "inline-flex items-center rounded-lg \
+pub const NAV_ITEM_BASE: &str = "inline-flex items-center rounded-lg \
      text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] \
      hover:bg-[var(--color-card)]/30 transition-colors cursor-pointer select-none";
 

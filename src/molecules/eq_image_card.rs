@@ -5,13 +5,13 @@ use crate::{PlaygroundEnum, playground};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
-use crate::playground::playground_helpers::{
-    CodeBlock, DemoSection, PropSelect, PropInput, PropToggle, StyleInfo, format_catalog,
-};
-#[cfg(feature = "playground")]
 use crate::atoms::{EqText, TextVariant};
 #[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_helpers::{
+    CodeBlock, DemoSection, PropInput, PropSelect, PropToggle, StyleInfo, format_catalog,
+};
+#[cfg(feature = "playground")]
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 /// Controls how the caption is displayed relative to the image.
 #[derive(Clone, PartialEq, Default, PlaygroundEnum)]
@@ -109,46 +109,52 @@ pub fn EqImageCard(
         CaptionMode::Below => {
             let cls = merge_classes(s::CARD_WRAPPER, &class);
             rsx! {
-            figure {
-                class: "{cls}",
-                "aria-label": if has_aria_label { "{aria_label}" } else { "" },
-                EqImage { src, alt, size, aspect_ratio, object_fit, rounded }
-                if has_caption {
-                    figcaption { class: s::FIGCAPTION,
-                        CaptionContent {
-                            title_class: s::CAPTION_TITLE,
-                            description_class: s::CAPTION_DESCRIPTION,
-                            attribution_class: s::CAPTION_ATTRIBUTION,
-                            title, description, attribution,
-                        }
-                    }
-                }
-            }
-        }},
-        CaptionMode::Overlay => {
-            let cls = merge_classes(s::OVERLAY_CONTAINER, &class);
-            let effective_label = if has_aria_label { aria_label.clone() } else { alt.clone() };
-            rsx! {
-            div {
-                class: "{cls}",
-                role: "figure",
-                "aria-label": "{effective_label}",
-                EqImage { src, alt, size, aspect_ratio, object_fit, rounded }
-                if has_caption {
-                    div { class: s::OVERLAY_GRADIENT,
-                        "aria-hidden": "true",
-                        div { class: s::OVERLAY_TEXT_WRAPPER,
+                figure {
+                    class: "{cls}",
+                    "aria-label": if has_aria_label { "{aria_label}" } else { "" },
+                    EqImage { src, alt, size, aspect_ratio, object_fit, rounded }
+                    if has_caption {
+                        figcaption { class: s::FIGCAPTION,
                             CaptionContent {
-                                title_class: s::OVERLAY_TITLE,
-                                description_class: s::OVERLAY_DESCRIPTION,
-                                attribution_class: s::OVERLAY_ATTRIBUTION,
+                                title_class: s::CAPTION_TITLE,
+                                description_class: s::CAPTION_DESCRIPTION,
+                                attribution_class: s::CAPTION_ATTRIBUTION,
                                 title, description, attribution,
                             }
                         }
                     }
                 }
             }
-        }},
+        }
+        CaptionMode::Overlay => {
+            let cls = merge_classes(s::OVERLAY_CONTAINER, &class);
+            let effective_label = if has_aria_label {
+                aria_label.clone()
+            } else {
+                alt.clone()
+            };
+            rsx! {
+                div {
+                    class: "{cls}",
+                    role: "figure",
+                    "aria-label": "{effective_label}",
+                    EqImage { src, alt, size, aspect_ratio, object_fit, rounded }
+                    if has_caption {
+                        div { class: s::OVERLAY_GRADIENT,
+                            "aria-hidden": "true",
+                            div { class: s::OVERLAY_TEXT_WRAPPER,
+                                CaptionContent {
+                                    title_class: s::OVERLAY_TITLE,
+                                    description_class: s::OVERLAY_DESCRIPTION,
+                                    attribution_class: s::OVERLAY_ATTRIBUTION,
+                                    title, description, attribution,
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

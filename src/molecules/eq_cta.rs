@@ -24,13 +24,13 @@ use crate::{PlaygroundEnum, playground};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
+use crate::atoms::{ButtonVariant, EqButton, EqText, TextVariant};
+#[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
     CodeBlock, DemoSection, PropInput, PropSelect, StyleInfo, format_catalog,
 };
 #[cfg(feature = "playground")]
-use crate::atoms::{EqText, TextVariant, EqButton, ButtonVariant};
-#[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 /// Layout mode for the CTA banner.
 #[derive(Clone, Copy, PartialEq, Default, PlaygroundEnum)]
@@ -117,8 +117,7 @@ pub fn EqCta(
 #[component]
 fn DemoEqCta() -> Element {
     let mut title = use_signal(|| "Ready to get started?".to_string());
-    let mut description =
-        use_signal(|| "Create your first project in under a minute.".to_string());
+    let mut description = use_signal(|| "Create your first project in under a minute.".to_string());
     let mut layout_str = use_signal(|| "Inline".to_string());
 
     let layout = match layout_str().as_str() {

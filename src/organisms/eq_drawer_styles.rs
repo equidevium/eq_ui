@@ -1,8 +1,7 @@
 //! Style constants for EqDrawer.
 
 /// Full-viewport backdrop overlay.
-pub const BACKDROP: &str =
-    "fixed inset-0 z-50 \
+pub const BACKDROP: &str = "fixed inset-0 z-50 \
      bg-[var(--color-surface-overlay)] \
      transition-opacity duration-200";
 
@@ -12,8 +11,7 @@ pub const BACKDROP_OPEN: &str = "opacity-100";
 pub const BACKDROP_CLOSED: &str = "opacity-0 pointer-events-none";
 
 /// The drawer panel — shared base.
-pub const PANEL: &str =
-    "fixed z-50 flex flex-col \
+pub const PANEL: &str = "fixed z-50 flex flex-col \
      bg-[var(--color-card)] \
      border-[var(--color-card-border)] \
      shadow-2xl shadow-black/40 \
@@ -25,23 +23,19 @@ pub const PANEL_OPEN: &str = "translate-x-0 translate-y-0";
 // ── Side-specific base + closed transforms ────────────────────────
 
 /// Left side: panel sizing and closed state.
-pub const SIDE_LEFT: &str =
-    "inset-y-0 left-0 border-r max-w-[85vw]";
+pub const SIDE_LEFT: &str = "inset-y-0 left-0 border-r max-w-[85vw]";
 pub const SIDE_LEFT_CLOSED: &str = "-translate-x-full";
 
 /// Right side.
-pub const SIDE_RIGHT: &str =
-    "inset-y-0 right-0 border-l max-w-[85vw]";
+pub const SIDE_RIGHT: &str = "inset-y-0 right-0 border-l max-w-[85vw]";
 pub const SIDE_RIGHT_CLOSED: &str = "translate-x-full";
 
 /// Top side.
-pub const SIDE_TOP: &str =
-    "inset-x-0 top-0 border-b max-h-[85vh]";
+pub const SIDE_TOP: &str = "inset-x-0 top-0 border-b max-h-[85vh]";
 pub const SIDE_TOP_CLOSED: &str = "-translate-y-full";
 
 /// Bottom side.
-pub const SIDE_BOTTOM: &str =
-    "inset-x-0 bottom-0 border-t max-h-[85vh]";
+pub const SIDE_BOTTOM: &str = "inset-x-0 bottom-0 border-t max-h-[85vh]";
 pub const SIDE_BOTTOM_CLOSED: &str = "translate-y-full";
 
 // ── Width / height presets ─────────────────────────────────────────
@@ -64,25 +58,20 @@ pub const SIZE_FULL_V: &str = "h-screen";
 
 // ── Header / body / footer ────────────────────────────────────────
 
-pub const HEADER: &str =
-    "flex items-center justify-between px-5 py-4 shrink-0 \
+pub const HEADER: &str = "flex items-center justify-between px-5 py-4 shrink-0 \
      border-b border-[var(--color-card-border)]";
 
-pub const HEADER_TITLE: &str =
-    "text-lg font-semibold text-[var(--color-label-primary)]";
+pub const HEADER_TITLE: &str = "text-lg font-semibold text-[var(--color-label-primary)]";
 
-pub const CLOSE_BUTTON: &str =
-    "shrink-0 p-1 rounded-md \
+pub const CLOSE_BUTTON: &str = "shrink-0 p-1 rounded-md \
      text-[var(--color-label-secondary)] \
      hover:text-[var(--color-label-primary)] \
      hover:bg-[var(--color-tertiary-dark)]/60 \
      transition-colors cursor-pointer";
 
-pub const BODY: &str =
-    "flex-1 overflow-y-auto px-5 py-4 text-sm text-[var(--color-label-primary)]";
+pub const BODY: &str = "flex-1 overflow-y-auto px-5 py-4 text-sm text-[var(--color-label-primary)]";
 
-pub const FOOTER: &str =
-    "flex items-center justify-end gap-2 px-5 py-4 shrink-0 \
+pub const FOOTER: &str = "flex items-center justify-end gap-2 px-5 py-4 shrink-0 \
      border-t border-[var(--color-card-border)]";
 
 /// All style tokens for playground introspection.

@@ -4,13 +4,13 @@ use crate::{PlaygroundEnum, playground};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
+use crate::atoms::{EqText, TextVariant};
+#[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
     CodeBlock, DemoSection, PropSelect, StyleInfo, format_catalog,
 };
 #[cfg(feature = "playground")]
-use crate::atoms::{EqText, TextVariant};
-#[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 /// Visual style of the divider line.
 #[derive(Clone, PartialEq, Default, PlaygroundEnum)]
@@ -110,7 +110,13 @@ pub fn EqDivider(
         DividerWeight::ExtraThick => s::EXTRA_THICK,
     };
 
-    let base = format!("{} {} {} {}", s::BASE, variant_class, weight_class, spacing_class);
+    let base = format!(
+        "{} {} {} {}",
+        s::BASE,
+        variant_class,
+        weight_class,
+        spacing_class
+    );
     let cls = merge_classes(&base, &class);
 
     rsx! {

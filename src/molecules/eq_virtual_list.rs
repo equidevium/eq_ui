@@ -21,18 +21,18 @@
 //! ```
 
 use super::eq_virtual_list_styles as s;
-use crate::theme::merge_classes;
 use crate::playground;
+use crate::theme::merge_classes;
 use dioxus::prelude::*;
 
+#[cfg(feature = "playground")]
+use crate::atoms::{EqText, TextVariant};
 #[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
     CodeBlock, DemoSection, PropInput, PropToggle, StyleInfo, format_catalog,
 };
 #[cfg(feature = "playground")]
-use crate::atoms::{EqText, TextVariant};
-#[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 // ── Orientation ──────────────────────────────────────────────────
 
@@ -59,7 +59,10 @@ pub struct StickyHeader {
 
 impl StickyHeader {
     pub fn new(at_index: usize, label: impl Into<String>) -> Self {
-        Self { at_index, label: label.into() }
+        Self {
+            at_index,
+            label: label.into(),
+        }
     }
 }
 
@@ -129,7 +132,10 @@ pub fn EqVirtualList(
     // Stable unique ID for the viewport element.
     static COUNTER: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
     let vp_id = use_hook(|| {
-        format!("eq-vl-{}", COUNTER.fetch_add(1, std::sync::atomic::Ordering::Relaxed))
+        format!(
+            "eq-vl-{}",
+            COUNTER.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
+        )
     });
 
     // ── Scroll state ─────────────────────────────────────────────
@@ -142,7 +148,11 @@ pub fn EqVirtualList(
     use_effect(move || {
         if let Some(idx) = scroll_idx {
             let target = idx as f64 * item_size;
-            let prop = if is_horizontal { "scrollLeft" } else { "scrollTop" };
+            let prop = if is_horizontal {
+                "scrollLeft"
+            } else {
+                "scrollTop"
+            };
             let js = format!(
                 "const el = document.getElementById('{}'); if(el) el.{} = {};",
                 vp_id_eff, prop, target
@@ -168,18 +178,37 @@ pub fn EqVirtualList(
     let offset_px = win_start as f64 * item_size;
 
     // ── Sticky header: find the active one ───────────────────────
-    let active_sticky: Option<&StickyHeader> = sticky_headers
-        .iter()
-        .rfind(|h| h.at_index <= first_visible);
+    let active_sticky: Option<&StickyHeader> =
+        sticky_headers.iter().rfind(|h| h.at_index <= first_visible);
 
     // ── Styles ───────────────────────────────────────────────────
-    let viewport_base = if is_horizontal { s::VIEWPORT_HORIZONTAL } else { s::VIEWPORT };
+    let viewport_base = if is_horizontal {
+        s::VIEWPORT_HORIZONTAL
+    } else {
+        s::VIEWPORT
+    };
     let viewport_cls = merge_classes(viewport_base, &class);
 
-    let sizer_cls = if is_horizontal { s::SIZER_HORIZONTAL } else { s::SIZER };
-    let window_cls = if is_horizontal { s::WINDOW_HORIZONTAL } else { s::WINDOW };
-    let item_cls = if is_horizontal { s::ITEM_HORIZONTAL } else { s::ITEM };
-    let sticky_cls = if is_horizontal { s::STICKY_HEADER_HORIZONTAL } else { s::STICKY_HEADER };
+    let sizer_cls = if is_horizontal {
+        s::SIZER_HORIZONTAL
+    } else {
+        s::SIZER
+    };
+    let window_cls = if is_horizontal {
+        s::WINDOW_HORIZONTAL
+    } else {
+        s::WINDOW
+    };
+    let item_cls = if is_horizontal {
+        s::ITEM_HORIZONTAL
+    } else {
+        s::ITEM
+    };
+    let sticky_cls = if is_horizontal {
+        s::STICKY_HEADER_HORIZONTAL
+    } else {
+        s::STICKY_HEADER
+    };
 
     let viewport_style = if is_horizontal {
         format!("width: {viewport_size}px; height: {item_size}px;")
@@ -298,7 +327,8 @@ fn DemoEqVirtualList() -> Element {
 
     let sticky_headers = if show_sticky() {
         // Create section headers every 50 items.
-        (0..count).step_by(50)
+        (0..count)
+            .step_by(50)
             .map(|i| StickyHeader::new(i, format!("Section {}", i / 50 + 1)))
             .collect::<Vec<_>>()
     } else {
@@ -323,7 +353,8 @@ fn DemoEqVirtualList() -> Element {
             "Row {idx}"
         }
     },
-}"#.to_string();
+}"#
+    .to_string();
 
     rsx! {
         DemoSection { title: "EqVirtualList",
@@ -413,7 +444,8 @@ fn DemoEqVirtualList() -> Element {
 #[cfg(feature = "playground")]
 #[component]
 fn GalleryEqVirtualList() -> Element {
-    let sticky_hdrs = (0..200).step_by(25)
+    let sticky_hdrs = (0..200)
+        .step_by(25)
         .map(|i| StickyHeader::new(i, format!("Group {}", i / 25 + 1)))
         .collect::<Vec<_>>();
 

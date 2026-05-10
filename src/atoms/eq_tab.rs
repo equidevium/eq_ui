@@ -33,13 +33,13 @@ use dioxus::document;
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
+use crate::atoms::{EqText, TextVariant};
+#[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
     CodeBlock, DemoSection, PropSelect, StyleInfo, format_catalog,
 };
 #[cfg(feature = "playground")]
-use crate::atoms::{EqText, TextVariant};
-#[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 // ── Types ─────────────────────────────────────────────────────────
 
@@ -145,7 +145,11 @@ pub fn EqTab(
     };
 
     let (container_extra, base_cls, active_cls) = match variant {
-        TabVariant::Underline => (s::CONTAINER_UNDERLINE, s::UNDERLINE_BASE, s::UNDERLINE_ACTIVE),
+        TabVariant::Underline => (
+            s::CONTAINER_UNDERLINE,
+            s::UNDERLINE_BASE,
+            s::UNDERLINE_ACTIVE,
+        ),
         TabVariant::Pill => ("", s::PILL_BASE, s::PILL_ACTIVE),
         TabVariant::Card => (s::CONTAINER_CARD, s::CARD_BASE, s::CARD_ACTIVE),
     };
@@ -329,7 +333,8 @@ fn DemoEqTab() -> Element {
         \x20   size: TabSize::Md,\n\
         \x20   active: active(),\n\
         \x20   on_change: move |idx| active.set(idx),\n\
-        }".to_string();
+        }"
+    .to_string();
 
     rsx! {
         DemoSection { title: "EqTab",
@@ -394,18 +399,22 @@ fn GalleryEqTab() -> Element {
     let mut size_sm_active = use_signal(|| 0usize);
     let mut size_lg_active = use_signal(|| 0usize);
 
-    let basic_tabs = || vec![
-        TabItem::new("First"),
-        TabItem::new("Second"),
-        TabItem::new("Third"),
-    ];
+    let basic_tabs = || {
+        vec![
+            TabItem::new("First"),
+            TabItem::new("Second"),
+            TabItem::new("Third"),
+        ]
+    };
 
-    let badge_tabs = || vec![
-        TabItem::new("Inbox").badge(12),
-        TabItem::new("Drafts").badge(3),
-        TabItem::new("Sent"),
-        TabItem::new("Spam").disabled(true),
-    ];
+    let badge_tabs = || {
+        vec![
+            TabItem::new("Inbox").badge(12),
+            TabItem::new("Drafts").badge(3),
+            TabItem::new("Sent"),
+            TabItem::new("Spam").disabled(true),
+        ]
+    };
 
     rsx! {
         div { class: "space-y-4",

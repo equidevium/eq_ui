@@ -4,7 +4,7 @@ use super::column_def::EqColumnDef;
 use super::styles as s;
 use super::types::{ColumnAlign, ResizeState, RowSelection, SortDirection, SortState};
 use crate::atoms::eq_icon_paths;
-use crate::atoms::{EqCheckbox, CheckboxState, EqIcon, IconSize};
+use crate::atoms::{CheckboxState, EqCheckbox, EqIcon, IconSize};
 use dioxus::prelude::*;
 use std::collections::{HashMap, HashSet};
 
@@ -73,10 +73,14 @@ pub(super) fn render_header<T: Clone + PartialEq + 'static>(
     // Select All state: all visible rows selected?
     let all_selected = row_selection == RowSelection::Multi
         && !visible_indices.is_empty()
-        && visible_indices.iter().all(|idx| selected_rows.read().contains(idx));
+        && visible_indices
+            .iter()
+            .all(|idx| selected_rows.read().contains(idx));
     let some_selected = row_selection == RowSelection::Multi
         && !all_selected
-        && visible_indices.iter().any(|idx| selected_rows.read().contains(idx));
+        && visible_indices
+            .iter()
+            .any(|idx| selected_rows.read().contains(idx));
 
     // Copy visible indices for the closure (can't capture slice).
     let vis = visible_indices.to_vec();

@@ -36,13 +36,13 @@ use crate::{PlaygroundEnum, playground};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
+use crate::atoms::{EqText, TextVariant};
+#[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
     CodeBlock, DemoSection, PropSelect, PropToggle, StyleInfo, format_catalog,
 };
 #[cfg(feature = "playground")]
-use crate::atoms::{EqText, TextVariant};
-#[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 /// Semantic colour variant for the progress fill.
 #[derive(Clone, Copy, PartialEq, Default, PlaygroundEnum)]
@@ -130,7 +130,11 @@ pub fn EqProgress(
         ProgressVariant::Warning => s::FILL_WARNING,
         ProgressVariant::Danger => s::FILL_DANGER,
         ProgressVariant::Default => {
-            if gradient { s::FILL_GRADIENT } else { s::FILL_SOLID }
+            if gradient {
+                s::FILL_GRADIENT
+            } else {
+                s::FILL_SOLID
+            }
         }
     };
 
@@ -140,7 +144,10 @@ pub fn EqProgress(
 
     // Fill: base classes + indeterminate animation or width
     let (fill_cls, fill_style) = if indeterminate {
-        (format!("{} {}", fill_base, s::INDETERMINATE_FILL), String::new())
+        (
+            format!("{} {}", fill_base, s::INDETERMINATE_FILL),
+            String::new(),
+        )
     } else {
         (fill_base.to_string(), format!("width: {}%;", pct))
     };
@@ -215,7 +222,8 @@ fn DemoEqProgress() -> Element {
         }\n\
         \n\
         // Indeterminate loading\n\
-        EqProgress { indeterminate: true, size: ProgressSize::Lg }".to_string();
+        EqProgress { indeterminate: true, size: ProgressSize::Lg }"
+        .to_string();
 
     rsx! {
         DemoSection { title: "EqProgress",

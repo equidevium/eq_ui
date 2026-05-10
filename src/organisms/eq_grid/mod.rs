@@ -10,18 +10,21 @@
 //! - **pagination** - page navigation bar
 //! - **grid** - the `EqGrid` component that orchestrates everything
 
-pub mod types;
 pub mod column_def;
 pub mod styles;
+pub mod types;
 
-mod header;
 mod body;
+mod bulk_actions;
+mod export;
+pub mod grid;
+mod header;
 mod pagination;
 mod quick_filter;
-mod export;
-mod bulk_actions;
-pub mod grid;
 
-pub use types::{ColumnAlign, SortDirection, SortState, RowSelection, GridDensity, GridNavigation, GridDragPayload, ExportFormat};
 pub use column_def::EqColumnDef;
 pub use grid::EqGrid;
+pub use types::{
+    ColumnAlign, ExportFormat, GridDensity, GridDragPayload, GridNavigation, RowSelection,
+    SortDirection, SortState,
+};

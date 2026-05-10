@@ -15,29 +15,25 @@ pub const CONTAINER: &str = "flex items-center gap-1";
 pub const CONTAINER_UNDERLINE: &str = "border-b border-[var(--color-card-border)]";
 
 /// Shared button reset for underline tabs.
-pub const UNDERLINE_BASE: &str =
-    "relative cursor-pointer font-medium transition-colors \
+pub const UNDERLINE_BASE: &str = "relative cursor-pointer font-medium transition-colors \
      text-[var(--color-label-secondary)] \
      hover:text-[var(--color-label-primary)]";
 
 /// Active state for underline tabs - accent bottom border + primary text.
-pub const UNDERLINE_ACTIVE: &str =
-    "text-[var(--color-label-primary)] \
+pub const UNDERLINE_ACTIVE: &str = "text-[var(--color-label-primary)] \
      after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] \
      after:bg-[var(--color-accent-primary)] after:rounded-full";
 
 // ── Pill variant ──────────────────────────────────────────────────
 
 /// Shared button reset for pill tabs.
-pub const PILL_BASE: &str =
-    "cursor-pointer font-medium rounded-full transition-colors \
+pub const PILL_BASE: &str = "cursor-pointer font-medium rounded-full transition-colors \
      text-[var(--color-label-secondary)] \
      hover:bg-[var(--color-surface-elevated)] \
      hover:text-[var(--color-label-primary)]";
 
 /// Active state for pill tabs - elevated surface fill + primary text.
-pub const PILL_ACTIVE: &str =
-    "bg-[var(--color-surface-elevated)] text-[var(--color-label-primary)] \
+pub const PILL_ACTIVE: &str = "bg-[var(--color-surface-elevated)] text-[var(--color-label-primary)] \
      shadow-sm";
 
 // ── Card variant ──────────────────────────────────────────────────
@@ -46,15 +42,13 @@ pub const PILL_ACTIVE: &str =
 pub const CONTAINER_CARD: &str = "border-b border-[var(--color-card-border)]";
 
 /// Shared button reset for card tabs.
-pub const CARD_BASE: &str =
-    "cursor-pointer font-medium rounded-t-lg transition-colors \
+pub const CARD_BASE: &str = "cursor-pointer font-medium rounded-t-lg transition-colors \
      text-[var(--color-label-secondary)] \
      hover:text-[var(--color-label-primary)] \
      hover:bg-[var(--color-card)]/30";
 
 /// Active card tab - solid background, border on 3 sides, overlaps container border.
-pub const CARD_ACTIVE: &str =
-    "bg-[var(--color-card)] text-[var(--color-label-primary)] \
+pub const CARD_ACTIVE: &str = "bg-[var(--color-card)] text-[var(--color-label-primary)] \
      border border-[var(--color-card-border)] border-b-transparent \
      -mb-px";
 
@@ -82,8 +76,7 @@ pub const WITH_ICON: &str = "inline-flex items-center gap-1.5";
 // ── Badge / count ─────────────────────────────────────────────────
 
 /// Optional count badge inside a tab.
-pub const BADGE: &str =
-    "ml-1.5 inline-flex items-center justify-center min-w-[1.25rem] h-5 \
+pub const BADGE: &str = "ml-1.5 inline-flex items-center justify-center min-w-[1.25rem] h-5 \
      px-1 rounded-full text-[10px] font-semibold \
      bg-[var(--color-accent-primary)]/15 text-[var(--color-accent-primary)]";
 

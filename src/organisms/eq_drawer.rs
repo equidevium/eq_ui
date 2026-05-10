@@ -31,13 +31,13 @@ use crate::{PlaygroundEnum, playground};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
+use crate::atoms::{ButtonVariant, EqButton, EqText, TextVariant};
+#[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
     CodeBlock, DemoSection, PropSelect, PropToggle, StyleInfo, format_catalog,
 };
 #[cfg(feature = "playground")]
-use crate::atoms::{EqText, TextVariant, EqButton, ButtonVariant};
-#[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 // ── Types ─────────────────────────────────────────────────────────
 
@@ -139,7 +139,11 @@ pub fn EqDrawer(
     };
 
     // Backdrop state.
-    let backdrop_state = if open { s::BACKDROP_OPEN } else { s::BACKDROP_CLOSED };
+    let backdrop_state = if open {
+        s::BACKDROP_OPEN
+    } else {
+        s::BACKDROP_CLOSED
+    };
 
     // Side classes.
     let side_cls = match side {

@@ -1,6 +1,6 @@
 //! Parse component props from a `#[component] fn` signature.
 
-use syn::{FnArg, Ident, Pat, Result, Type, Attribute, Expr};
+use syn::{Attribute, Expr, FnArg, Ident, Pat, Result, Type};
 
 /// A single component prop extracted from the function signature.
 #[derive(Debug)]
@@ -47,14 +47,16 @@ pub fn extract_props(sig: &syn::Signature) -> Result<Vec<PropInfo>> {
         let attrs = &pat_ty.attrs;
 
         let has_playground_skip = attrs.iter().any(|a| {
-            a.path().is_ident("playground") && a.parse_args::<Ident>().map(|i| i == "skip").unwrap_or(false)
+            a.path().is_ident("playground")
+                && a.parse_args::<Ident>()
+                    .map(|i| i == "skip")
+                    .unwrap_or(false)
         });
 
         let default_expr = extract_default_value(attrs);
         let kind = classify_type(&name, &ty);
 
-        let skip = has_playground_skip
-            || matches!(kind, PropKind::Handler | PropKind::Unknown);
+        let skip = has_playground_skip || matches!(kind, PropKind::Handler | PropKind::Unknown);
 
         props.push(PropInfo {
             name,
@@ -109,14 +111,20 @@ fn classify_type(name: &Ident, ty: &Type) -> PropKind {
     }
 
     // Option<EventHandler<...>> / Option<Callback<...>>
-    if ty_str.starts_with("Option") && (ty_str.contains("EventHandler") || ty_str.contains("Callback")) {
+    if ty_str.starts_with("Option")
+        && (ty_str.contains("EventHandler") || ty_str.contains("Callback"))
+    {
         return PropKind::Handler;
     }
 
     // If none of the above, assume it's an enum type.
     // Extract the ident from the type.
-    let Type::Path(tp) = ty else { return PropKind::Unknown; };
-    let Some(seg) = tp.path.segments.last() else { return PropKind::Unknown; };
+    let Type::Path(tp) = ty else {
+        return PropKind::Unknown;
+    };
+    let Some(seg) = tp.path.segments.last() else {
+        return PropKind::Unknown;
+    };
     let ident = &seg.ident;
     let ident_str = ident.to_string();
     // Skip common non-enum types
@@ -145,7 +153,9 @@ fn extract_default_value(attrs: &[Attribute]) -> Option<Expr> {
                 syn::punctuated::Punctuated::<syn::Meta, syn::Token![,]>::parse_terminated,
             ) {
                 for m in &nested {
-                    let syn::Meta::NameValue(nv) = m else { continue; };
+                    let syn::Meta::NameValue(nv) = m else {
+                        continue;
+                    };
                     if nv.path.is_ident("default") {
                         return Some(nv.value.clone());
                     }
@@ -153,7 +163,9 @@ fn extract_default_value(attrs: &[Attribute]) -> Option<Expr> {
             }
             continue;
         };
-        let syn::Meta::NameValue(nv) = meta else { continue; };
+        let syn::Meta::NameValue(nv) = meta else {
+            continue;
+        };
         if nv.path.is_ident("default") {
             return Some(nv.value);
         }

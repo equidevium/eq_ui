@@ -8,7 +8,8 @@ use crate::parse_props::{PropInfo, PropKind};
 /// Generate `handler_name: move |_| {}` for every Handler prop.
 /// Used in static gallery instances where handlers are required but not interactive.
 fn noop_handler_props(props: &[PropInfo]) -> Vec<TokenStream> {
-    props.iter()
+    props
+        .iter()
         .filter(|p| p.kind == PropKind::Handler)
         .map(|p| {
             let name = &p.name;
@@ -24,8 +25,12 @@ fn noop_handler_props(props: &[PropInfo]) -> Vec<TokenStream> {
 fn find_form_handler_pairs(props: &[PropInfo]) -> Vec<(Ident, Ident)> {
     let mut pairs = Vec::new();
 
-    let handlers: Vec<_> = props.iter().filter(|p| p.kind == PropKind::Handler).collect();
-    let string_props: Vec<_> = props.iter()
+    let handlers: Vec<_> = props
+        .iter()
+        .filter(|p| p.kind == PropKind::Handler)
+        .collect();
+    let string_props: Vec<_> = props
+        .iter()
         .filter(|p| matches!(p.kind, PropKind::String) && p.name != "class")
         .collect();
 
@@ -39,7 +44,8 @@ fn find_form_handler_pairs(props: &[PropInfo]) -> Vec<(Ident, Ident)> {
         }
 
         // Try to pair with a `value` prop first, then fall back to first String prop
-        let value_prop = string_props.iter()
+        let value_prop = string_props
+            .iter()
             .find(|p| p.name == "value")
             .or_else(|| string_props.first());
 
@@ -57,7 +63,10 @@ fn find_form_handler_pairs(props: &[PropInfo]) -> Vec<(Ident, Ident)> {
 fn find_bool_handler_pairs(props: &[PropInfo]) -> Vec<(Ident, Ident)> {
     let mut pairs = Vec::new();
 
-    let handlers: Vec<_> = props.iter().filter(|p| p.kind == PropKind::Handler).collect();
+    let handlers: Vec<_> = props
+        .iter()
+        .filter(|p| p.kind == PropKind::Handler)
+        .collect();
     let bools: Vec<_> = props.iter().filter(|p| p.kind == PropKind::Bool).collect();
 
     for handler in &handlers {
@@ -75,9 +84,7 @@ fn find_bool_handler_pairs(props: &[PropInfo]) -> Vec<(Ident, Ident)> {
         // on_change -> checked (first bool prop)
         // on_toggle -> toggled
         // on_X -> X
-        let target_name = handler_name
-            .strip_prefix("on_")
-            .unwrap_or(&handler_name);
+        let target_name = handler_name.strip_prefix("on_").unwrap_or(&handler_name);
 
         // Look for a bool prop with matching name
         let matched = bools.iter().find(|b| b.name == target_name);
@@ -108,7 +115,8 @@ pub fn gen_demo(
     let demo_name = format_ident!("__PlaygroundDemo{}", comp_name);
 
     // Separate controllable props (get signals + controls) from children (get sample content)
-    let controllable: Vec<_> = props.iter()
+    let controllable: Vec<_> = props
+        .iter()
         .filter(|p| !p.skip && !matches!(p.kind, PropKind::Children))
         .collect();
     let has_children = props.iter().any(|p| matches!(p.kind, PropKind::Children));
@@ -235,9 +243,7 @@ pub fn gen_demo(
     // ── Children: editable signal + control ────────────────────────
     // For components with `children: Element`, we add a `sig_content` signal
     // that lets the user type custom children text in the demo.
-    let comp_label = comp_name.to_string()
-        .trim_start_matches("Eq")
-        .to_string();
+    let comp_label = comp_name.to_string().trim_start_matches("Eq").to_string();
     let default_children_text = format!("Sample {}", comp_label);
 
     let children_signal_decl = if has_children {
@@ -320,12 +326,19 @@ pub fn gen_demo(
     };
 
     // ── Variant gallery sections inside the demo ────────────────
-    let enum_props: Vec<_> = props.iter().filter(|p| matches!(p.kind, PropKind::Enum(_))).collect();
-    let bool_props: Vec<_> = props.iter()
+    let enum_props: Vec<_> = props
+        .iter()
+        .filter(|p| matches!(p.kind, PropKind::Enum(_)))
+        .collect();
+    let bool_props: Vec<_> = props
+        .iter()
         .filter(|p| p.kind == PropKind::Bool && !p.skip)
         .collect();
-    let string_props: Vec<_> = props.iter()
-        .filter(|p| matches!(p.kind, PropKind::String | PropKind::StaticStr) && !p.skip && p.name != "class")
+    let string_props: Vec<_> = props
+        .iter()
+        .filter(|p| {
+            matches!(p.kind, PropKind::String | PropKind::StaticStr) && !p.skip && p.name != "class"
+        })
         .collect();
 
     // No-op handlers for static instances in variant galleries.
@@ -346,12 +359,18 @@ pub fn gen_demo(
                 let pname = &p.name;
                 (pname.clone(), true)
             });
-            let on_label = label_prop.as_ref().map(|(pname, _)| {
-                quote! { #pname: "On", }
-            }).unwrap_or(quote! {});
-            let off_label = label_prop.as_ref().map(|(pname, _)| {
-                quote! { #pname: "Off", }
-            }).unwrap_or(quote! {});
+            let on_label = label_prop
+                .as_ref()
+                .map(|(pname, _)| {
+                    quote! { #pname: "On", }
+                })
+                .unwrap_or(quote! {});
+            let off_label = label_prop
+                .as_ref()
+                .map(|(pname, _)| {
+                    quote! { #pname: "Off", }
+                })
+                .unwrap_or(quote! {});
 
             quote! {
                 div { class: "space-y-4",
@@ -464,28 +483,37 @@ pub fn gen_demo(
     // Section 3: With populated strings — show component with all string props filled
     let strings_section = if string_props.len() >= 2 {
         // Show a few instances with strings populated
-        let string_filled: Vec<TokenStream> = string_props.iter().map(|p| {
-            let pname = &p.name;
-            let sample = match p.name.to_string().as_str() {
-                "label" => "Dark mode".to_string(),
-                "description" => "Use dark colors for the interface".to_string(),
-                "title" => "Feature Title".to_string(),
-                "subtitle" => "A brief subtitle".to_string(),
-                "placeholder" => "Type here...".to_string(),
-                other => format!("Sample {}", other),
-            };
-            quote! { #pname: #sample, }
-        }).collect();
+        let string_filled: Vec<TokenStream> = string_props
+            .iter()
+            .map(|p| {
+                let pname = &p.name;
+                let sample = match p.name.to_string().as_str() {
+                    "label" => "Dark mode".to_string(),
+                    "description" => "Use dark colors for the interface".to_string(),
+                    "title" => "Feature Title".to_string(),
+                    "subtitle" => "A brief subtitle".to_string(),
+                    "placeholder" => "Type here...".to_string(),
+                    other => format!("Sample {}", other),
+                };
+                quote! { #pname: #sample, }
+            })
+            .collect();
 
-        let first_bool_on = bool_props.first().map(|p| {
-            let bname = &p.name;
-            quote! { #bname: true, }
-        }).unwrap_or(quote! {});
+        let first_bool_on = bool_props
+            .first()
+            .map(|p| {
+                let bname = &p.name;
+                quote! { #bname: true, }
+            })
+            .unwrap_or(quote! {});
 
-        let first_bool_off = bool_props.first().map(|p| {
-            let bname = &p.name;
-            quote! { #bname: false, }
-        }).unwrap_or(quote! {});
+        let first_bool_off = bool_props
+            .first()
+            .map(|p| {
+                let bname = &p.name;
+                quote! { #bname: false, }
+            })
+            .unwrap_or(quote! {});
 
         quote! {
             div { class: "space-y-4",
@@ -512,7 +540,10 @@ pub fn gen_demo(
 
     // Section 4: Children examples — for children-based components without enums/bools,
     // show a small gallery of instances with different sample content
-    let children_examples_section = if has_children && enum_props.is_empty() && bool_props.is_empty() {
+    let children_examples_section = if has_children
+        && enum_props.is_empty()
+        && bool_props.is_empty()
+    {
         // Build 3 sample instances with varied children text
         let samples = [
             format!("First {}", comp_label),
@@ -521,30 +552,36 @@ pub fn gen_demo(
         ];
 
         // For each string/static-str prop, provide sensible defaults
-        let default_prop_vals: Vec<TokenStream> = controllable.iter().filter_map(|p| {
-            let pname = &p.name;
-            match &p.kind {
-                PropKind::String | PropKind::StaticStr => {
-                    let val = match p.name.to_string().as_str() {
-                        "href" => "https://example.com".to_string(),
-                        "for_id" => "field".to_string(),
-                        other => format!("sample-{}", other),
-                    };
-                    Some(quote! { #pname: #val, })
+        let default_prop_vals: Vec<TokenStream> = controllable
+            .iter()
+            .filter_map(|p| {
+                let pname = &p.name;
+                match &p.kind {
+                    PropKind::String | PropKind::StaticStr => {
+                        let val = match p.name.to_string().as_str() {
+                            "href" => "https://example.com".to_string(),
+                            "for_id" => "field".to_string(),
+                            other => format!("sample-{}", other),
+                        };
+                        Some(quote! { #pname: #val, })
+                    }
+                    _ => None,
                 }
-                _ => None,
-            }
-        }).collect();
+            })
+            .collect();
 
-        let instances: Vec<TokenStream> = samples.iter().map(|sample_text| {
-            quote! {
-                #comp_name {
-                    #(#default_prop_vals)*
-                    #(#noop_handlers)*
-                    #sample_text
+        let instances: Vec<TokenStream> = samples
+            .iter()
+            .map(|sample_text| {
+                quote! {
+                    #comp_name {
+                        #(#default_prop_vals)*
+                        #(#noop_handlers)*
+                        #sample_text
+                    }
                 }
-            }
-        }).collect();
+            })
+            .collect();
 
         quote! {
             div { class: "space-y-4",
@@ -618,20 +655,21 @@ pub fn gen_demo(
 /// Renders a compact showcase with representative instances.
 /// If there's an enum prop, shows one instance per variant.
 /// If there's a bool prop, shows both on and off states per variant.
-pub fn gen_gallery(
-    comp_name: &Ident,
-    props: &[PropInfo],
-) -> TokenStream {
+pub fn gen_gallery(comp_name: &Ident, props: &[PropInfo]) -> TokenStream {
     let gallery_name = format_ident!("__PlaygroundGallery{}", comp_name);
 
-    let enum_props: Vec<_> = props.iter().filter(|p| matches!(p.kind, PropKind::Enum(_))).collect();
-    let bool_props: Vec<_> = props.iter().filter(|p| p.kind == PropKind::Bool && !p.skip).collect();
+    let enum_props: Vec<_> = props
+        .iter()
+        .filter(|p| matches!(p.kind, PropKind::Enum(_)))
+        .collect();
+    let bool_props: Vec<_> = props
+        .iter()
+        .filter(|p| p.kind == PropKind::Bool && !p.skip)
+        .collect();
 
     let has_children = props.iter().any(|p| matches!(p.kind, PropKind::Children));
     let children_content = if has_children {
-        let comp_label = comp_name.to_string()
-            .trim_start_matches("Eq")
-            .to_string();
+        let comp_label = comp_name.to_string().trim_start_matches("Eq").to_string();
         let sample = format!("Sample {}", comp_label);
         quote! { #sample }
     } else {
@@ -644,7 +682,9 @@ pub fn gen_gallery(
     // For String and StaticStr props, provide sensible defaults
     let string_defaults: Vec<TokenStream> = props
         .iter()
-        .filter(|p| matches!(p.kind, PropKind::String | PropKind::StaticStr) && !p.skip && p.name != "class")
+        .filter(|p| {
+            matches!(p.kind, PropKind::String | PropKind::StaticStr) && !p.skip && p.name != "class"
+        })
         .map(|p| {
             let pname = &p.name;
             let val = p.name.to_string().replace('_', " ");
@@ -654,7 +694,7 @@ pub fn gen_gallery(
                     // Use a string literal directly for &'static str
                     quote! { #pname: #val, }
                 }
-                _ => quote! { #pname: #val, }
+                _ => quote! { #pname: #val, },
             }
         })
         .collect();

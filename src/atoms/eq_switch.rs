@@ -10,13 +10,13 @@ use crate::{PlaygroundEnum, playground};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
-use crate::playground::playground_helpers::{
-    CodeBlock, DemoSection, PropSelect, PropToggle, PropInput, StyleInfo, format_catalog,
-};
-#[cfg(feature = "playground")]
 use crate::atoms::{EqText, TextVariant};
 #[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_helpers::{
+    CodeBlock, DemoSection, PropInput, PropSelect, PropToggle, StyleInfo, format_catalog,
+};
+#[cfg(feature = "playground")]
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 // ── Types ─────────────────────────────────────────────────────────
 
@@ -70,21 +70,33 @@ pub fn EqSwitch(
     #[props(into, default)]
     class: String,
 ) -> Element {
-    let wrapper_base = if disabled { s::WRAPPER_DISABLED } else { s::WRAPPER };
+    let wrapper_base = if disabled {
+        s::WRAPPER_DISABLED
+    } else {
+        s::WRAPPER
+    };
     let wrapper_cls = merge_classes(wrapper_base, &class);
 
     let track_cls = if checked {
-        format!("{} {}", s::TRACK_ON, match size {
-            SwitchSize::Sm => s::SM_TRACK,
-            SwitchSize::Md => s::MD_TRACK,
-            SwitchSize::Lg => s::LG_TRACK,
-        })
+        format!(
+            "{} {}",
+            s::TRACK_ON,
+            match size {
+                SwitchSize::Sm => s::SM_TRACK,
+                SwitchSize::Md => s::MD_TRACK,
+                SwitchSize::Lg => s::LG_TRACK,
+            }
+        )
     } else {
-        format!("{} {}", s::TRACK, match size {
-            SwitchSize::Sm => s::SM_TRACK,
-            SwitchSize::Md => s::MD_TRACK,
-            SwitchSize::Lg => s::LG_TRACK,
-        })
+        format!(
+            "{} {}",
+            s::TRACK,
+            match size {
+                SwitchSize::Sm => s::SM_TRACK,
+                SwitchSize::Md => s::MD_TRACK,
+                SwitchSize::Lg => s::LG_TRACK,
+            }
+        )
     };
 
     let thumb_base = match size {
@@ -150,7 +162,6 @@ pub fn EqSwitch(
         }
     }
 }
-
 
 // ── Smoke tests ─────────────────────────────────────────────────────
 

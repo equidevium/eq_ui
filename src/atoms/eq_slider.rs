@@ -29,13 +29,13 @@ use crate::{PlaygroundEnum, playground};
 use dioxus::prelude::*;
 
 #[cfg(feature = "playground")]
-use crate::playground::playground_helpers::{
-    CodeBlock, DemoSection, PropSelect, PropToggle, PropInput, StyleInfo, format_catalog,
-};
-#[cfg(feature = "playground")]
 use crate::atoms::{EqText, TextVariant};
 #[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_helpers::{
+    CodeBlock, DemoSection, PropInput, PropSelect, PropToggle, StyleInfo, format_catalog,
+};
+#[cfg(feature = "playground")]
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 // ── Types ─────────────────────────────────────────────────────────
 
@@ -128,7 +128,11 @@ pub fn EqSlider(
         format!("{:.1}", value)
     };
 
-    let aria = if aria_label.is_empty() { None } else { Some(aria_label.clone()) };
+    let aria = if aria_label.is_empty() {
+        None
+    } else {
+        Some(aria_label.clone())
+    };
 
     rsx! {
         div { class: "{wrapper_cls}",

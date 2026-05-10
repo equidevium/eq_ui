@@ -7,8 +7,7 @@
 
 /// Outer wrapper - bezel + side buttons surround the screen area.
 /// `box-content` so the padding adds *outside* the screen dims.
-pub const SHELL: &str =
-    "relative inline-block rounded-[3rem] bg-neutral-900 \
+pub const SHELL: &str = "relative inline-block rounded-[3rem] bg-neutral-900 \
      shadow-2xl shadow-black/40 ring-1 ring-black/30 \
      p-[12px] box-content";
 
@@ -16,8 +15,7 @@ pub const SHELL: &str =
 
 /// Screen surface - clipped, rounded interior of the device.
 /// Width and height are applied inline based on the `DeviceModel`.
-pub const SCREEN: &str =
-    "relative overflow-hidden rounded-[2.5rem] \
+pub const SCREEN: &str = "relative overflow-hidden rounded-[2.5rem] \
      bg-[var(--color-primary-dark)] \
      flex flex-col";
 
@@ -25,15 +23,13 @@ pub const SCREEN: &str =
 
 /// Static black pill positioned at the top centre of the screen.
 /// Width and height are applied inline based on the `DeviceModel`.
-pub const DYNAMIC_ISLAND: &str =
-    "absolute top-[11px] left-1/2 -translate-x-1/2 z-20 \
+pub const DYNAMIC_ISLAND: &str = "absolute top-[11px] left-1/2 -translate-x-1/2 z-20 \
      rounded-full bg-black";
 
 // ── Status bar ──────────────────────────────────────────────────────
 
 /// Status bar row - flanks the Dynamic Island with time / indicators.
-pub const STATUS_BAR: &str =
-    "relative z-10 h-[54px] px-[28px] \
+pub const STATUS_BAR: &str = "relative z-10 h-[54px] px-[28px] \
      flex items-center justify-between \
      text-[14px] font-semibold tracking-tight \
      text-[var(--color-label-primary)]";
@@ -52,16 +48,14 @@ pub const BODY: &str = "flex-1 overflow-auto relative";
 // ── Home indicator ──────────────────────────────────────────────────
 
 /// Bottom horizontal pill (the "swipe-up" handle).
-pub const HOME_INDICATOR: &str =
-    "absolute bottom-[8px] left-1/2 -translate-x-1/2 z-20 \
+pub const HOME_INDICATOR: &str = "absolute bottom-[8px] left-1/2 -translate-x-1/2 z-20 \
      h-[5px] w-[134px] rounded-full \
      bg-[var(--color-label-primary)]/85";
 
 // ── Painted side buttons (decorative) ───────────────────────────────
 
 /// Common base for all painted side buttons.
-pub const SIDE_BUTTON_BASE: &str =
-    "absolute bg-neutral-700 rounded-sm pointer-events-none";
+pub const SIDE_BUTTON_BASE: &str = "absolute bg-neutral-700 rounded-sm pointer-events-none";
 
 /// Action button (left side, top).
 pub const ACTION_BUTTON: &str = "left-[-2px] top-[88px] h-[36px] w-[3px]";

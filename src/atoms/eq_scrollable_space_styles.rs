@@ -9,8 +9,5 @@ pub const SCROLLBAR: &str = "scrollbar-thin scrollbar-thumb-[var(--color-scrollb
 
 /// All style tokens for playground introspection.
 pub fn catalog() -> Vec<(&'static str, &'static str)> {
-    vec![
-        ("CONTAINER", CONTAINER),
-        ("SCROLLBAR", SCROLLBAR),
-    ]
+    vec![("CONTAINER", CONTAINER), ("SCROLLBAR", SCROLLBAR)]
 }

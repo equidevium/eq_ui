@@ -1,16 +1,16 @@
-use dioxus::prelude::*;
 use super::eq_card_styles as s;
-use crate::theme::merge_classes;
 use crate::playground;
+use crate::theme::merge_classes;
+use dioxus::prelude::*;
 
+#[cfg(feature = "playground")]
+use crate::atoms::{EqText, TextVariant};
 #[cfg(feature = "playground")]
 use crate::playground::playground_helpers::{
     CodeBlock, DemoSection, PropToggle, StyleInfo, format_catalog,
 };
 #[cfg(feature = "playground")]
-use crate::atoms::{EqText, TextVariant};
-#[cfg(feature = "playground")]
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 /// Card container molecule.
 #[playground(
@@ -66,11 +66,7 @@ pub fn EqCard(
 ///
 /// Use `class` to extend or replace the default styles .
 #[component]
-pub fn EqCardHeader(
-    #[props(into, default)]
-    class: String,
-    children: Element,
-) -> Element {
+pub fn EqCardHeader(#[props(into, default)] class: String, children: Element) -> Element {
     let cls = merge_classes(s::CARD_HEADER, &class);
     rsx! {
         div {
@@ -84,11 +80,7 @@ pub fn EqCardHeader(
 ///
 /// Use `class` to extend or replace the default styles .
 #[component]
-pub fn EqCardBody(
-    #[props(into, default)]
-    class: String,
-    children: Element,
-) -> Element {
+pub fn EqCardBody(#[props(into, default)] class: String, children: Element) -> Element {
     let cls = merge_classes(s::CARD_BODY, &class);
     rsx! {
         div {
@@ -102,11 +94,7 @@ pub fn EqCardBody(
 ///
 /// Use `class` to extend or replace the default styles .
 #[component]
-pub fn EqCardFooter(
-    #[props(into, default)]
-    class: String,
-    children: Element,
-) -> Element {
+pub fn EqCardFooter(#[props(into, default)] class: String, children: Element) -> Element {
     let cls = merge_classes(s::CARD_FOOTER, &class);
     rsx! {
         div {
@@ -232,11 +220,13 @@ mod tests {
 
     #[test]
     fn smoke_renders_complete_card() {
-        let mut dom = VirtualDom::new(|| rsx! {
-            EqCard {
-                EqCardHeader { "Title" }
-                EqCardBody { "body" }
-                EqCardFooter { "footer" }
+        let mut dom = VirtualDom::new(|| {
+            rsx! {
+                EqCard {
+                    EqCardHeader { "Title" }
+                    EqCardBody { "body" }
+                    EqCardFooter { "footer" }
+                }
             }
         });
         dom.rebuild_in_place();

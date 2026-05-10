@@ -2,7 +2,7 @@
 
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{DeriveInput, Data, Fields, Result};
+use syn::{Data, DeriveInput, Fields, Result};
 
 pub fn expand(input: DeriveInput) -> Result<TokenStream> {
     let name = &input.ident;
@@ -41,9 +41,12 @@ pub fn expand(input: DeriveInput) -> Result<TokenStream> {
     let variant_count = variant_names.len();
 
     // Build the match arms for from_name
-    let match_arms = variant_names.iter().zip(variant_idents.iter()).map(|(name_str, ident)| {
-        quote! { #name_str => #name::#ident }
-    });
+    let match_arms = variant_names
+        .iter()
+        .zip(variant_idents.iter())
+        .map(|(name_str, ident)| {
+            quote! { #name_str => #name::#ident }
+        });
 
     // Default arm uses the default variant
     let default_ident = variants

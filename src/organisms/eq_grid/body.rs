@@ -4,7 +4,7 @@ use super::column_def::EqColumnDef;
 use super::styles as s;
 use super::types::{ColumnAlign, RowSelection};
 use crate::atoms::eq_icon_paths;
-use crate::atoms::{EqCheckbox, CheckboxState, EqIcon, IconSize};
+use crate::atoms::{CheckboxState, EqCheckbox, EqIcon, IconSize};
 use dioxus::prelude::*;
 use std::collections::{HashMap, HashSet};
 
@@ -52,7 +52,10 @@ pub(super) fn render_body<T: Clone + PartialEq + 'static>(
 
     // Row height style - only applied when virtualized (row_height > 0).
     let row_h_style = if row_height > 0.0 {
-        format!("height: {:.0}px; max-height: {:.0}px; overflow: hidden;", row_height, row_height)
+        format!(
+            "height: {:.0}px; max-height: {:.0}px; overflow: hidden;",
+            row_height, row_height
+        )
     } else {
         String::new()
     };
@@ -60,7 +63,11 @@ pub(super) fn render_body<T: Clone + PartialEq + 'static>(
     // Total column count for spacer colspan (include grip + checkbox columns).
     let col_count = columns.len()
         + if reorderable { 1 } else { 0 }
-        + if row_selection == RowSelection::Multi { 1 } else { 0 };
+        + if row_selection == RowSelection::Multi {
+            1
+        } else {
+            0
+        };
     let col_span = format!("{col_count}");
 
     rsx! {

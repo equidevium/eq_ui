@@ -30,7 +30,7 @@ use crate::eq_theme::EqTheme;
 use crate::molecules::TreeNode;
 use crate::organisms::{EqAppShell, EqFooter, EqHeader};
 use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor};
-use crate::{UI_TAILWIND_CSS, UI_INDEX_CSS, UI_BUTTONS_CSS};
+use crate::{UI_BUTTONS_CSS, UI_INDEX_CSS, UI_TAILWIND_CSS};
 use dioxus::prelude::*;
 
 // ── ThemeSwitcher (internal) ───────────────────────────────────────
@@ -137,10 +137,7 @@ fn build_tree_from_descriptors(descriptors: &[ComponentDescriptor]) -> Vec<TreeN
 
 /// Routes the selected tree node ID to the matching descriptor's demo.
 #[component]
-fn PreviewPanel(
-    selected: Option<String>,
-    descriptors: Vec<ComponentDescriptor>,
-) -> Element {
+fn PreviewPanel(selected: Option<String>, descriptors: Vec<ComponentDescriptor>) -> Element {
     if let Some(ref id) = selected {
         // Find the descriptor with a matching id
         if let Some(desc) = descriptors.iter().find(|d| d.id == id.as_str()) {

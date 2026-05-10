@@ -5,10 +5,10 @@
 //! `ComponentDescriptor` pattern, step-by-step instructions for adding
 //! new components, the style catalog convention, and feature gating.
 
-use dioxus::prelude::*;
 use crate::atoms::EqDivider;
 use crate::playground::playground_helpers::{CodeBlock, DemoSection};
-use crate::playground::playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
+use crate::playground::playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
+use dioxus::prelude::*;
 
 // ── Descriptor ────────────────────────────────────────────────────
 
@@ -20,27 +20,31 @@ pub fn descriptor() -> ComponentDescriptor {
         description: "Learn how the EqPlayground works, how to navigate it, \
                       and how to add your own components.",
         style_tokens: || vec![],
-        usage_examples: || vec![
-            UsageExample {
-                label: "Launch the playground",
-                code: "use eq_ui::{all_component_descriptors, EqPlayground};\n\n\
+        usage_examples: || {
+            vec![
+                UsageExample {
+                    label: "Launch the playground",
+                    code: "use eq_ui::{all_component_descriptors, EqPlayground};\n\n\
                        fn App() -> Element {\n\
                        \x20   rsx! {\n\
                        \x20       EqPlayground {\n\
                        \x20           descriptors: all_component_descriptors(),\n\
                        \x20       }\n\
                        \x20   }\n\
-                       }".into(),
-            },
-            UsageExample {
-                label: "Add custom components",
-                code: "let mut descs = all_component_descriptors();\n\
+                       }"
+                    .into(),
+                },
+                UsageExample {
+                    label: "Add custom components",
+                    code: "let mut descs = all_component_descriptors();\n\
                        descs.push(my_widget::descriptor());\n\n\
                        rsx! {\n\
                        \x20   EqPlayground { descriptors: descs }\n\
-                       }".into(),
-            },
-        ],
+                       }"
+                    .into(),
+                },
+            ]
+        },
         render_demo: || rsx! { GuideContent {} },
         render_gallery: || rsx! { GuideContent {} },
         mobile_friendly: false,

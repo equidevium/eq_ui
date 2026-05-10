@@ -15,19 +15,18 @@
 //! }
 //! ```
 
-pub mod playground_types;
-pub mod playground_helpers;
 pub mod eq_playground;
 pub mod eq_playground_styles;
-pub mod theme_showcase;
 pub mod playground_guide;
+pub mod playground_helpers;
+pub mod playground_types;
+pub mod theme_showcase;
 
-pub use playground_types::{ComponentDescriptor, ComponentCategory, UsageExample};
-pub use playground_helpers::{
-    CodeBlock, DemoSection, StyleInfo, PropSelect, PropInput, PropToggle,
-    format_catalog, highlight_rust, highlight_styles,
-    PROP_ROW, PROP_LABEL, PROP_CONTROL,
-};
 pub use eq_playground::EqPlayground;
+pub use playground_helpers::{
+    CodeBlock, DemoSection, PROP_CONTROL, PROP_LABEL, PROP_ROW, PropInput, PropSelect, PropToggle,
+    StyleInfo, format_catalog, highlight_rust, highlight_styles,
+};
+pub use playground_types::{ComponentCategory, ComponentDescriptor, UsageExample};
 
 pub use crate::playground_enum_trait::PlaygroundEnumInfo;

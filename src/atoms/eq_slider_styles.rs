@@ -4,8 +4,7 @@
 pub const WRAPPER: &str = "flex items-center gap-3 w-full";
 
 /// The native range input, themed via accent color.
-pub const INPUT: &str =
-    "w-full h-2 appearance-none rounded-full cursor-pointer \
+pub const INPUT: &str = "w-full h-2 appearance-none rounded-full cursor-pointer \
      bg-[var(--color-tertiary-dark)] \
      accent-[var(--color-accent-primary)] \
      focus:outline-none focus:ring-2 focus:ring-[var(--color-accent-primary)]/40";
@@ -18,8 +17,7 @@ pub const MD: &str = "h-2";
 pub const LG: &str = "h-3";
 
 /// Value label displayed beside the slider.
-pub const LABEL: &str =
-    "shrink-0 min-w-[3ch] text-right text-sm tabular-nums \
+pub const LABEL: &str = "shrink-0 min-w-[3ch] text-right text-sm tabular-nums \
      text-[var(--color-label-secondary)]";
 
 /// Disabled state.

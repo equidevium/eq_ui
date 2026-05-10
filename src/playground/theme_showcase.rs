@@ -18,15 +18,15 @@ pub fn descriptor() -> ComponentDescriptor {
         category: ComponentCategory::Theming,
         description: "Interactive palette of all CSS custom properties in the active theme.",
         style_tokens: || vec![],
-        usage_examples: || vec![
-            UsageExample {
+        usage_examples: || {
+            vec![UsageExample {
                 label: "Switch themes",
                 code: "Use the dropdown in the header to switch between\n\
                        all 21 built-in themes and see how each palette\n\
                        defines these tokens."
                     .into(),
-            },
-        ],
+            }]
+        },
         render_demo: || rsx! { DemoThemeShowcase {} },
         render_gallery: || rsx! { DemoThemeShowcase {} },
         mobile_friendly: false,

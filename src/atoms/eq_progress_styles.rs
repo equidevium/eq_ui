@@ -7,35 +7,31 @@
 // ── Track (outer container) ────────────────────────────────────────
 
 /// Base track - rounded pill, themed background, overflow hidden.
-pub const TRACK: &str = "relative w-full rounded-full overflow-hidden bg-[var(--color-surface-elevated)]";
+pub const TRACK: &str =
+    "relative w-full rounded-full overflow-hidden bg-[var(--color-surface-elevated)]";
 
 // ── Fill bar ───────────────────────────────────────────────────────
 
 /// Default gradient fill using the button gradient palette.
-pub const FILL_GRADIENT: &str =
-    "h-full rounded-full transition-[width] duration-[var(--transition-normal,0.25s)] ease-out \
+pub const FILL_GRADIENT: &str = "h-full rounded-full transition-[width] duration-[var(--transition-normal,0.25s)] ease-out \
      bg-gradient-to-r from-[var(--color-btn-default-start)] via-[var(--color-btn-default-mid)] to-[var(--color-btn-default-end)]";
 
 /// Solid accent fill (no gradient).
-pub const FILL_SOLID: &str =
-    "h-full rounded-full transition-[width] duration-[var(--transition-normal,0.25s)] ease-out \
+pub const FILL_SOLID: &str = "h-full rounded-full transition-[width] duration-[var(--transition-normal,0.25s)] ease-out \
      bg-[var(--color-accent-primary)]";
 
 // ── Variant fills ──────────────────────────────────────────────────
 
 /// Success - green fill.
-pub const FILL_SUCCESS: &str =
-    "h-full rounded-full transition-[width] duration-[var(--transition-normal,0.25s)] ease-out \
+pub const FILL_SUCCESS: &str = "h-full rounded-full transition-[width] duration-[var(--transition-normal,0.25s)] ease-out \
      bg-[var(--color-success)]";
 
 /// Warning - amber fill.
-pub const FILL_WARNING: &str =
-    "h-full rounded-full transition-[width] duration-[var(--transition-normal,0.25s)] ease-out \
+pub const FILL_WARNING: &str = "h-full rounded-full transition-[width] duration-[var(--transition-normal,0.25s)] ease-out \
      bg-[var(--color-warning)]";
 
 /// Danger - red fill.
-pub const FILL_DANGER: &str =
-    "h-full rounded-full transition-[width] duration-[var(--transition-normal,0.25s)] ease-out \
+pub const FILL_DANGER: &str = "h-full rounded-full transition-[width] duration-[var(--transition-normal,0.25s)] ease-out \
      bg-[var(--color-error)]";
 
 // ── Sizes (track height) ──────────────────────────────────────────
